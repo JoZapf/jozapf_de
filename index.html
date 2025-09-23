@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="de" class="h-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Jo Zapf - Cross Media Solutions" />
+    <title>Jo Zapf - Cross Media Solutions</title>
+    
+    <!-- Canonical URL für Duplicate Content -->
+    <link rel="canonical" href="https://jozapf.de/" />
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Jo Zapf - Cross Media Solutions" />
+    <meta property="og:description" content="Jo Zapf - Cross Media Solutions" />
+    <meta property="og:url" content="https://jozapf.de/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://jozapf.de/assets/png/Jo_Zapf.png" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Jo Zapf - Cross Media Solutions" />
+    <meta name="twitter:description" content="Jo Zapf - Cross Media Solutions" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    
+    <!-- Preload wichtiger Ressourcen -->
+    <link rel="preload" href="assets/css/bootstrap.css" as="style" />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" as="style" />
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!-- Fallback font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/css/timeline.css" rel="stylesheet" />
+    <link href="assets/css/vertical_timeline.css" rel="stylesheet" />
+    <link href="assets/css/cover.css" rel="stylesheet" />
+  </head>
+
+  <body class="text-light bg-dark-333 d-flex flex-column min-vh-100">
+    <!-- Sticky navbar -->
+    <header data-bs-theme="dark">
+      <nav class="navbar navbar-dark bg-transparent sticky-top border-bottom border-secondary-subtle">
+        <div class="container-xxl d-flex justify-content-end">
+          <button
+            class="btn btn-outline-light btn-sm px-2 py-1 rounded-1"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#menuPanel"
+            aria-controls="menuPanel"
+            aria-expanded="false"
+            aria-label="Menü öffnen"
+          >
+            <span class="navbar-toggler-icon small align-middle"></span>
+          </button>
+        </div>
+      </nav>
+
+      <div id="menuPanel" class="collapse bg-dark border-bottom border-secondary-subtle">
+        <div class="container-xxl py-4">
+          <div class="row">
+            <div class="col-12 col-md-8">
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2"><a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" href="https://www.linkedin.com/in/jo-zapf/" target="_blank" rel="noopener">LinkedIn</a></li>
+                <li class="mb-2"><a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" href="https://github.com/JoZapf" target="_blank" rel="noopener">GitHub</a></li>
+                <li class="mb-0"><a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" href="mailto:mail@jozapf.de">E–Mail</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="container-xxl hero d-flex flex-column align-items-center justify-content-center text-center">
+      <div class="avatar mb-3" aria-hidden="true">
+        <span class="avatar-initial"> </span>
+      </div>
+      <h1 class="hero-name">Jo Zapf</h1>
+      <p class="hero-quote">„everything you can imagine is real"</p>
+      <h6>
+		<script>
+		(function() {
+		  const startDate = new Date('1999-01-01');
+		  const currentDate = new Date();
+		  
+		  let years = currentDate.getFullYear() - startDate.getFullYear();
+		  const monthDiff = currentDate.getMonth() - startDate.getMonth();
+		  const dayDiff = currentDate.getDate() - startDate.getDate();
+		  
+		  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+			years--;
+		  }
+		  
+		  document.write(years);
+		})();
+		</script> 
+		years autodidactic* journey<p class="intro"><img src="./assets/svg/gfx.svg" alt="decorative shape" width="100" height="95" class="shape-wrap-left"/>
+		Areas of focus alongside my current program include: Hardening and operating Linux & Windows stacks; reproducible development environments with Docker/Docker Compose. Deployments run as CI/CD via GitHub Actions with clean versioning and review gates. In parallel, I evaluate AI agents on local (on-prem) MCP servers.
+	</p></h6></div>
+    </section>
+
+    <!-- Start Horizontal Timeline -->
+    <main class="container-xxl pb-5 horizontal_timeline">
+      <section class="staggered-timeline">
+        <div class="timeline-container">
+          <div class="milestones-wrapper">
+            
+            <div class="milestone-item">
+              <div class="timeline-dot"></div>
+              <div class="milestone-content">
+                <div class="event-date">1999</div>
+                <h6 class="track">Graphic</h6>
+                <p class="note">continued artificial sketching / reinforcing visual media</p>
+				<p class="note">#adobe master collection #cross media #intrinsic motivation</p>
+              </div> 
+           </div>
+            
+            <div class="milestone-item">
+              <div class="timeline-dot"></div>
+              <div class="milestone-content">
+                <div class="event-date">2010</div>
+                <h6 class="track">Web</h6>
+                <p class="note">html / css / mysql / javascript / php</p>
+              </div>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#wordpress</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#joomla</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#typo3(editorial)</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#bootstrap</h6> 
+			</div>
+            
+            <div class="milestone-item">
+              <div class="timeline-dot"></div>
+              <div class="milestone-content">
+                <div class="event-date">2011</div>
+                <h6 class="track">Video</h6>
+                <p class="note">film / cross-media- & post-production / motion graphics / 3D</p>
+              </div>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#after effects</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#adobe extendscript</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#cinema 4D</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#animation</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#fair advertising</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#campaign films</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#dvd authoring</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#artistic works</h6>
+            </div>
+            
+            <div class="milestone-item">
+              <div class="timeline-dot"></div>
+              <div class="milestone-content">
+                <div class="event-date">2013</div>
+                <h6 class="track">Photo</h6>
+                <p class="note">products / locations / people</p>
+              </div>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#product</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#eventlocations</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#portrait</h6>
+            </div>
+            
+            <div class="milestone-item">
+              <div class="timeline-dot"></div>
+              <div class="milestone-content">
+                <div class="event-date">2016</div>
+                <h6 class="track">Net Admin / IT</h6>
+                <p class="note">process automate / cross-media production / digital infrastructure / network administration</p>
+              </div>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#project management</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#primary responsibility</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#customer service</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#cross-media</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#unifi</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#fiber</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#custom networks</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#conferences</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#redundant infrastructure</h6>
+				  <h6 class="badge bg-body-tertiary text-black mb-0">#paperless office</h6>			  
+            </div>
+            
+            <div class="milestone-item">
+              <div class="timeline-dot"></div>
+              <div class="milestone-content">
+                <div class="event-date">2025</div>
+                <h6 class="track">Application Dev. </h6>
+                <p class="note">
+				in consequence of the past: setting up a new level 
+				*<i><small>(studies until early 2027)</small></i>
+				</p>
+              </div>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#python</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#java</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#javascript</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#html</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#css</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#mysql</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#linux</h6>			  
+            </div>
+            
+          </div>
+          
+          <!-- Floating Freelance Milestone -->
+          <div class="freelance-milestone-float">
+            <div class="freelance-dot-float"></div>
+            <div class="freelance-content">
+              <!--<div class="freelance-date">2010</div> -->
+              <h6 class="freelance-track">Freelance</h6>
+              <p class="freelance-note"> </p>
+            </div>
+            <div class="freelance-connector"></div>
+          </div>
+          
+        </div>
+      </section>
+	  
+	  
+    </main>
+
+<!-- Start Vertical Timeline -->
+<main class="vertical_timeline"> 
+	<div class="container py-5">
+	  <div class="main-timeline-4 text-white">
+		<div class="timeline-4 left-4">
+		  <div class="card gradient-custom">
+			<div class="card-body p-4">
+			  <i class="fas fa-brain fa-2x mb-3"></i>
+			  <h4 class="left">2025</h4>
+			  <p class="small text-white-50 mb-4 left">Application Development</p>
+			  <p class="timeline_content left">in consequence of the past: setting up a new level<br/>*(studies until early 2027)
+			  </p>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#python</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#java</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#javascript</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#html</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#css</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#mysql</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#linux</h6>
+			</div>
+		  </div>
+		</div>
+		<div class="timeline-4 right-4">
+		  <div class="card gradient-custom">
+			<div class="card-body p-4">
+			  <i class="fas fa-camera fa-2x mb-3"></i>
+			  <h4 class="right">2016</h4>
+			  <p class="small text-white-50 mb-4">Net Admin / IT / project management</p>
+			  <p class="timeline_content right">project management / process automate / digital infrastructure / network administration
+			  </p>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#project management</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#primary responsibility</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#customer service</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#customer service</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#unifi</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#fiber</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#custom networks</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#conferences</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#redundant infrastructure</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#paperless office</h6>
+			</div>
+		  </div>
+		</div>
+		<div class="timeline-4 left-4">
+		  <div class="card gradient-custom">
+			<div class="card-body p-4">
+			  <i class="fas fa-campground fa-2x mb-3"></i>
+			  <h4 class="left">2013</h4>
+			  <p class="small text-white-50 mb-4 left">Photo</p>
+			  <p class="timeline_content left">products / locations / people
+			  </p>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#product</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#eventlocations</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#portrait</h6>
+			</div>
+		  </div>
+		</div>
+		<div class="timeline-4 right-4">
+		  <div class="card gradient-custom">
+			<div class="card-body p-4">
+			  <i class="fas fa-sun fa-2x mb-3"></i>
+			  <h4 class="right">2011</h4>
+			  <p class="small text-white-50 mb-4 right">Video</p>
+			  <p class="timeline_content  right">film / cross-media- & post-production / motion graphics / 3D
+			  </p>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#after effects</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#adobe extendscript</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#cinema 4D</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#animation</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#fair advertising</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#campaign films</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#dvd authoring</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#artistic works</h6>
+			</div>
+		  </div>
+		</div>
+		<div class="timeline-4 left-4">
+		  <div class="card gradient-custom">
+			<div class="card-body p-4">
+			  <i class="fas fa-palette fa-2x mb-3 left"></i>
+			  <h4 class="left">2010</h4>
+			  <p class="small text-white-50 mb-4 left">Web</p>
+			  <p class="timeline_content left">html / css / mysql / javascript / php
+			  </p>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#wordpress</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#joomla</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#typo3(editorial)</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#bootstrap</h6>
+			</div>
+		  </div>
+		</div>
+		
+		<div class="timeline-4 right-4">
+		  <div class="card gradient-custom">
+			<div class="card-body p-4">
+			  <i class="fas fa-laugh-beam fa-2x mb-3 right"></i>
+			  <h4 class="right">1999</h4>
+			  <p class="small text-white-50 mb-4">Graphic</p>
+			  <p class="timeline_content  right">continued artificial sketching / reinforcing self-taught learning creating visual media
+			  </p>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#adobe master collection</h6>
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#cross media</h6>	
+			  <h6 class="badge bg-body-tertiary text-black mb-0">#intrinsic motivation</h6>		  
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+</main>
+<!-- End Vertical Timeline -->
+    <footer class="mt-auto py-4 border-top border-secondary-subtle small text-center opacity-75">
+      <script>
+        const y = new Date().getFullYear();
+        document.write(`&copy; 1999 – ${y} | Jo Zapf | DE-Berlin`);
+      </script>
+    </footer>
+     <script src="assets/js/bootstrap.bundle.min.js" class="astro-vvvwv3sm"></script>
+  </body>
+</html>

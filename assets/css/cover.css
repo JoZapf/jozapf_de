@@ -1,0 +1,175 @@
+/* Horizontal Timeline - nur über 1400px anzeigen */
+.horizontal_timeline {
+  display: none;
+}
+
+/* Base / Theme */
+:root { --bg-333:#333333; --line:#6c757d; --muted:#adb5bd; }
+h6, h1, {color: var(--muted);}
+.intro {
+	border-bottom:solid 1px var(--line);
+	padding-top: 80px;
+	bottom: 50px;
+	color: var(--muted);
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    width: 100%;
+    padding-right: calc(var(--bs-gutter-x) * 1.5);
+    padding-left: calc(var(--bs-gutter-x) * 1.5);
+	padding-bottom:50px;
+}
+footer {background:#13171a;}
+.badge {
+    --bs-badge-padding-x: 0.5em;
+    --bs-badge-padding-y: 0.3em;
+    --bs-badge-font-size: 0.65em;
+    --bs-badge-font-weight: 700;
+    --bs-badge-color: #fff;
+    --bs-badge-border-radius: var(--bs-border-radius);
+    display: inline-block;
+    padding: var(--bs-badge-padding-y) var(--bs-badge-padding-x);
+    font-size: var(--bs-badge-font-size);
+    font-weight: var(--bs-badge-font-weight);
+    line-height: 1;
+    color: var(--bs-badge-color);
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: var(--bs-badge-border-radius);
+}
+
+.bg-body-tertiary {
+    --bs-bg-opacity: 1;
+	background-color:black!important;
+	color:#cfd4da!important;
+	border:solid 1px var(--line)!important;
+}
+.p-4 {
+    padding: 0.75rem !important;
+}
+.mb-4 {
+    margin-bottom: 0.5rem !important;
+}
+.bg-transparent { background-color:#13171a!important;}
+.btn-outline-light { --bs-btn-hover-bg:#6c757d; --bs-btn-border-color: #e9ecef; --bs-btn-hover-border-color: var(--line);}
+html, body { height:100%; }
+body.bg-dark-333 { background:#212529; color:#e9ecef; font-family:"Gotham Light","Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif; }
+
+/* subtle tracking for small caps */
+.tracking-tight { letter-spacing:.08em; }
+
+/* Hero */
+.hero { padding-top: 150px; padding-bottom: 60px; color: }
+.hero-name {
+    font-weight: 300;
+    font-size: clamp(2.2rem, 2.6vw + 1rem, 4rem);
+    line-height: 1.1;
+    margin: 0.25rem 0 -1rem 0;
+    display: inline-block;
+    padding: 0.35rem 1.25rem;
+}
+
+.hero-quote {
+  font-weight:300;
+  font-size:clamp(1rem, .9vw + .6rem, 1.4rem);
+  color: var(--muted);
+  margin: .35rem 0 0;
+  position: relative;
+}
+.hero-quote::before,
+.hero-quote::after{
+  content:"";
+  display:block;
+  height:1px;
+  background:var(--line);
+  width:min(650px, 80vw);
+  margin:.75rem auto 0.35rem auto;
+}
+
+/* Avatar */
+.avatar {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(circle at 35% 35%, #555 0, #444 60%, #3a3a3a 100%);
+  background-image: url('../png/Jo_Zapf.png');
+  background-size: cover;        
+  background-position: center;   
+  background-repeat: no-repeat;
+
+}
+.avatar img { width:100%; height:100%; object-fit: cover; display:block; }
+.avatar-initial { font-weight:500; font-size:2rem; color:#ddd; opacity:.85; }
+
+/* Footer */
+footer { color: var(--muted); }
+
+/* Helpers */
+.border-secondary-subtle { border-color: rgba(255,255,255,.15)!important; }
+
+/* =========== VERTICAL (<1400px) =========== */
+@media (max-width: 1399.98px){
+		.hero { padding-top: 88px; padding-bottom: 0px; }
+		
+	.hero-quote::before,
+	.hero-quote::after{
+	  content:"";
+	  display:block;
+	  height:1px;
+	  background:var(--line);
+	  width:min(840px, 80vw);
+	  padding:0px 15vw 0px 15vw;
+	  margin:.75rem auto 0.35rem auto;
+	}
+		
+.intro {
+	border-bottom:solid 1px var(--line);
+	padding-top: 80px;
+	bottom: 50px;
+	color: var(--muted);
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    width: auto;
+    padding-right: calc(var(--bs-gutter-x) * 1.5);
+    padding-left: calc(var(--bs-gutter-x) * 1.5);
+	    margin-right: calc(var(--bs-gutter-x) * 1.5);
+    margin-left: calc(var(--bs-gutter-x) * 1.5);
+	padding-bottom:50px;
+	}
+}
+
+@media (min-width: 1400px) {
+  .horizontal_timeline {
+    display: block;
+  }
+  .vertical_timeline {
+    display: none;
+  }
+}
+
+/* Vertical Timeline - nur unter 1400px anzeigen */
+.vertical_timeline {
+  display: block;
+}
+
+@media (min-width: 1400px) {
+  .vertical_timeline {
+    display: none;
+  }
+    
+}
+
+.shape-wrap-left {
+  float: left;                    /* Umfluss aktivieren */
+  width: 100px;                   /* Muss gesetzt sein (auch Höhe) */
+  height: 95px;
+  shape-outside: url("../svg/gfx.svg"); /* Kontur aus SVG ableiten */
+  shape-image-threshold: 0.1;     /* Alpha-Schwelle für die Konturerkennung */
+  shape-margin: 0.5px;              /* Abstand zwischen Text und Kontur */
+  margin: 0rem 0.2rem 1.2rem 1rem;          /* Klassischer Außenabstand zum Textblock */
+  display: block;                 /* Verhindert Inline-Image-Zwischenräume */
+}
+
+
