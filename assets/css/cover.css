@@ -19,6 +19,20 @@
   width: var(--icon-width);
   height: var(--icon-height);
 }
+.icon-left, .icon-big-left {
+  width: var(--icon-width);
+  height: var(--icon-height);
+  float:left;
+  margin-left:20px;
+  margin-bottom:-5px;
+}
+.icon-right, .icon-big-right {
+  width: var(--icon-width);
+  height: var(--icon-height);
+  float:right;
+  margin-right:20px;
+  margin-bottom:-5px;
+}
 	
 h6, h1, {color: var(--muted);}
 p.hashtags {
