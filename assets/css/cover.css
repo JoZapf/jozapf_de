@@ -4,7 +4,22 @@
 }
 
 /* Base / Theme */
-:root { --bg-333:#333333; --line:#6c757d; --muted:#adb5bd; }
+:root { 
+	--bg-333:#333333;
+	--line:#6c757d; 
+	--muted:#adb5bd;
+	--icon-width: 75px;
+	--icon-height: 75px;
+	--icon-big-width: 150px;
+	--icon-big-height: 150px;
+
+}
+
+.icon, .icon-big {
+  width: var(--icon-width);
+  height: var(--icon-height);
+}
+	
 h6, h1, {color: var(--muted);}
 p.hashtags {
 	min-height:75px;
@@ -25,7 +40,7 @@ p.hashtags {
 footer {background:#13171a;}
 .badge {
     /* --bs-badge-padding-x: 0.5em; */
-    --bs-badge-padding-y: 0.3em;
+    --bs-badge-padding-y: 0.2em;
     --bs-badge-font-size: 0.85em;
     --bs-badge-font-weight: 100;
     --bs-badge-color: #fff;
@@ -34,12 +49,21 @@ footer {background:#13171a;}
     padding: var(--bs-badge-padding-y) var(--bs-badge-padding-x);
     font-size: var(--bs-badge-font-size);
     font-weight: var(--bs-badge-font-weight);
-    line-height: 1;
+    line-height: 1.35;
     color: var(--bs-badge-color);
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: var(--bs-badge-border-radius);
+	margin:0.2rem;
+}
+/* Option 3: Spezifischer - direkte Kinder */
+p.note.note-bg > img {
+    margin-right:10px;
+	margin-bottom:10px;
+	display:block;
+    margin-left: auto;  /* Zentriert horizontal */
+    margin-right: auto; /* Zentriert horizontal */
 }
 
 .bg-body-tertiary {
@@ -166,7 +190,7 @@ footer { color: var(--muted); }
 }
 
 .shape-wrap-left {
-  float: left;                    /* Umfluss aktivieren */
+  /* float: left;                    /* Umfluss aktivieren */
   width: 100px;                   /* Muss gesetzt sein (auch Höhe) */
   height: 95px;
   shape-outside: url("../svg/gfx.svg"); /* Kontur aus SVG ableiten */

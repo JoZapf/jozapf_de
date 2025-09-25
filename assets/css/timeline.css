@@ -352,6 +352,7 @@ footer { color: var(--muted); }
     border-bottom: 2px solid var(--line);
     font-size: 0.8rem;
     text-transform: uppercase;
+	text-align:center;
     display: inline-block;
     padding: 2px 1em;
     margin-top: 55px;
@@ -364,32 +365,39 @@ footer { color: var(--muted); }
   opacity: .85;
   font-weight: 500;
   margin-bottom: 0.5rem;
+  text-align:center;
 }
 
 .note {
   color: #cfd4da;
-  font-size: .9rem;
+  font-size: 1rem;
   line-height: 1.35;
   margin: 0 .25rem;
-  padding: 10px 20px; 
-  min-height:7rem;
+  padding: 10px 10px; 
+  min-height:12rem;
    
 }
 
 .note-bg {
 	background-color: var(--line);
 	border-top-right-radius:10px;
-	border-top-left-radius:10px; 
+	border-top-left-radius:10px;
+	border-right: 1px solid var(--line)!important;
+	border-left: 1px solid var(--line)!important; 	
 }
 
 .hashtags {
   color: #cfd4da;
-
-  line-height: 1.35;
+  text-transform:uppercase;
+  line-height: 1.55;
   margin-top: .25rem; 
   background-color: var(--line);
   border-bottom-right-radius:10px;
   border-bottom-left-radius:10px;
+  border-right: 1px solid var(--line)!important;
+  border-left: 1px solid var(--line)!important;  
+  font-size:0.9em;
+  min-height:8rem;
 }
 
 /* Responsive positioning */
