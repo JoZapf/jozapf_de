@@ -70,8 +70,8 @@ p.note.note-bg > img {
     --bs-bg-opacity: 1;
 	background-color:#212529!important;
 	color:#cfd4da!important;
-	border:solid 0px var(--line)!important;
-}
+	border:solid 1px var(--line)!important;
+} 
 .p-4 {
     padding: 0.75rem !important;
 }
@@ -162,10 +162,19 @@ footer { color: var(--muted); }
     width: auto;
     padding-right: calc(var(--bs-gutter-x) * 1.5);
     padding-left: calc(var(--bs-gutter-x) * 1.5);
-	    margin-right: calc(var(--bs-gutter-x) * 1.5);
+	margin-right: calc(var(--bs-gutter-x) * 1.5);
     margin-left: calc(var(--bs-gutter-x) * 1.5);
 	padding-bottom:50px;
+	text-transform:none;
 	}
+	
+.bg-body-tertiary-left {
+    --bs-bg-opacity: 1;
+    background-color: #212529!important;
+    color: #cfd4da!important;
+    border: solid 1px var(--line)!important;
+    float: right!important;
+}
 }
 
 @media (min-width: 1400px) {

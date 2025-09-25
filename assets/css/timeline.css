@@ -256,10 +256,29 @@ footer { color: var(--muted); }
     padding-top: 24px;
   }
   
+  .mb-4 {
+	  text-transform: uppercase;
+  }
+  h6 {text-transform:uppercase;}
   .milestones-wrapper {
     position: relative;
   }
   
+ .bg-body-tertiary {
+    --bs-bg-opacity: 1;
+    background-color: #212529!important;
+    color: #cfd4da!important;
+    border: solid 1px #cfd4da!important;
+} 
+ 
+.bg-body-tertiary>left  {
+    --bs-bg-opacity: 1;
+    background-color: #212529!important;
+    color: #cfd4da!important;
+    border: solid 1px #cfd4da!important;
+	text-align:right;
+} 
+ 
   /* Zentrale vertikale Achse */
   .milestones-wrapper::before {
     content: "";
@@ -373,8 +392,8 @@ footer { color: var(--muted); }
   font-size: 1rem;
   line-height: 1.35;
   margin: 0 .25rem;
-  padding: 10px 10px; 
-  min-height:12rem;
+  padding: 20px 5px; 
+  min-height:14rem;
    
 }
 
@@ -397,7 +416,7 @@ footer { color: var(--muted); }
   border-right: 1px solid var(--line)!important;
   border-left: 1px solid var(--line)!important;  
   font-size:0.9em;
-  min-height:8rem;
+  min-height:9rem;
 }
 
 /* Responsive positioning */
