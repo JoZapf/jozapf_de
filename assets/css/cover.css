@@ -6,6 +6,10 @@
 /* Base / Theme */
 :root { --bg-333:#333333; --line:#6c757d; --muted:#adb5bd; }
 h6, h1, {color: var(--muted);}
+p.hashtags {
+	min-height:75px;
+	background-color:var(--line);
+}
 .intro {
 	border-bottom:solid 1px var(--line);
 	padding-top: 80px;
@@ -20,10 +24,10 @@ h6, h1, {color: var(--muted);}
 }
 footer {background:#13171a;}
 .badge {
-    --bs-badge-padding-x: 0.5em;
+    /* --bs-badge-padding-x: 0.5em; */
     --bs-badge-padding-y: 0.3em;
-    --bs-badge-font-size: 0.65em;
-    --bs-badge-font-weight: 700;
+    --bs-badge-font-size: 0.85em;
+    --bs-badge-font-weight: 100;
     --bs-badge-color: #fff;
     --bs-badge-border-radius: var(--bs-border-radius);
     display: inline-block;
@@ -40,9 +44,9 @@ footer {background:#13171a;}
 
 .bg-body-tertiary {
     --bs-bg-opacity: 1;
-	background-color:black!important;
+	background-color:#212529!important;
 	color:#cfd4da!important;
-	border:solid 1px var(--line)!important;
+	border:solid 0px var(--line)!important;
 }
 .p-4 {
     padding: 0.75rem !important;

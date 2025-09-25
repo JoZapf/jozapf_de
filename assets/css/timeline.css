@@ -89,7 +89,7 @@ footer { color: var(--muted); }
   
   .milestone-item {
     flex: 1;
-    margin-top: calc(var(--connector) + 40px); /* 40px Abstand fÃ¼r bessere Trennung */
+    margin-top: calc(var(--connector) + 80px); /* 40px Abstand fÃ¼r bessere Trennung */
   }
   
   /* Freelance-Timeline - oberhalb aller anderen */
@@ -102,7 +102,7 @@ footer { color: var(--muted); }
 		height: 2px;
 		background: var(--line);
 		z-index: 0;
-		top: 28px;
+		top: 70px;
 	}
   
   /* Gestaffelte Timeline-Linien - Ã¼ber die gesamte Container-Breite */
@@ -370,8 +370,26 @@ footer { color: var(--muted); }
   color: #cfd4da;
   font-size: .9rem;
   line-height: 1.35;
-  margin-top: .25rem;
-  padding: 0 20px;  
+  margin: 0 .25rem;
+  padding: 10px 20px; 
+  min-height:7rem;
+   
+}
+
+.note-bg {
+	background-color: var(--line);
+	border-top-right-radius:10px;
+	border-top-left-radius:10px; 
+}
+
+.hashtags {
+  color: #cfd4da;
+
+  line-height: 1.35;
+  margin-top: .25rem; 
+  background-color: var(--line);
+  border-bottom-right-radius:10px;
+  border-bottom-left-radius:10px;
 }
 
 /* Responsive positioning */
@@ -389,7 +407,7 @@ footer { color: var(--muted); }
 	.freelance-milestone-float {
 		position: absolute;
 		left: 27.0%;
-		top: calc(-1 * var(--connector) - -2px);
+		top: calc(-1 * var(--connector) - -45px);
 		text-align: center;
 		z-index: 20;
 	}
