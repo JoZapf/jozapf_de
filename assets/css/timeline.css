@@ -1,58 +1,8 @@
-/* Base / Theme */
-:root { --bg-333:#333333; --line:#6c757d; --muted:#adb5bd; }
-h6 {color: var(--muted);}
-.btn-outline-light { --bs-btn-hover-bg:#6c757d; --bs-btn-border-color: #6c757d;}
-html, body { height:100%; }
-body.bg-dark-333 { background:#333333; color:#e9ecef; font-family:"Gotham Light","Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif; }
 
-/* Hero */
-.hero { padding-top: 88px; padding-bottom: 75px; }
-.hero-name {
-  font-weight:300;
-  font-size: clamp(2.2rem, 2.6vw + 1rem, 4rem);
-  line-height:1.1;
-  margin: .25rem 0 0.5rem 0;
-  display:inline-block;
-  padding:.35rem 1.25rem;
-}
-.hero-quote {
-  font-weight:300;
-  font-size:clamp(1rem, .9vw + .6rem, 1.4rem);
-  color: var(--muted);
-  margin: .35rem 0 0;
-  position: relative;
-}
-.hero-quote::before,
-.hero-quote::after{
-  content:"";
-  display:block;
-  height:1px;
-  background:var(--line);
-  width:min(650px, 80vw);
-  margin:.75rem auto 0.35rem auto;
-}
+/* ========== STAGGERED HORIZONZTAL TIMELINE ========== */
 
-/* Avatar */
-.avatar {
-  width: 120px; height: 120px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  overflow: hidden;
-  display:flex; align-items:center; justify-content:center;
-  background: radial-gradient(circle at 35% 35%, #555 0, #444 60%, #3a3a3a 100%);
-  background-size: cover;        
-  background-position: center;   
-  background-repeat: no-repeat;
-}
-.avatar-initial { font-weight:500; font-size:2rem; color:#ddd; opacity:.85; }
+.timeline_content {color:#cfd4da!important;}
 
-/* Footer */
-footer { color: var(--muted); }
-
-/* Helpers */
-.border-secondary-subtle { border-color: rgba(255,255,255,.15)!important; }
-
-/* ========== GESTAFFELTE TIMELINE ========== */
 .staggered-timeline {
     --connector: 48px;
     --dot-offset: 5px;
@@ -89,7 +39,7 @@ footer { color: var(--muted); }
   
   .milestone-item {
     flex: 1;
-    margin-top: calc(var(--connector) + 80px); /* 40px Abstand fÃ¼r bessere Trennung */
+    margin-top: calc(var(--connector) + 80px); 
   }
   
   /* Freelance-Timeline - oberhalb aller anderen */
@@ -250,7 +200,7 @@ footer { color: var(--muted); }
   }
 }
 
-/* =========== VERTICAL (<1400px) =========== */
+/* =========== VERTICAL Timeline (<1400px) =========== */
 @media (max-width: 1399.98px) {
   .staggered-timeline {
     padding-top: 24px;

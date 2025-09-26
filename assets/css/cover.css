@@ -1,32 +1,106 @@
+/*###+++ Base / Theme +++###*/
+:root { 
+	--bg-jz:#212529;
+	--line:#6c757d; 
+	--muted:#adb5bd;
+	--icon-width: 75px;
+	--icon-height: 75px;
+	--icon-width-small: 35px;
+	--icon-height-small: 35px;	
+	}	
+	
+html, body { 
+	height:100%;
+	}
+	
+body.bg-dark-333 { 
+	background:var(--bg-jz); 
+	color:#e9ecef; 
+	font-family:"Gotham Light","Montserrat",
+	system-ui,-apple-system,"Segoe UI",
+	Roboto,"Helvetica Neue",
+	Arial,"Noto Sans","Liberation Sans",sans-serif; }
+
+
+/*###+++ Headings +++###*/	
+h1, h6 {
+	color: var(--muted);
+	}
+h4 {color:#cfd4da!important;}
+	
+/*###+++ Header / Navbar +++###*/
+.bg-transparent { background-color:#13171a!important;}
+.border-secondary-subtle { border-color: rgba(255,255,255,.15)!important; }
+
+/* Footer */
+footer {background:#13171a;}
+footer { color: var(--muted); }
+
+/*###+++ Avatar +++###*/
+.avatar {
+	width: 120px; height: 120px;
+	border-radius: 50%;
+	border: 1px solid var(--line);
+	overflow: hidden;
+	display:flex; align-items:center; justify-content:center;
+	background: radial-gradient(circle at 35% 35%, #555 0, #444 60%, #3a3a3a 100%);
+	background-image: url('../png/JoZapf.png');
+	background-size: cover;        
+	background-position: center;   
+	background-repeat: no-repeat;
+	}
+
+.avatar img { width:100%; height:100%; object-fit: cover; display:block; }
+.avatar-initial { font-weight:500; font-size:2rem; color:#ddd; opacity:.85; }
+
+/* Hero */
+.hero { padding-top: 150px; padding-bottom: 60px; color: #cfd4da }
+.hero-name {
+    font-weight: 300;
+    font-size: clamp(2.2rem, 2.6vw + 1rem, 4rem);
+    line-height: 1.1;
+    margin: 0.25rem 0 -1rem 0;
+    display: inline-block;
+    padding: 0.35rem 1.25rem;
+}
+
+.hero-quote {
+  font-weight:300;
+  font-size:clamp(1rem, .9vw + .6rem, 1.4rem);
+  color: var(--muted);
+  margin: .35rem 0 0;
+  position: relative;
+}
+.hero-quote::before,
+.hero-quote::after{
+  content:"";
+  display:block;
+  height:1px;
+  background:var(--line);
+  width:min(650px, 80vw);
+  margin:.75rem auto 0.35rem auto;
+}
+
+/* Footer */
+footer { color: var(--muted); }
+
 /* Horizontal Timeline - nur über 1400px anzeigen */
 .horizontal_timeline {
   display: none;
 }
 
-/* Base / Theme */
-:root { 
-	--bg-333:#333333;
-	--line:#6c757d; 
-	--muted:#adb5bd;
-	--icon-width: 75px;
-	--icon-height: 75px;
-	--icon-big-width: 150px;
-	--icon-big-height: 150px;
-
-}
-
-.icon, .icon-big {
+.icon {
   width: var(--icon-width);
   height: var(--icon-height);
 }
-.icon-left, .icon-big-left {
+.icon-left {
   width: var(--icon-width);
   height: var(--icon-height);
   float:left;
   margin-left:20px;
   margin-bottom:-5px;
 }
-.icon-right, .icon-big-right {
+.icon-right {
   width: var(--icon-width);
   height: var(--icon-height);
   float:right;
@@ -34,11 +108,7 @@
   margin-bottom:-5px;
 }
 	
-h6, h1, {color: var(--muted);}
-p.hashtags {
-	min-height:75px;
-	background-color:var(--line);
-}
+
 .intro {
 	border-bottom:solid 1px var(--line);
 	padding-top: 80px;
@@ -51,7 +121,11 @@ p.hashtags {
     padding-left: calc(var(--bs-gutter-x) * 1.5);
 	padding-bottom:50px;
 }
-footer {background:#13171a;}
+
+p.hashtags {
+	min-height:75px;
+	background-color:var(--line);
+	}
 .badge {
     /* --bs-badge-padding-x: 0.5em; */
     --bs-badge-padding-y: 0.2em;
@@ -92,64 +166,19 @@ p.note.note-bg > img {
 .mb-4 {
     margin-bottom: 0.5rem !important;
 }
-.bg-transparent { background-color:#13171a!important;}
+
 .btn-outline-light { --bs-btn-hover-bg:#6c757d; --bs-btn-border-color: #e9ecef; --bs-btn-hover-border-color: var(--line);}
-html, body { height:100%; }
-body.bg-dark-333 { background:#212529; color:#e9ecef; font-family:"Gotham Light","Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif; }
+
+.btn-outline-light { --bs-btn-hover-bg:#6c757d; --bs-btn-border-color: #6c757d;}
 
 /* subtle tracking for small caps */
 .tracking-tight { letter-spacing:.08em; }
 
-/* Hero */
-.hero { padding-top: 150px; padding-bottom: 60px; color: }
-.hero-name {
-    font-weight: 300;
-    font-size: clamp(2.2rem, 2.6vw + 1rem, 4rem);
-    line-height: 1.1;
-    margin: 0.25rem 0 -1rem 0;
-    display: inline-block;
-    padding: 0.35rem 1.25rem;
-}
 
-.hero-quote {
-  font-weight:300;
-  font-size:clamp(1rem, .9vw + .6rem, 1.4rem);
-  color: var(--muted);
-  margin: .35rem 0 0;
-  position: relative;
-}
-.hero-quote::before,
-.hero-quote::after{
-  content:"";
-  display:block;
-  height:1px;
-  background:var(--line);
-  width:min(650px, 80vw);
-  margin:.75rem auto 0.35rem auto;
-}
 
-/* Avatar */
-.avatar {
-  width: 120px; height: 120px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  overflow: hidden;
-  display:flex; align-items:center; justify-content:center;
-  background: radial-gradient(circle at 35% 35%, #555 0, #444 60%, #3a3a3a 100%);
-  background-image: url('../png/Jo_Zapf.png');
-  background-size: cover;        
-  background-position: center;   
-  background-repeat: no-repeat;
 
-}
-.avatar img { width:100%; height:100%; object-fit: cover; display:block; }
-.avatar-initial { font-weight:500; font-size:2rem; color:#ddd; opacity:.85; }
 
-/* Footer */
-footer { color: var(--muted); }
 
-/* Helpers */
-.border-secondary-subtle { border-color: rgba(255,255,255,.15)!important; }
 
 /* =========== VERTICAL (<1400px) =========== */
 @media (max-width: 1399.98px){
@@ -166,29 +195,45 @@ footer { color: var(--muted); }
 	  margin:.75rem auto 0.35rem auto;
 	}
 		
-.intro {
-	border-bottom:solid 1px var(--line);
-	padding-top: 80px;
-	bottom: 50px;
-	color: var(--muted);
-    --bs-gutter-x: 1.5rem;
-    --bs-gutter-y: 0;
-    width: auto;
-    padding-right: calc(var(--bs-gutter-x) * 1.5);
-    padding-left: calc(var(--bs-gutter-x) * 1.5);
-	margin-right: calc(var(--bs-gutter-x) * 1.5);
-    margin-left: calc(var(--bs-gutter-x) * 1.5);
-	padding-bottom:50px;
-	text-transform:none;
+	.intro {
+		border-bottom:solid 1px var(--line);
+		padding-top: 4rem;
+		bottom: 50px;
+		color: var(--muted);
+		--bs-gutter-x: 1.5rem;
+		--bs-gutter-y: 0;
+		width: auto;
+		padding-right: calc(var(--bs-gutter-x) * 1.5);
+		padding-left: calc(var(--bs-gutter-x) * 1.5);
+		padding-bottom:20px;
+		text-transform:none;
+		}
+		
+	.bg-body-tertiary-left {
+		--bs-bg-opacity: 1;
+		background-color: #212529!important;
+		color: #cfd4da!important;
+		border: solid 1px var(--line)!important;
+		float: right!important;
+		}
+	.icon {
+	  width: var(--icon-width-small);
+	  height: var(--icon-height-small);
 	}
-	
-.bg-body-tertiary-left {
-    --bs-bg-opacity: 1;
-    background-color: #212529!important;
-    color: #cfd4da!important;
-    border: solid 1px var(--line)!important;
-    float: right!important;
-}
+	.icon-left {
+	  width: var(--icon-width-small)!important;
+	  height: var(--icon-height-small)!important;
+	  float:left;
+	  margin-left:20px;
+	  margin-bottom:-5px;
+	}
+	.icon-right {
+	  width: var(--icon-width-small)!important;
+	  height: var(--icon-height-small)!important;
+	  float:right;
+	  margin-right:20px;
+	  margin-bottom:-5px;
+	}		
 }
 
 @media (min-width: 1400px) {
@@ -205,13 +250,8 @@ footer { color: var(--muted); }
   display: block;
 }
 
-@media (min-width: 1400px) {
-  .vertical_timeline {
-    display: none;
-  }
-    
-}
 
+/*###+++ Icons & Images +++###*/
 .shape-wrap-left {
   /* float: left;                    /* Umfluss aktivieren */
   width: 100px;                   /* Muss gesetzt sein (auch Höhe) */
@@ -224,3 +264,36 @@ footer { color: var(--muted); }
 }
 
 
+/* =========== MOBILE VERTICAL Timeline (<600px) =========== */
+@media (max-width: 650px) {
+	.intro {
+		padding-top:25px;
+		margin-left: calc(var(--bs-gutter-x) * 0.0);
+		margin-right: calc(var(--bs-gutter-x) * 0.0);
+		padding-bottom: 2rem;
+	}
+	.hero-quote {
+		font-weight: 300;
+		font-size: clamp(1rem, .9vw + .6rem, 1.4rem);
+		color: var(--muted);
+		margin: .35rem 0 0;
+		position: relative;
+		font-size:1.35rem;
+	}
+
+	.py-5 {
+		padding-top: 0rem !important;
+		padding-bottom: 3rem !important;
+	}
+	
+
+	.hero {
+		padding-top: 40px;
+		padding-bottom: 0px;
+	}
+	
+
+	.left-4::after, .right-4::after {
+    left: 7px;
+}
+}
