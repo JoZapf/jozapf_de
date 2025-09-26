@@ -1,0 +1,12 @@
+# Font-Ordner komplett
+assets/fonts/
+
+# Font-Dateien überall
+*.ttf
+*.woff
+*.woff2
+*.otf
+
+# Umgebungsvariablen
+.env
+assets/php/.env

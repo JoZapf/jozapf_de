@@ -9,9 +9,17 @@
 	--icon-height-small: 35px;	
 	}	
 	
-html, body { 
+	
+html, body {
+    font-family: 'Montserrat', Arial, sans-serif;
 	height:100%;
 	}
+	
+	
+/*###+++ Fonts / Monserat +++###*/
+.bold-text { font-weight: 700; }
+.italic-text { font-style: italic; }	
+	
 	
 body.bg-dark-333 { 
 	background:var(--bg-jz); 
@@ -28,13 +36,16 @@ h1, h6 {
 	}
 h4 {color:#cfd4da!important;}
 	
+	
 /*###+++ Header / Navbar +++###*/
 .bg-transparent { background-color:#13171a!important;}
 .border-secondary-subtle { border-color: rgba(255,255,255,.15)!important; }
 
+
 /* Footer */
 footer {background:#13171a;}
 footer { color: var(--muted); }
+
 
 /*###+++ Avatar +++###*/
 .avatar {
@@ -182,6 +193,11 @@ p.note.note-bg > img {
 
 /* =========== VERTICAL (<1400px) =========== */
 @media (max-width: 1399.98px){
+
+	/* Vertical Timeline - nur unter 1400px anzeigen */
+	.vertical_timeline {
+	  display: block;
+	}
 		.hero { padding-top: 88px; padding-bottom: 0px; }
 		
 	.hero-quote::before,
@@ -241,14 +257,11 @@ p.note.note-bg > img {
     display: block;
   }
   .vertical_timeline {
-    display: none;
+    display: none!important;
   }
 }
 
-/* Vertical Timeline - nur unter 1400px anzeigen */
-.vertical_timeline {
-  display: block;
-}
+
 
 
 /*###+++ Icons & Images +++###*/
