@@ -15,6 +15,13 @@ html, body {
 	height:100%;
 	}
 	
+.hero-subtitle {
+    display: block;
+    font-size: 1rem; /* oder was dein h6 hatte */
+    font-weight: 500;
+    letter-spacing: -0.05em; /* für 95% Breite */
+    margin: 0.5rem 0;
+}	
 	
 /*###+++ Fonts / Monserat +++###*/
 .bold-text { font-weight: 700; }
@@ -33,6 +40,7 @@ body.bg-dark-333 {
 /*###+++ Headings +++###*/	
 h1, h6 {
 	color: var(--muted);
+	margin-top:10px;
 	}
 h4 {color:#cfd4da!important;}
 
