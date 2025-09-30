@@ -52,7 +52,7 @@
 		height: 2px;
 		background: var(--line);
 		z-index: 0;
-		top: 70px;
+		top: 68px;
 	}
   
   /* Gestaffelte Timeline-Linien - Ã¼ber die gesamte Container-Breite */
@@ -209,7 +209,7 @@
   .mb-4 {
 	  text-transform: uppercase;
   }
-  h6 {text-transform:uppercase;}
+ 
   .milestones-wrapper {
     position: relative;
   }
@@ -450,7 +450,7 @@
 
 .freelance-dot-float {
     position: absolute;
-    top: calc(100% + 50px - 42px);
+    top: calc(100% + 50px - 45px);
     left: 43%;
     transform: translateX(-50%);
     width: 6px;

@@ -35,7 +35,30 @@ h1, h6 {
 	color: var(--muted);
 	}
 h4 {color:#cfd4da!important;}
+
+	h5, .h5 {
+		font-weight: 700!important;
+		}
 	
+.intro li {
+    text-align: left;
+    padding: 0.25rem 0;
+    list-style: none;
+    position: relative;  /* Wichtig: Hier muss position: relative sein! */
+    padding-left: 20px;  /* Platz für die Border + Abstand zum Text */
+}
+
+
+.intro li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    width: 0.75rem;
+    background-color: var(--muted);
+}
+
 	
 /*###+++ Header / Navbar +++###*/
 .bg-transparent { background-color:#13171a!important;}
@@ -47,6 +70,12 @@ footer {background:#13171a;}
 footer { color: var(--muted); }
 
 
+.input-group .btn {
+
+    background-color: green!important;
+    color: white!important;
+}
+
 /*###+++ Avatar +++###*/
 .avatar {
 	width: 120px; height: 120px;
@@ -55,7 +84,7 @@ footer { color: var(--muted); }
 	overflow: hidden;
 	display:flex; align-items:center; justify-content:center;
 	background: radial-gradient(circle at 35% 35%, #555 0, #444 60%, #3a3a3a 100%);
-	background-image: url('../png/JoZapf.png');
+	background-image: url('../png/JoZapf_500x500.png');
 	background-size: cover;        
 	background-position: center;   
 	background-repeat: no-repeat;
@@ -225,6 +254,10 @@ p.note.note-bg > img {
 		text-transform:none;
 		}
 		
+	h5, .h5 {
+		font-weight: 700!important;
+		}
+	
 	.bg-body-tertiary-left {
 		--bs-bg-opacity: 1;
 		background-color: #212529!important;
@@ -249,7 +282,10 @@ p.note.note-bg > img {
 	  float:right;
 	  margin-right:20px;
 	  margin-bottom:-5px;
-	}		
+	}	
+			ol, ul {
+    padding-left: 0rem!important;
+	}
 }
 
 @media (min-width: 1400px) {
@@ -291,7 +327,7 @@ p.note.note-bg > img {
 		color: var(--muted);
 		margin: .35rem 0 0;
 		position: relative;
-		font-size:1.35rem;
+		font-size:1.25rem;
 	}
 
 	.py-5 {
@@ -302,11 +338,115 @@ p.note.note-bg > img {
 
 	.hero {
 		padding-top: 40px;
-		padding-bottom: 0px;
+		padding-bottom: 20px;
+	}
+	
+	h6, .h6 {
+    font-size: 1rem;
+	}
+	
+	h5, .h5 {
+    font-weight: 700!important;
 	}
 	
 
 	.left-4::after, .right-4::after {
     left: 7px;
+	}
+	
+	.intro {
+		border-bottom:solid 1px var(--line);
+		padding-top: 80px;
+		bottom: 50px;
+		color: var(--muted);
+		--bs-gutter-x: 1.5rem;
+		--bs-gutter-y: 0;
+		width: 100%;
+		padding-right: calc(var(--bs-gutter-x) * 0.5);
+		padding-left: calc(var(--bs-gutter-x) * 0.5);
+		padding-top:60px!important;
+	}	
+	
+	ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 0em!important;
+    margin-block-end: 0em!important;
+    padding-inline-start: 0px!important;
+    unicode-bidi: isolate;
+	}
+	
+	ol, ul {
+    padding-left: 0rem!important;
+	}
+	
 }
+
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #008000;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.btn-close:hover {
+  color: #000;
+}
+
+.modal-body {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+.modal-body iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+}
+
+.modal-header .btn-close {
+    color: red;
+    font-size: 3rem;
 }
