@@ -8,5 +8,9 @@ assets/fonts/
 *.otf
 
 # Umgebungsvariablen
+# Environment files
 .env
+.env.*
+.env.prod
+*.env
 assets/php/.env
