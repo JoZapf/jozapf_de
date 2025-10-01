@@ -17,11 +17,14 @@ html, body {
 	
 .hero-subtitle {
     display: block;
-    font-size: 1rem; /* oder was dein h6 hatte */
+    font-size: clamp(1rem, .9vw + .6rem, 1.4rem);
     font-weight: 500;
-    letter-spacing: -0.05em; /* für 95% Breite */
+    letter-spacing: +0.05em; 
     margin: 0.5rem 0;
 }	
+
+
+
 	
 /*###+++ Fonts / Monserat +++###*/
 .bold-text { font-weight: 700; }
@@ -38,14 +41,23 @@ body.bg-dark-333 {
 
 
 /*###+++ Headings +++###*/	
-h1, h6 {
+
+h1, {
 	color: var(--muted);
 	margin-top:10px;
 	}
+	
+h6 {
+	color: var(--muted);
+	margin-top:10px;
+	letter-spacing: +0.05em;
+	}
+	
 h4 {color:#cfd4da!important;}
 
 	h5, .h5 {
 		font-weight: 700!important;
+		letter-spacing: +0.02em;
 		}
 	
 .intro li {
@@ -54,6 +66,7 @@ h4 {color:#cfd4da!important;}
     list-style: none;
     position: relative;  /* Wichtig: Hier muss position: relative sein! */
     padding-left: 20px;  /* Platz für die Border + Abstand zum Text */
+	letter-spacing: +0.02em;
 }
 
 
@@ -110,23 +123,25 @@ footer { color: var(--muted); }
     margin: 0.25rem 0 -1rem 0;
     display: inline-block;
     padding: 0.35rem 1.25rem;
+	color:var(--muted);
 }
 
 .hero-quote {
   font-weight:300;
   font-size:clamp(1rem, .9vw + .6rem, 1.4rem);
-  color: var(--muted);
+  color: var(--bg-jz);
   margin: .35rem 0 0;
   position: relative;
+  background-color:var(--muted);
+  letter-spacing: +0.2em; 
 }
-.hero-quote::before,
-.hero-quote::after{
-  content:"";
-  display:block;
-  height:1px;
-  background:var(--line);
-  width:min(650px, 80vw);
-  margin:.75rem auto 0.35rem auto;
+.hero-quote::before, .hero-quote::after {
+    content: "";
+    display: block;
+    height: 1px;
+    background: var(--bg-jz);
+    width: min(650px, 80vw);
+    margin: .75rem auto 0.75rem auto;
 }
 
 /* Footer */
@@ -332,7 +347,7 @@ p.note.note-bg > img {
 	.hero-quote {
 		font-weight: 300;
 		font-size: clamp(1rem, .9vw + .6rem, 1.4rem);
-		color: var(--muted);
+		color: var(--bg-jz);
 		margin: .35rem 0 0;
 		position: relative;
 		font-size:1.25rem;
@@ -351,6 +366,7 @@ p.note.note-bg > img {
 	
 	h6, .h6 {
     font-size: 1rem;
+	
 	}
 	
 	h5, .h5 {

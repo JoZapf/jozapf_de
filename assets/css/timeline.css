@@ -47,8 +47,8 @@
 		content: "";
 		position: absolute;
 		top: calc(-1 * var(--connector) - var(--line-spacing));
-		left: 30%;
-		width: calc(66.66% - 110px);
+		left: 36%;
+		width: calc(58.66% - 102px);
 		height: 2px;
 		background: var(--line);
 		z-index: 0;
@@ -383,7 +383,7 @@
   
 	.freelance-milestone-float {
 		position: absolute;
-		left: 27.0%;
+		left: 32.5%;
 		top: calc(-1 * var(--connector) - -45px);
 		text-align: center;
 		z-index: 20;
