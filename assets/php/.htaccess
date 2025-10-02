@@ -1,0 +1,4 @@
+<Files ".env">
+  Require all denied
+</Files>
+php_flag display_errors Off

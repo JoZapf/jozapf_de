@@ -1,6 +1,6 @@
 {
-  "name": "jozapf.de",
-  "short_name": "jozapf.de",
+  "name": "Jo Zapf",
+  "short_name": "jozapf",
   "icons": [
     {
       "src": "/assets/favicon/web-app-manifest-192x192.png",
@@ -16,6 +16,6 @@
     }
   ],
   "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "background_color": "#212529",
   "display": "standalone"
 }
