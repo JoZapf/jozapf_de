@@ -13,9 +13,12 @@ assets/fonts/
 .env.*
 .env.prod
 *.env
-assets/php/.env__mcp_write_test.txt
 .DS_Store
 Thumbs.db
 *.log
 node_modules/
 dist/
+
+# MCP write test
+__mcp_write_test.txt
+__mcp_write_test.txt
