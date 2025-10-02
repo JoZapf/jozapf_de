@@ -13,4 +13,9 @@ assets/fonts/
 .env.*
 .env.prod
 *.env
-assets/php/.env
+assets/php/.env__mcp_write_test.txt
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+dist/
