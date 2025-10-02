@@ -1,0 +1,187 @@
+.left {
+	text-align:right;
+}
+
+.right {
+	text-align:left;	
+}
+
+/* The actual timeline (the vertical ruler) */
+.main-timeline-4 {
+  position: relative;
+}
+
+/* The actual timeline (the vertical ruler) */
+.main-timeline-4::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  background-color: var(--line);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -2px;
+}
+
+/* Container around content */
+.timeline-4 {
+  position: relative;
+  background-color: inherit;
+  width: 50%;
+}
+
+/* The circles on the timeline */
+.timeline-4::after {
+    content: "";
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    right: -5px;
+    background-color: var(--line);
+    top: 22px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* Place the container to the left */
+.left-4 {
+  padding: 0px 40px 5px 0px;
+  left: 0;
+}
+
+/* Place the container to the right */
+.right-4 {
+  padding: 0px 0px 5px 40px;
+  left: 50%;
+}
+
+/* Add arrows to the left container (pointing right) */
+.left-4::before {
+  content: " ";
+  position: absolute;
+  top: 18px;
+  z-index: 1;
+  right: 30px;
+  border: medium solid rgba(37, 117, 252, 1);
+  border-width: 10px 0 10px 10px;
+  border-color: transparent transparent transparent var(--line);
+}
+
+/* Add arrows to the right container (pointing left) */
+.right-4::before {
+  content: " ";
+  position: absolute;
+  top: 18px;
+  z-index: 1;
+  left: 30px;
+  border: medium solid rgba(245, 87, 108, 1);
+  border-width: 10px 10px 10px 0;
+  border-color: transparent var(--line) transparent transparent;
+}
+
+/* Fix the circle for containers on the right side */
+.right-4::after {
+  left: -8px;
+}
+
+/* =========== MOBILEVERTICAL Timeline <600px =========== */
+@media screen and (max-width: 650px) {
+	
+	.container-sm, .container {
+		max-width: 650px;
+	}
+
+	.timeline-4 {
+		width: 100%;
+		padding-left: 70px;
+		padding-right: 25px;
+	}
+
+	.timeline-4::before {
+		left: 35px;
+		border: medium solid white;
+		border-width: 10px 10px 10px 0;
+		border-color: transparent var(--line) transparent transparent;
+	}
+	.main-timeline-4::after {
+		left: 15px;
+	}
+	
+	.left-4::after,
+	.right-4::after {
+		left: 15px;
+	 }
+
+	.left-4::before {
+		right: auto;
+	}
+
+	.right-4 {
+		left: 0%;
+	}
+  
+  	.left-4 {
+		padding: 0px 0px 10px 44px;
+	}
+	
+	.right-4 {
+		padding: 0px 0px 10px 44px;
+	}
+	
+	.icon {
+	  width: var(--icon-width-small);
+	  height: var(--icon-height-small);
+	}
+	.icon-left {
+	  width: var(--icon-width-small)!important;
+	  height: var(--icon-height-small)!important;
+	  float:left;
+	  margin-left:20px;
+	  margin-bottom:-5px;
+	}
+	.icon-right {
+	  width: var(--icon-width-small)!important;
+	  height: var(--icon-height-small)!important;
+	  float:right;
+	  margin-right:20px;
+	  margin-bottom:-5px;
+	}	
+}
+@media (min-width: 651px) {
+	.container-sm, .container {
+		max-width: 95vw;
+	}
+	
+}
+	
+/* =========== VERTICAL Timeline Container Gradient =========== */
+.gradient-custom {
+	/* fallback for old browsers */
+	background: #252c33;
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: -webkit-linear-gradient(
+    to bottom,
+    rgba(106, 17, 203, 1),
+    rgba(37, 117, 252, 1)
+	);
+	border: solid 1px var(--line);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: linear-gradient(to bottom, #252c33, #212529);
+}
+
+.gradient-custom-4 {
+	/* fallback for old browsers */
+	background: #f093fb;
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: -webkit-linear-gradient(
+		to left,
+		rgba(240, 147, 251, 1),
+		rgba(245, 87, 108, 1)
+	);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: linear-gradient(
+		to left,
+		rgba(240, 147, 251, 1),
+		rgba(245, 87, 108, 1)
+	);
+}
