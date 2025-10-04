@@ -10,6 +10,7 @@ assets/fonts/
 # Umgebungsvariablen
 .env
 assets/php/.env
+assets/php/.env.prod
 
 # ganze Ordner
 assets/php/logs/archive/
