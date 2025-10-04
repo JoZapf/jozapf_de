@@ -8,9 +8,12 @@ assets/fonts/
 *.otf
 
 # Umgebungsvariablen
-# Environment files
 .env
-.env.*
-.env.prod
-*.env
 assets/php/.env
+
+# ganze Ordner
+assets/php/logs/archive/
+assets/php/logs/sent-eml/
+
+# Log-Dateien rekursiv in allen Unterordnern:
+assets/php/logs/**/*.log
