@@ -1,0 +1,34 @@
+*   [33m2e09c42[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge: Live-Sync 2025-10-02_11-07-45
+[31m|[m[32m\[m  
+[31m|[m * [33m5dd6821[m[33m ([m[1;31morigin/sync/live-2025-10-02_11-07-45[m[33m, [m[1;32msync/live-2025-10-02_11-07-45[m[33m)[m Sync: Live-Stand importiert (2025-10-02 11:11:51)
+[31m|[m[31m/[m  
+* [33m4f5355e[m ignore: __mcp_write_test.txt
+* [33m5adf586[m chore: normalize line endings via .gitattributes
+* [33macb4d82[m chore: extend .gitignore for common temp/build artifacts
+* [33m70cc0c3[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m Docs: Documentation added
+* [33mad16698[m ui: update cover & timeline styles; adjust index layout
+* [33m4ab6605[m Clean up after history rewrite
+[32m|[m * [33mb24715e[m WIP on develop: bda769b Security: Remove exposed .env files
+[32m|[m[32m/[m[34m|[m 
+[32m|[m [34m|[m * [33m65dcbd5[m[33m ([m[1;35mrefs/stash[m[33m)[m WIP on develop: bda769b Security: Remove exposed .env files
+[32m|[m [34m|[m[32m/[m  
+[32m|[m[32m/[m[34m|[m   
+[32m|[m * [33m690c9a9[m index on develop: bda769b Security: Remove exposed .env files
+[32m|[m[32m/[m  
+* [33mbda769b[m Security: Remove exposed .env files
+* [33m492a319[m Fix: Remove .env.prod from tracking and update .gitignore
+* [33mebfc9c4[m Update: sync assets from live server & hero subheader
+* [33m6981a23[m Update: sync CSS from live server
+* [33md22a81d[m Feature: optimized seo head
+[35m|[m * [33m5f3b2cb[m[33m ([m[1;31morigin/production[m[33m, [m[1;32mproduction[m[33m)[m Adjust paths for production deployment (web root)
+[35m|[m * [33m492739b[m[33m ([m[1;31morigin/feature/contact-form[m[33m, [m[1;32mfeature/contact-form[m[33m)[m Fix paths for contact form - adjust URLs to include /jozapf/ prefix
+[35m|[m * [33m5ee6d4c[m Migrate contact form from test11.1 - complete setup with PHP backend, security headers, and privacy policy
+[35m|[m * [33m8de3081[m Save current state before merging test11.1
+[35m|[m[35m/[m  
+* [33m2a38ae7[m Feature: contact form & local fonts
+* [33m6381e93[m Fix: CSS mobile devices
+* [33m7aed63b[m[33m ([m[1;31morigin/feature/horizontal-timeline-hashtags[m[33m, [m[1;32mfeature/horizontal-timeline-hashtags[m[33m)[m improved styling for small screens / icons added
+* [33m919969b[m improved styling for small screens
+* [33m2cece95[m Add timeline icons and improve styling
+* [33m544773d[m Add hashtag functionality and timeline improvements
+* [33m44e1b71[m Initial commit: Bootstrap Docker project

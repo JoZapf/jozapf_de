@@ -166,7 +166,7 @@
 	/* Align all dots to left line */
 	.left-4::after,
 	.right-4::after {
-		left: 15px;
+		left: 8px;
 	}
 
 	/* Reset left arrow */

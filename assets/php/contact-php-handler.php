@@ -1,20 +1,33 @@
 <?php
 /**
- * Contact Form Handler (PHPMailer)
- * --------------------------------
- * - Stabile JSON-Antworten (kein 500 für das Frontend)
- * - Eigener .env-Loader (ohne externe Abhängigkeiten)
- * - SMTP/Hetzner korrekt (TLS/SSL, Auth, Envelope-From)
- * - Versand an Admin **und optional Bestätigung an den Benutzer**
- * - Diagnosemodus via __diag=1
- * - Logging + EML-Mitschnitt in assets/php/logs/
+ * Contact Form Handler - V4.0 WITH EXTENDED LOGGING
+ * ===================================================
+ * 
+ * Features:
+ * ✅ PHPMailer (SMTP-Auth via .env.prod)
+ * ✅ ContactFormValidator-v2 with Extended Logging
+ * ✅ Blocklist/Whitelist support (GDPR-compliant)
+ * ✅ Auto-anonymization after 14 days
+ * ✅ Server-side Captcha validation
+ * ✅ Comprehensive sanitization
+ * 
+ * @author JoZapf
+ * @version 4.0.0
+ * @date 2025-10-04
  */
 
 declare(strict_types=1);
 
-// ---------------------------
-// 0) Immer JSON ausliefern
-// ---------------------------
+// ============================================================================
+// 0) SESSION START
+// ============================================================================
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// ============================================================================
+// 1) HEADERS & ERROR HANDLING
+// ============================================================================
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -22,457 +35,523 @@ header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
-    echo '';
     exit;
 }
 
-// ---------------------------
-// 1) Hilfsfunktionen
-// ---------------------------
-function json_ok(array $extra = []): void {
-    http_response_code(200);
-    echo json_encode(['ok' => true] + $extra, JSON_UNESCAPED_UNICODE);
-    exit;
-}
-function json_error(string $msg, int $status = 400, array $extra = []): void {
-    http_response_code($status);
-    echo json_encode(['ok' => false, 'error' => $msg] + $extra, JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-/**
- * Mini-.env-Lader (KEY=VALUE, # Kommentare)
- * - Sucht .env.local, sonst .env.prod
- */
-function load_env(string $rootDir): array {
-    $paths = [
-        $rootDir . '/.env.local',
-        $rootDir . '/.env.prod',
-    ];
-    $env = [];
-    foreach ($paths as $p) {
-        if (!is_file($p)) { continue; }
-        $lines = @file($p, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if ($line === '' || str_starts_with($line, '#')) continue;
-            if (!str_contains($line, '=')) continue;
-            [$k, $v] = explode('=', $line, 2);
-            $k = trim($k);
-            $v = trim($v);
-            $v = preg_replace('/^([\'"])(.*)\1$/', '$2', $v);
-            $env[$k] = $v;
-            $_ENV[$k] = $v;
-            if (function_exists('putenv')) {
-                @putenv("$k=$v");
-            }
-        }
-        if (str_ends_with($p, '.env.local')) break;
-    }
-    return $env;
-}
-function envv(string $key, ?string $default = null): ?string {
-    $val = $_ENV[$key] ?? getenv($key);
-    if ($val === false || $val === null || $val === '') return $default;
-    return (string)$val;
-}
-function sanitize_line(string $s): string {
-    $s = trim($s);
-    $s = str_replace(["\r", "\n"], ' ', $s);
-    return filter_var($s, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW) ?? '';
-}
-function e(string $s): string {
-    return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-}
-
-/**
- * Strenge Code-Heuristik
- * Erkennt typische Code-/Markup-Fragmente und blockiert die Nachricht.
- * Achtung: Kann False Positives verursachen, bewusst restriktiv.
- */
-function looks_like_code(string $t): bool {
-    $t = trim($t);
-    if ($t === '') return false;
-
-    // 1) Offensichtliche Marker
-    $patterns = [
-        '/<\/?[a-z][\w:\.-]*[^>]*>/i', // HTML/XML Tags
-        '/<\s*script\b/i',
-        '/<\s*style\b/i',
-        '/<\?php/i',
-        '/`{3,}/',                        // Markdown-Fences
-        '/\{\{|\}\}/',                // Templating
-        '/\$\(.*\)/s',                 // jQuery
-        '/\b(document|window|eval|Function)\b\s*\(/i',
-        '/\bon\w+\s*=\s*["\']/i',   // onClick=...
-        '/\bjavascript:\s*/i',
-        '/\bdata:\s*text\/html/i',
-        '/\b(function|class|=>)\b/i',
-        '/;\s*$/m',                      // Zeilenenden mit ;
-        '/\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION)\b\s/i'
-    ];
-    foreach ($patterns as $rx) {
-        if (preg_match($rx, $t)) return true;
-    }
-
-    // 2) Heuristik: hohe Dichte an spitzen/geschweiften Klammern
-    $angles = substr_count($t, '<') + substr_count($t, '>');
-    $braces = substr_count($t, '{') + substr_count($t, '}');
-    $backticks = substr_count($t, '`');
-    $longLine = max(array_map('strlen', preg_split('/\r?\n/', $t)));
-    if ($angles >= 2 || $braces >= 4 || $backticks >= 3 || $longLine > 300) return true;
-
-    return false;
-}
-function safe_log(string $file, string $msg): void {
-    @file_put_contents($file, '['.date('c').'] '.$msg.PHP_EOL, FILE_APPEND);
-}
-
-// ----------------------------------------
-// 2) Pfade & Autoload
-// ----------------------------------------
-$handlerDir   = __DIR__;                  // assets/php
-$projectRoot  = dirname($handlerDir, 2);  // Projekt-Root
-$vendorAutoload = $projectRoot . '/vendor/autoload.php';
-$logsDir      = $handlerDir . '/logs';
-if (!is_dir($logsDir)) @mkdir($logsDir, 0775, true);
-$debugLog     = $logsDir . '/debug.log';
-$phpErrLog    = $logsDir . '/php-errors.log';
-
-// PHP-Warnungen in eigenes Log
-set_error_handler(function($errno, $errstr, $errfile, $errline) use ($phpErrLog) {
-    safe_log($phpErrLog, "PHP[$errno] $errstr in $errfile:$errline");
+// Error Handler
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    error_log("PHP[$errno] $errstr in $errfile:$errline");
     return false;
 });
 
-if (!is_file($vendorAutoload)) {
-    json_error("vendor/autoload.php fehlt. Bitte 'composer install' ausführen.", 500, [
-        'autoload' => $vendorAutoload
-    ]);
+// ============================================================================
+// 2) HELPER FUNCTIONS
+// ============================================================================
+
+function json_success(string $message, array $data = []): void {
+    http_response_code(200);
+    echo json_encode([
+        'success' => true,
+        'message' => $message,
+        'data' => $data
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+function json_error(string $message, int $status = 400, array $extra = []): void {
+    http_response_code($status);
+    echo json_encode([
+        'success' => false,
+        'error' => $message
+    ] + $extra, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+/**
+ * EINHEITLICHE SANITIZATION
+ */
+function sanitize_text(string $input, int $maxLength = 5000): string {
+    $input = trim($input);
+    $input = str_replace(["\r", "\n", "\0"], ' ', $input);
+    $input = filter_var($input, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_BACKTICK) ?? '';
+    
+    if (strlen($input) > $maxLength) {
+        $input = mb_substr($input, 0, $maxLength, 'UTF-8');
+    }
+    
+    return $input;
+}
+
+/**
+ * HTML-Escaping
+ */
+function e(string $str): string {
+    return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/**
+ * ENV-Loader
+ */
+function load_env(string $envFile): array {
+    $env = [];
+    
+    if (!file_exists($envFile)) {
+        return $env;
+    }
+    
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+    
+    foreach ($lines as $line) {
+        $line = trim($line);
+        
+        if ($line === '' || str_starts_with($line, '#')) {
+            continue;
+        }
+        
+        if (!str_contains($line, '=')) {
+            continue;
+        }
+        
+        [$key, $value] = explode('=', $line, 2);
+        $key = trim($key);
+        $value = trim($value);
+        $value = preg_replace('/^([\'"])(.*)\1$/', '$2', $value);
+        
+        $env[$key] = $value;
+        $_ENV[$key] = $value;
+        putenv("$key=$value");
+    }
+    
+    return $env;
+}
+
+function env(string $key, ?string $default = null): ?string {
+    return $_ENV[$key] ?? getenv($key) ?: $default;
+}
+
+// ============================================================================
+// 3) CONFIGURATION
+// ============================================================================
+
+$handlerDir = __DIR__;
+$projectRoot = dirname($handlerDir, 2);
+$logsDir = $handlerDir . '/logs';
+$dataDir = $handlerDir . '/data';
+
+// Ensure directories exist
+if (!is_dir($logsDir)) {
+    @mkdir($logsDir, 0755, true);
+}
+if (!is_dir($dataDir)) {
+    @mkdir($dataDir, 0755, true);
+}
+
+// Load .env.prod
+$envFile = $handlerDir . '/.env.prod';
+load_env($envFile);
+
+// PHPMailer Autoload
+$vendorAutoload = $projectRoot . '/vendor/autoload.php';
+if (!file_exists($vendorAutoload)) {
+    json_error('System configuration error. Please contact administrator.', 500);
 }
 require_once $vendorAutoload;
 
-// ----------------------------------------
-// 3) ENV laden & Konfiguration
-// ----------------------------------------
-$env = load_env($projectRoot);
-$appEnv = envv('APP_ENV', 'prod');
+// ============================================================================
+// 4) VALIDATION & ABUSE PREVENTION (V2 - Extended Logging + Blocklist)
+// ============================================================================
 
-// Admin-Ziel & Absender
-$recipientEmail = envv('RECIPIENT_EMAIL', 'mail@jozapf.de');
-$noreplyEmail   = envv('NOREPLY_EMAIL',   'noreply@' . ($_SERVER['SERVER_NAME'] ?? 'localhost'));
-$subjectPrefix  = envv('SUBJECT_PREFIX',  'Kontakt: ');
+require_once __DIR__ . '/ContactFormValidator-v2.php';
 
-// SMTP
-$smtpHost   = envv('SMTP_HOST', '');
-$smtpPort   = (int) (envv('SMTP_PORT', '0') ?? 0);
-$smtpSecure = strtolower(envv('SMTP_SECURE', '') ?? ''); // '', tls, ssl
-$smtpUser   = envv('SMTP_USER', '');
-$smtpPass   = envv('SMTP_PASS', '');
+$validator = new ContactFormValidator([
+    'extendedLogDir' => $logsDir,
+    'blocklistDir' => $dataDir,
+    'honeypotField' => 'website',
+    'timestampField' => 'form_timestamp',
+    'minSubmitTime' => 3,
+    'maxSubmitTime' => 3600,
+    'rateLimitWindow' => 3600,
+    'rateLimitMax' => 5,
+    'requiredFields' => ['email', 'firstName', 'lastName', 'message'],
+    'spamKeywords' => [
+        'viagra', 'cialis', 'casino', 'lottery', 'prize',
+        'click here', 'buy now', 'limited time', 'act now',
+        'congratulations', 'winner', 'claim', 'free money'
+    ],
+    'maxLinks' => 3,
+    'maxEmailLength' => 254,
+    'maxMessageLength' => 5000,
+    'blockThreshold' => 30
+], true, true); // Extended Logging + Blocklist enabled
 
-// Dev-Fake
-$devFakeSend = filter_var(envv('DEV_FAKE_SEND', 'false'), FILTER_VALIDATE_BOOL);
+// Validate submission
+$validation = $validator->validate($_POST);
 
-// NEU: User-Bestätigung steuerbar
-$userConfirmEnable   = filter_var(envv('USER_CONFIRM_ENABLE', 'true'), FILTER_VALIDATE_BOOL);
-$userConfirmSubject  = envv('USER_CONFIRM_SUBJECT', 'Your message has been received.');
-$userConfirmGreeting = envv('USER_CONFIRM_GREETING', 'Thank you for your message! I will get back to you shortly.');
-
-// ----------------------------------------
-// 4) Eingaben lesen & validieren
-// ----------------------------------------
-$firstName = sanitize_line($_POST['firstName'] ?? '');
-$lastName  = sanitize_line($_POST['lastName'] ?? '');
-$email     = sanitize_line($_POST['email'] ?? '');
-$phone     = sanitize_line($_POST['phone'] ?? '');
-$subjectIn = sanitize_line($_POST['subject'] ?? '');
-$message   = trim((string)($_POST['message'] ?? ''));
-
-$captchaAnswer = $_POST['captchaAnswer'] ?? $_POST['captcha_answer'] ?? null;
-$captchaAnswer = is_string($captchaAnswer) ? trim($captchaAnswer) : $captchaAnswer;
-
-$privacy = isset($_POST['privacy']) ? 'on' : 'off';
-
-if ($firstName === '' && $lastName === '') {
-    json_error('Name is a required field.', 422, ['fields' => ['name' => false]]);
+// CRITICAL: Block if spam score too high or blocklisted
+if ($validation['blocked']) {
+    $errorMessage = 'Your submission was blocked.';
+    
+    // Specific message for blocklisted IPs
+    if (in_array('ip_blocklisted', $validation['reasons'] ?? [])) {
+        $errorMessage = 'Your IP address has been blocked due to previous abuse.';
+    }
+    
+    json_error(
+        $errorMessage,
+        429,
+        [
+            'spamScore' => $validation['spamScore'],
+            'reasons' => $validation['reasons'] ?? []
+        ]
+    );
 }
-if ($message === '') {
-    json_error('Message is a required field.', 422, ['fields' => ['message' => false]]);
+
+// ============================================================================
+// 5) INPUT SANITIZATION & FIELD VALIDATION
+// ============================================================================
+
+// Sanitize ALL fields
+$firstName = sanitize_text($_POST['firstName'] ?? '', 50);
+$lastName  = sanitize_text($_POST['lastName'] ?? '', 50);
+$email     = sanitize_text($_POST['email'] ?? '', 100);
+$phone     = sanitize_text($_POST['phone'] ?? '', 40);
+$subject   = sanitize_text($_POST['subject'] ?? '', 120);
+$message   = sanitize_text($_POST['message'] ?? '', 5000);
+
+// Captcha
+$captchaAnswer = trim($_POST['captchaAnswer'] ?? '');
+$captchaSolution = trim($_POST['captcha_answer'] ?? '');
+
+// Privacy checkbox
+$privacyAccepted = isset($_POST['privacy']) && $_POST['privacy'] === 'on';
+
+// --- REQUIRED FIELDS ---
+
+if (empty($firstName)) {
+    json_error('First name is required.', 422, ['fields' => ['firstName' => false]]);
 }
-if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    json_error('The email address is invalid.', 422, ['fields' => ['email' => false]]);
+
+if (empty($lastName)) {
+    json_error('Last name is required.', 422, ['fields' => ['lastName' => false]]);
 }
-if ($captchaAnswer !== null && $captchaAnswer !== '') {
-    if (!preg_match('/^\d{1,3}$/', (string)$captchaAnswer)) {
-        json_error('Security question invalid.', 422, ['fields' => ['captcha' => false]]);
+
+if (empty($email)) {
+    json_error('Email is required.', 422, ['fields' => ['email' => false]]);
+}
+
+if (empty($message)) {
+    json_error('Message is required.', 422, ['fields' => ['message' => false]]);
+}
+
+// --- PRIVACY CHECKBOX (DSGVO) ---
+
+if (!$privacyAccepted) {
+    json_error('You must accept the privacy policy.', 422, ['fields' => ['privacy' => false]]);
+}
+
+// --- CAPTCHA SERVER-SIDE VALIDATION ---
+
+if (empty($captchaAnswer)) {
+    json_error('Please solve the security question.', 422, ['fields' => ['captchaAnswer' => false]]);
+}
+
+if (!is_numeric($captchaAnswer)) {
+    json_error('Security answer must be a number.', 422, ['fields' => ['captchaAnswer' => false]]);
+}
+
+if (empty($captchaSolution)) {
+    json_error('Security question expired. Please refresh the page.', 422, ['fields' => ['captchaAnswer' => false]]);
+}
+
+if ((int)$captchaAnswer !== (int)$captchaSolution) {
+    json_error('Security answer is incorrect.', 422, ['fields' => ['captchaAnswer' => false]]);
+}
+
+// --- FORMAT VALIDATION ---
+
+// Email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    json_error('Invalid email address.', 422, ['fields' => ['email' => false]]);
+}
+
+// First/Last Name - Whitelist
+$namePattern = '/^[\p{L}\p{N}\s\.,\-\']{2,50}$/u';
+if (!preg_match($namePattern, $firstName)) {
+    json_error('First name contains invalid characters.', 422, ['fields' => ['firstName' => false]]);
+}
+if (!preg_match($namePattern, $lastName)) {
+    json_error('Last name contains invalid characters.', 422, ['fields' => ['lastName' => false]]);
+}
+
+// Phone (optional)
+if (!empty($phone)) {
+    $phonePattern = '/^[\d\s\+\-()\/]{0,40}$/';
+    if (!preg_match($phonePattern, $phone)) {
+        json_error('Phone number contains invalid characters.', 422, ['fields' => ['phone' => false]]);
     }
 }
 
-// ----------------------------------------
-// Zusätzliche Regex-Validierungen (Whitelist je Feld)
-$reLine   = '/^[\p{L}\p{N}\s\.,!?:;@()\+\-\'"&\/_]{1,120}$/u';
-$rePhone  = '/^[\p{N}\s\+\-()\/]{0,40}$/u';
-
-if ($firstName !== '' && !preg_match($reLine, $firstName)) {
-    json_error('First name contains invalid characters.', 422, ['fields' => ['firstName' => false]]);
-}
-if ($lastName !== '' && !preg_match($reLine, $lastName)) {
-    json_error('Last name contains invalid characters.', 422, ['fields' => ['lastName' => false]]);
-}
-if ($subjectIn !== '' && !preg_match($reLine, $subjectIn)) {
-    json_error('Subject contains invalid characters.', 422, ['fields' => ['subject' => false]]);
-}
-if ($phone !== '' && !preg_match($rePhone, $phone)) {
-    json_error('Phone number contains invalid characters.', 422, ['fields' => ['phone' => false]]);
+// Subject (optional)
+if (!empty($subject)) {
+    $subjectPattern = '/^[\p{L}\p{N}\s\.,!?:;@()\+\-\'"&\/_]{1,120}$/u';
+    if (!preg_match($subjectPattern, $subject)) {
+        json_error('Subject contains invalid characters.', 422, ['fields' => ['subject' => false]]);
+    }
 }
 
-// Strenge Code-Heuristik für Nachrichteninhalt
-if (looks_like_code($message)) {
-    json_error('The message contains code/markup fragments and has been rejected for security reasons.', 422, ['fields' => ['message' => false]]);
+// Message length
+if (strlen($message) < 10) {
+    json_error('Message must be at least 10 characters.', 422, ['fields' => ['message' => false]]);
 }
 
-// 5) Betreff & Admin-Body
-// ----------------------------------------
-$subjectSafe = trim($subjectPrefix . ($subjectIn !== '' ? $subjectIn : 'Kontaktformular'));
-$fullName    = trim($firstName . ' ' . $lastName);
+// ============================================================================
+// 6) PHPMAILER CONFIGURATION
+// ============================================================================
 
-$body  = '';
-$body .= '<h3>Neue Kontaktanfrage</h3>';
-$body .= '<table cellpadding="6" cellspacing="0" border="0">';
-$body .= '<tr><td><strong>Name:</strong></td><td>' . e($fullName ?: '—') . '</td></tr>';
-$body .= '<tr><td><strong>E-Mail:</strong></td><td>' . e($email ?: '—') . '</td></tr>';
-$body .= '<tr><td><strong>Telefon:</strong></td><td>' . e($phone ?: '—') . '</td></tr>';
-$body .= '<tr><td><strong>Betreff:</strong></td><td>' . e($subjectIn ?: '—') . '</td></tr>';
-$body .= '<tr><td><strong>Datenschutz:</strong></td><td>' . e($privacy === 'on' ? 'akzeptiert' : 'nicht bestätigt') . '</td></tr>';
-if ($captchaAnswer !== null && $captchaAnswer !== '') {
-    $body .= '<tr><td><strong>Security:</strong></td><td>Antwort ' . e((string)$captchaAnswer) . '</td></tr>';
-}
-$body .= '</table><hr>';
-$body .= '<div style="white-space:pre-wrap; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">' . nl2br(e($message)) . '</div>';
-
-// ----------------------------------------
-// 6) Diagnosemodus (kein Versand)
-// ----------------------------------------
-if (($_POST['__diag'] ?? '') === '1') {
-    $diag = [
-        'php'           => PHP_VERSION,
-        'sapi'          => PHP_SAPI,
-        'app_env'       => $appEnv,
-        'autoload'      => $vendorAutoload,
-        '.env.local'    => is_file($projectRoot.'/.env.local') ? 'OK' : 'MISSING',
-        '.env.prod'     => is_file($projectRoot.'/.env.prod')  ? 'OK' : 'MISSING',
-        'logsWritable'  => is_writable($logsDir) ? 'YES' : 'NO',
-        'smtp' => [
-            'host'   => $smtpHost,
-            'port'   => $smtpPort,
-            'secure' => $smtpSecure,
-            'auth'   => $smtpUser !== '' ? 'true' : 'false',
-            'user'   => $smtpUser !== '' ? 'SET' : 'EMPTY',
-        ],
-        'from' => [
-            'noreply'  => $noreplyEmail,
-            'recipient'=> $recipientEmail,
-        ],
-        'userConfirm' => [
-            'enabled'  => $userConfirmEnable ? 'true' : 'false',
-        ],
-    ];
-    json_ok($diag);
-}
-
-// ----------------------------------------
-// 7) PHPMailer konfigurieren
-// ----------------------------------------
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
+// Load SMTP config from .env.prod
+$recipientEmail = env('RECIPIENT_EMAIL', 'mail@jozapf.de');
+$smtpHost       = env('SMTP_HOST', '');
+$smtpPort       = (int) env('SMTP_PORT', '587');
+$smtpUser       = env('SMTP_USER', '');
+$smtpPass       = env('SMTP_PASS', '');
+$smtpSecure     = strtolower(env('SMTP_SECURE', 'tls'));
+
+// Validation
+if (empty($smtpHost) || empty($smtpUser) || empty($smtpPass)) {
+    error_log('[CONTACT FORM] SMTP configuration incomplete in .env.prod');
+    json_error('Email system not configured. Please contact administrator.', 500);
+}
+
+// ============================================================================
+// 7) SEND EMAIL TO ADMIN
+// ============================================================================
+
 $mail = new PHPMailer(true);
 
 try {
-    $mail->CharSet  = 'UTF-8';
+    // SMTP Configuration
+    $mail->isSMTP();
+    $mail->Host       = $smtpHost;
+    $mail->Port       = $smtpPort;
+    $mail->SMTPAuth   = true;
+    $mail->Username   = $smtpUser;
+    $mail->Password   = $smtpPass;
+    
+    // Encryption
+    if ($smtpSecure === 'tls' || $smtpPort === 587) {
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    } elseif ($smtpSecure === 'ssl' || $smtpPort === 465) {
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    }
+    
+    $mail->CharSet = 'UTF-8';
     $mail->Encoding = 'base64';
-    $mail->isHTML(true);
-
-    // SMTP-Setup (wenn Host gesetzt)
-    if ($smtpHost !== '' && $smtpPort > 0) {
-        $mail->isSMTP();
-        $mail->Host = $smtpHost;
-        $mail->Port = $smtpPort;
-
-        if ($smtpSecure === 'tls' || ($smtpSecure === '' && $smtpPort === 587)) {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        } elseif ($smtpSecure === 'ssl' || ($smtpSecure === '' && $smtpPort === 465)) {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        } else {
-            $mail->SMTPSecure = false;
-        }
-
-        $mail->SMTPAuth = ($smtpUser !== '');
-        if ($mail->SMTPAuth) {
-            $mail->Username = $smtpUser;
-            $mail->Password = $smtpPass ?? '';
-        }
-
-        if ($appEnv !== 'prod') {
-            $mail->SMTPDebug  = SMTP::DEBUG_SERVER;
-            $mail->Debugoutput = static function($str) use ($debugLog) {
-                safe_log($debugLog, "[SMTP] $str");
-            };
-        }
-    }
-
-    // ==============================================
-    // 8) Versand an Admin (From/Reply-To/Return-Path + EML)
-    // ==============================================
-    $fromHeader = $noreplyEmail ?: $smtpUser ?: 'no-reply@' . ($_SERVER['SERVER_NAME'] ?? 'localhost');
-    $replyName  = 'jozapf.de';
-
-    // Header-From = authentifizierte Mailbox (oder Fallback) -> DMARC freundlich
-    $headerFromEmail = $smtpUser ?: $fromHeader;
-    $replyToEmail    = $noreplyEmail ?: $headerFromEmail;
-
-    $mail->setFrom($headerFromEmail, $replyName, false);
+    
+    // From/To
+    $mail->setFrom($smtpUser, 'www.jozapf.de Contact Form');
     $mail->addAddress($recipientEmail);
-
-    // Wenn der Absender seine E-Mail eingetragen hat, als Reply-To ergänzen
-    if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $mail->addReplyTo($email, $fullName !== '' ? $fullName : 'Kontakt');
-    } else {
-        $mail->addReplyTo($replyToEmail, $replyName);
+    
+    // Reply-To = User's email
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $fullName = trim($firstName . ' ' . $lastName);
+        $mail->addReplyTo($email, $fullName);
     }
-
-    if (!empty($smtpUser)) {
-        $mail->Sender = $smtpUser; // Envelope-From
+    
+    // Envelope From
+    $mail->Sender = $smtpUser;
+    
+    // Subject
+    $emailSubject = !empty($subject) ? $subject : 'Contact Form Submission';
+    $mail->Subject = 'Contact: ' . $emailSubject;
+    
+    // Body
+    $fullName = trim($firstName . ' ' . $lastName);
+    
+    $htmlBody = '
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2c3e50; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+            .content { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-top: none; }
+            table { width: 100%; border-collapse: collapse; }
+            td { padding: 8px; border-bottom: 1px solid #eee; }
+            td:first-child { font-weight: bold; width: 120px; color: #555; }
+            .message { margin-top: 15px; padding: 15px; background: white; border-left: 3px solid #3498db; white-space: pre-wrap; }
+            .footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 0.85em; color: #777; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2>Neue Kontaktanfrage</h2>
+            </div>
+            <div class="content">
+                <table>
+                    <tr><td>Name:</td><td>' . e($fullName) . '</td></tr>
+                    <tr><td>E-Mail:</td><td><a href="mailto:' . e($email) . '">' . e($email) . '</a></td></tr>
+                    ' . (!empty($phone) ? '<tr><td>Telefon:</td><td>' . e($phone) . '</td></tr>' : '') . '
+                    ' . (!empty($subject) ? '<tr><td>Betreff:</td><td>' . e($subject) . '</td></tr>' : '') . '
+                </table>
+                
+                <div class="message">
+                    <strong>Nachricht:</strong><br><br>
+                    ' . nl2br(e($message)) . '
+                </div>
+                
+                <div class="footer">
+                    <strong>Metadata:</strong><br>
+                    Spam-Score: ' . $validation['spamScore'] . '/100<br>
+                    IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown') . '<br>
+                    Zeitstempel: ' . date('d.m.Y H:i:s') . '
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    ';
+    
+    $mail->isHTML(true);
+    $mail->Body = $htmlBody;
+    $mail->AltBody = strip_tags(str_replace('<br>', "\n", $htmlBody));
+    
+    // Send
+    if (!$mail->send()) {
+        error_log('[CONTACT FORM] Failed to send admin email: ' . $mail->ErrorInfo);
+        json_error('Failed to send message. Please try again.', 500);
     }
-
-    $mail->Subject = $subjectSafe;
-    $mail->Body    = $body;
-    $mail->AltBody = strip_tags(preg_replace('/<br\s*\/?>/i', "\n", $body));
-
-    if (!empty($_SERVER['REMOTE_ADDR'])) {
-        $mail->addCustomHeader('X-Originating-IP', $_SERVER['REMOTE_ADDR']);
-    }
-    $mail->addCustomHeader('X-App-Env', (string)$appEnv);
-    $mail->addCustomHeader('X-App-Handler', 'contact-php-handler.php');
-
-    // EML-Mitschnitt
+    
+    // Log sent email (.eml)
     $emlDir = $logsDir . '/sent-eml';
-    if (!is_dir($emlDir)) { @mkdir($emlDir, 0775, true); }
+    if (!is_dir($emlDir)) {
+        @mkdir($emlDir, 0755, true);
+    }
+    
     $emlFile = $emlDir . '/mail-' . date('Ymd-His') . '-' . bin2hex(random_bytes(4)) . '.eml';
-
-    try {
-        if ($mail->preSend()) {
-            $raw = $mail->getSentMIMEMessage();
-            @file_put_contents($emlFile, $raw);
-        }
-    } catch (\Throwable $emlEx) {
-        safe_log($debugLog, '[MAIL] EML write failed: ' . $emlEx->getMessage());
+    if ($mail->preSend()) {
+        @file_put_contents($emlFile, $mail->getSentMIMEMessage());
     }
-
-    // Admin-Versand (oder Fake im Dev)
-    if ($devFakeSend) {
-        safe_log($debugLog, '[FAKE_SEND] Admin-Mail NICHT gesendet (DEV_FAKE_SEND=true).');
-    } else {
-        $ok = $mail->send();
-        if (!$ok) {
-            safe_log($debugLog, 'Admin send() returned false; ErrorInfo=' . $mail->ErrorInfo);
-            json_error('Versand fehlgeschlagen: ' . $mail->ErrorInfo, 502);
-        }
-    }
-
-    // ==============================================
-    // 9) (NEU) Bestätigungs-Mail an den Benutzer
-    //    - nur wenn:
-    //      • USER_CONFIRM_ENABLE=true
-    //      • gültige Absender-E-Mail im Formular vorhanden
-    //      • kein Fake-Send aktiv
-    //    - Absender-Politik für DMARC:
-    //      • From = SMTP_USER (authentifizierte Mailbox)
-    //      • Reply-To = NOREPLY_EMAIL (oder leer)
-    // ==============================================
-    $userConfirmSent = false;
-    if ($userConfirmEnable && !$devFakeSend && $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $confirm = new PHPMailer(true);
-        try {
-            $confirm->CharSet  = 'UTF-8';
-            $confirm->Encoding = 'base64';
-            $confirm->isHTML(true);
-
-            // SMTP identisch konfigurieren
-            if ($smtpHost !== '' && $smtpPort > 0) {
-                $confirm->isSMTP();
-                $confirm->Host = $smtpHost;
-                $confirm->Port = $smtpPort;
-
-                if ($smtpSecure === 'tls' || ($smtpSecure === '' && $smtpPort === 587)) {
-                    $confirm->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                } elseif ($smtpSecure === 'ssl' || ($smtpSecure === '' && $smtpPort === 465)) {
-                    $confirm->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-                } else {
-                    $confirm->SMTPSecure = false;
-                }
-
-                $confirm->SMTPAuth = ($smtpUser !== '');
-                if ($confirm->SMTPAuth) {
-                    $confirm->Username = $smtpUser;
-                    $confirm->Password = $smtpPass ?? '';
-                }
-            }
-
-            // From/Reply-To
-            $confirmFrom = $smtpUser ?: $noreplyEmail ?: 'no-reply@' . ($_SERVER['SERVER_NAME'] ?? 'localhost');
-            $confirm->setFrom($confirmFrom, 'jozapf.de', false);
-            $confirm->addAddress($email, $fullName !== '' ? $fullName : '');
-
-            if ($noreplyEmail !== '') {
-                $confirm->addReplyTo($noreplyEmail, 'No-Reply');
-            }
-
-            $confirm->Subject = $userConfirmSubject;
-
-            // Schlichte, saubere Bestätigungsnachricht
-            $confirmBody  = '<p>' . e($userConfirmGreeting) . '</p>';
-            $confirmBody .= '<hr><p><strong>Copy of your details:</strong></p>';
-            $confirmBody .= '<table cellpadding="6" cellspacing="0" border="0">';
-            $confirmBody .= '<tr><td><strong>Name:</strong></td><td>' . e($fullName ?: '—') . '</td></tr>';
-            $confirmBody .= '<tr><td><strong>E-Mail:</strong></td><td>' . e($email ?: '—') . '</td></tr>';
-            if ($subjectIn !== '') {
-                $confirmBody .= '<tr><td><strong>Subject:</strong></td><td>' . e($subjectIn) . '</td></tr>';
-            }
-            if ($phone !== '') {
-                $confirmBody .= '<tr><td><strong>Phone:</strong></td><td>' . e($phone) . '</td></tr>';
-            }
-            $confirmBody .= '</table><hr>';
-            $confirmBody .= '<div style="white-space:pre-wrap; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">' . nl2br(e($message)) . '</div>';
-
-            $confirm->Body    = $confirmBody;
-            $confirm->AltBody = strip_tags(preg_replace('/<br\s*\/?>/i', "\n", $confirmBody));
-
-            // Envelope-From (Bounces) -> SMTP_USER
-            if (!empty($smtpUser)) {
-                $confirm->Sender = $smtpUser;
-            }
-
-            $userConfirmSent = $confirm->send();
-            if (!$userConfirmSent) {
-                safe_log($debugLog, 'User confirm send() false; ErrorInfo=' . $confirm->ErrorInfo);
-            }
-        } catch (\Throwable $ex) {
-            safe_log($debugLog, 'User confirm exception: ' . $ex->getMessage());
-        }
-    }
-
-    // Erfolg fürs Frontend
-    json_ok([
-        'sent' => !$devFakeSend,
-        'userConfirm' => $userConfirmEnable ? ($userConfirmSent ? 'sent' : 'not_sent_or_failed') : 'disabled'
-    ]);
-
-} catch (Exception $ex) {
-    safe_log($debugLog, 'PHPMailer Exception: ' . $ex->getMessage());
-    json_error('E-Mail Fehler: ' . $ex->getMessage(), 500);
-} catch (\Throwable $ex) {
-    safe_log($debugLog, 'Unhandled Throwable: ' . $ex->getMessage());
-    json_error('Unerwarteter Fehler im Handler.', 500);
+    
+} catch (Exception $e) {
+    error_log('[CONTACT FORM] PHPMailer Exception: ' . $e->getMessage());
+    json_error('Email system error. Please contact administrator.', 500);
 }
+
+// ============================================================================
+// 8) SEND CONFIRMATION TO USER
+// ============================================================================
+
+$confirmMail = new PHPMailer(true);
+
+try {
+    // Same SMTP config
+    $confirmMail->isSMTP();
+    $confirmMail->Host       = $smtpHost;
+    $confirmMail->Port       = $smtpPort;
+    $confirmMail->SMTPAuth   = true;
+    $confirmMail->Username   = $smtpUser;
+    $confirmMail->Password   = $smtpPass;
+    
+    if ($smtpSecure === 'tls' || $smtpPort === 587) {
+        $confirmMail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    } elseif ($smtpSecure === 'ssl' || $smtpPort === 465) {
+        $confirmMail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    }
+    
+    $confirmMail->CharSet = 'UTF-8';
+    $confirmMail->Encoding = 'base64';
+    
+    // From/To
+    $confirmMail->setFrom($smtpUser, 'jozapf.de');
+    $confirmMail->addAddress($email, $fullName);
+    $confirmMail->Sender = $smtpUser;
+    
+    // Subject
+    $confirmMail->Subject = 'Thank you for your message - www.jozapf.de';
+    
+    // Body
+    $confirmHtml = '
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #27ae60; color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; }
+            .checkmark { font-size: 48px; margin-bottom: 10px; }
+            .content { background: #f9f9f9; padding: 30px 20px; border: 1px solid #ddd; border-top: none; }
+            .message-copy { margin: 20px 0; padding: 20px; background: white; border-left: 4px solid #27ae60; }
+            .footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 0.85em; color: #777; text-align: center; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="checkmark">✓</div>
+                <h2>Message Received</h2>
+            </div>
+            <div class="content">
+                <p>Dear ' . e($firstName) . ',</p>
+                
+                <p>Thank you for contacting me! I have received your message and will get back to you as soon as possible.</p>
+                
+                <div class="message-copy">
+                    <strong>Your message:</strong><br><br>
+                    ' . (!empty($subject) ? '<strong>Subject:</strong> ' . e($subject) . '<br><br>' : '') . '
+                    ' . nl2br(e($message)) . '
+                </div>
+                
+                <p>Best regards,<br>
+                <strong>Jo Zapf</strong><br>
+                <a href="https://jozapf.de">jozapf.de</a></p>
+                
+                <div class="footer">
+                    This is an automated confirmation email. Please do not reply!<br>
+                    © ' . date('Y') . ' jozapf.de
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    ';
+    
+    $confirmMail->isHTML(true);
+    $confirmMail->Body = $confirmHtml;
+    $confirmMail->AltBody = strip_tags(str_replace('<br>', "\n", $confirmHtml));
+    
+    // Send (don't fail if confirmation fails)
+    $confirmSent = @$confirmMail->send();
+    
+    // Log confirmation
+    if ($confirmSent) {
+        $confirmEmlFile = $emlDir . '/confirmation-' . date('Ymd-His') . '-' . bin2hex(random_bytes(4)) . '.eml';
+        if ($confirmMail->preSend()) {
+            @file_put_contents($confirmEmlFile, $confirmMail->getSentMIMEMessage());
+        }
+    }
+    
+} catch (Exception $e) {
+    error_log('[CONTACT FORM] Confirmation email failed: ' . $e->getMessage());
+    // Don't fail the whole request if confirmation fails
+}
+
+// ============================================================================
+// 9) SUCCESS RESPONSE
+// ============================================================================
+
+json_success(
+    'Thank you for your message! We will get back to you shortly. A confirmation email has been sent to ' . $email,
+    [
+        'timestamp' => date('c'),
+        'spamScore' => $validation['spamScore'],
+        'confirmationSent' => $confirmSent ?? false
+    ]
+);

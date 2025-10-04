@@ -1,4 +1,4 @@
-// assets/js/contact-form-logic.js
+// assets/js/contact-form-logic.js - FINAL FIXED VERSION
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
@@ -74,17 +74,17 @@ async function submitForm(form) {
 
   const userAns = Number(captchaA?.value);
   if (!Number.isFinite(userAns) || String(captchaA?.value ?? '').trim() === '') {
-    setFieldInvalid(captchaA, 'Bitte die Aufgabe lösen.');
+    setFieldInvalid(captchaA, 'Please solve the math problem.');
     hasErr = true;
   } else if (captchaSolution != null && userAns !== captchaSolution) {
-    setFieldInvalid(captchaA, 'Leider falsch. Neue Aufgabe wurde erzeugt.');
+    setFieldInvalid(captchaA, 'Incorrect answer. New problem generated.');
     generateCaptcha(form); setCaptchaOnForm(form);
     hasErr = true;
   }
 
   if (hasErr) {
     show(errorBox);
-    if (errorText) errorText.textContent = 'Bitte markierte Felder korrigieren.';
+    if (errorText) errorText.textContent = 'Please correct the marked fields.';
     return;
   }
 
@@ -106,14 +106,50 @@ async function submitForm(form) {
     let data = null;
     try { data = await res.json(); } catch { /* no-op */ }
 
-    if (res.ok && data && data.ok === true) {
+    // ✅ FIXED: Check for data.success and ensure proper CSS classes
+    if (res.ok && data && data.success === true) {
       form.reset();
       generateCaptcha(form); setCaptchaOnForm(form);
-      show(successBox); hide(errorBox);
+      
+      // ✅ GREEN SUCCESS - Remove error class, add success class
+      if (successBox) {
+        successBox.classList.remove('cf-error');
+        successBox.classList.add('cf-success');
+      }
+      if (errorBox) {
+        errorBox.classList.remove('cf-success');
+        errorBox.classList.add('cf-error');
+      }
+      
+      show(successBox); 
+      hide(errorBox);
+      
+      // Set success message from server
+      const successText = successBox.querySelector('p, div, [id*="text"]');
+      if (successText && data.message) {
+        successText.textContent = data.message;
+      } else if (successBox) {
+        // Fallback: Update the entire success box content
+        successBox.innerHTML = '<p>' + (data.message || 'Thank you for your message! We will get back to you shortly.') + '</p>';
+      }
+      
     } else {
-      const msg = (data && (data.error || data.message)) || 'Senden fehlgeschlagen. Bitte später erneut versuchen.';
+      // ❌ RED ERROR
+      const msg = (data && (data.error || data.message)) || 'Failed to send message. Please try again later.';
       if (errorText) errorText.textContent = msg;
-      show(errorBox); hide(successBox);
+      
+      // Ensure error box has error class, success box has success class
+      if (errorBox) {
+        errorBox.classList.remove('cf-success');
+        errorBox.classList.add('cf-error');
+      }
+      if (successBox) {
+        successBox.classList.remove('cf-error');
+        successBox.classList.add('cf-success');
+      }
+      
+      show(errorBox); 
+      hide(successBox);
 
       if (data && data.fields) {
         if (data.fields.firstName === false || data.fields.name === false) setFieldInvalid(firstName);
@@ -126,8 +162,20 @@ async function submitForm(form) {
       }
     }
   } catch (e) {
-    if (errorText) errorText.textContent = 'Netzwerkfehler. Bitte später erneut versuchen.';
-    show(errorBox); hide(successBox);
+    if (errorText) errorText.textContent = 'Network error. Please try again later.';
+    
+    // Ensure error styling
+    if (errorBox) {
+      errorBox.classList.remove('cf-success');
+      errorBox.classList.add('cf-error');
+    }
+    if (successBox) {
+      successBox.classList.remove('cf-error');
+      successBox.classList.add('cf-success');
+    }
+    
+    show(errorBox); 
+    hide(successBox);
   } finally {
     const submitBtn = $('#submitBtn', form);
     if (submitBtn) submitBtn.disabled = false;

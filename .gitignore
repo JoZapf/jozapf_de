@@ -8,16 +8,12 @@ assets/fonts/
 *.otf
 
 # Umgebungsvariablen
-# Environment files
 .env
-.env.*
-.env.prod
-*.env
-.DS_Store
-Thumbs.db
-*.log
-node_modules/
-dist/
+assets/php/.env
 
-# MCP write test
-__mcp_write_test.txt
+# ganze Ordner
+assets/php/logs/archive/
+assets/php/logs/sent-eml/
+
+# Log-Dateien rekursiv in allen Unterordnern:
+assets/php/logs/**/*.log

@@ -1,6 +1,6 @@
 /**
  * cover.css - Base Theme & Layout Styles
- * Main stylesheet for Jo Zapf Portfolio
+ * Main stylesheet
  * 
  * Table of Contents:
  * 1. CSS Variables
@@ -54,6 +54,9 @@ body.bg-dark-333 {
 h1 {
 	color: var(--muted);
 	margin-top: 10px;
+}
+h3 {
+color: #cfd4da!important;
 }
 
 h4 {
@@ -250,7 +253,7 @@ footer {
 }
 
 .input-group .btn {
-	background-color: green !important;
+	background-color: #198754 !important;
 	color: white !important;
 }
 
@@ -488,3 +491,4 @@ p.note.note-bg > img {
 		padding-left: 0 !important;
 	}
 }
+

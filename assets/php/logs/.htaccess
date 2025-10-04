@@ -1,0 +1,21 @@
+# Protect log directory from public access
+# Place this file in: /assets/php/logs/.htaccess
+
+<Files "*">
+    # Deny all direct access
+    Require all denied
+</Files>
+
+# Alternative for Apache 2.2
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Additional security: Disable script execution
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+    Require all denied
+</FilesMatch>
