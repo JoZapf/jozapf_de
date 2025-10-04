@@ -1,0 +1,54 @@
+#Optional 1 RegEx files match
+#<FilesMatch "^\.(env|env\.prod|env\.local)$|^(blocklist|AbuseLogger\.php)$">
+#  Require all denied
+#</FilesMatch>
+#php_flag display_errors Off
+
+# Optional 2 RegEx sensitive files match
+#<FilesMatch "^\.(env|env\.prod|env\.local)$|^(blocklist|AbuseLogger\.php)$">
+#  Require all denied
+#</FilesMatch>
+#php_flag display_errors Off
+
+#Optional 3
+#<Files ".env">
+#  Require all denied
+#</Files>
+#<Files ".env.prod">
+#  Require all denied
+#</Files>
+#<Files "blocklist">
+#  Require all denied
+#</Files>
+#<Files "AbuseLogger.php">
+#  Require all denied
+#</Files>
+#php_flag display_errors Off
+
+# Redirect dashboard.html to login
+#RewriteEngine On
+#RewriteRule ^dashboard\.html$ ./dashboard-login.php [R,L]
+
+# Protect environment files
+<FilesMatch "^\.(env|env\.prod|env\.local)$">
+  Require all denied
+</FilesMatch>
+
+# Protect PHP classes from direct access
+<Files "AbuseLogger.php">
+  Require all denied
+</Files>
+
+# Protect API backend (optional - depends on your setup)
+# Uncomment if you want API only callable from same server
+#<Files "dashboard-api.php">
+#  Require all denied
+#</Files>
+
+# Disable PHP error display
+php_flag display_errors Off
+
+# Optional: Protect log files
+<FilesMatch "\.log$">
+  Require all denied
+</FilesMatch>

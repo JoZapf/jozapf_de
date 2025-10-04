@@ -1,187 +1,218 @@
+/**
+ * vertical_timeline.css - Vertical Timeline Styles
+ * Vertical layout for timeline on tablets and mobile devices
+ * 
+ * Breakpoints:
+ * - Desktop: hidden
+ * - Tablet/Mobile (<1400px): shown
+ * - Mobile (<650px): adjusted spacing
+ */
+
+/* ========================================
+   LAYOUT & ALIGNMENT
+   ======================================== */
 .left {
-	text-align:right;
+	text-align: right;
 }
 
 .right {
-	text-align:left;	
+	text-align: left;
 }
 
-/* The actual timeline (the vertical ruler) */
+/* ========================================
+   MAIN TIMELINE STRUCTURE
+   ======================================== */
+
+/* Vertical ruler/line */
 .main-timeline-4 {
-  position: relative;
+	position: relative;
 }
 
-/* The actual timeline (the vertical ruler) */
 .main-timeline-4::after {
-  content: "";
-  position: absolute;
-  width: 2px;
-  background-color: var(--line);
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  margin-left: -2px;
+	content: "";
+	position: absolute;
+	width: 2px;
+	background-color: var(--line);
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	margin-left: -2px;
 }
 
-/* Container around content */
+/* Timeline container */
 .timeline-4 {
-  position: relative;
-  background-color: inherit;
-  width: 50%;
+	position: relative;
+	background-color: inherit;
+	width: 50%;
 }
 
-/* The circles on the timeline */
+/* ========================================
+   TIMELINE DOTS & CIRCLES
+   ======================================== */
+
+/* Dots on the vertical line */
 .timeline-4::after {
-    content: "";
-    position: absolute;
-    width: 13px;
-    height: 13px;
-    right: -5px;
-    background-color: var(--line);
-    top: 22px;
-    border-radius: 50%;
-    z-index: 1;
+	content: "";
+	position: absolute;
+	width: 13px;
+	height: 13px;
+	right: -5px;
+	background-color: var(--line);
+	top: 22px;
+	border-radius: 50%;
+	z-index: 1;
 }
 
-/* Place the container to the left */
+/* ========================================
+   POSITIONING (LEFT/RIGHT)
+   ======================================== */
+
+/* Left-aligned items */
 .left-4 {
-  padding: 0px 40px 5px 0px;
-  left: 0;
+	padding: 0 40px 5px 0;
+	left: 0;
 }
 
-/* Place the container to the right */
+/* Right-aligned items */
 .right-4 {
-  padding: 0px 0px 5px 40px;
-  left: 50%;
+	padding: 0 0 5px 40px;
+	left: 50%;
 }
 
-/* Add arrows to the left container (pointing right) */
+/* ========================================
+   ARROWS/CONNECTORS
+   ======================================== */
+
+/* Arrow pointing right (from left items) */
 .left-4::before {
-  content: " ";
-  position: absolute;
-  top: 18px;
-  z-index: 1;
-  right: 30px;
-  border: medium solid rgba(37, 117, 252, 1);
-  border-width: 10px 0 10px 10px;
-  border-color: transparent transparent transparent var(--line);
+	content: " ";
+	position: absolute;
+	top: 18px;
+	z-index: 1;
+	right: 30px;
+	border: medium solid rgba(37, 117, 252, 1);
+	border-width: 10px 0 10px 10px;
+	border-color: transparent transparent transparent var(--line);
 }
 
-/* Add arrows to the right container (pointing left) */
+/* Arrow pointing left (from right items) */
 .right-4::before {
-  content: " ";
-  position: absolute;
-  top: 18px;
-  z-index: 1;
-  left: 30px;
-  border: medium solid rgba(245, 87, 108, 1);
-  border-width: 10px 10px 10px 0;
-  border-color: transparent var(--line) transparent transparent;
+	content: " ";
+	position: absolute;
+	top: 18px;
+	z-index: 1;
+	left: 30px;
+	border: medium solid rgba(245, 87, 108, 1);
+	border-width: 10px 10px 10px 0;
+	border-color: transparent var(--line) transparent transparent;
 }
 
-/* Fix the circle for containers on the right side */
+/* Fix circle position for right-side items */
 .right-4::after {
-  left: -8px;
+	left: -8px;
 }
 
-/* =========== MOBILEVERTICAL Timeline <600px =========== */
+/* ========================================
+   GRADIENT BACKGROUNDS
+   ======================================== */
+
+/* Card background gradient */
+.gradient-custom {
+	background: #252c33;
+	background: linear-gradient(to bottom, #252c33, #212529);
+	border: 1px solid var(--line);
+}
+
+.gradient-custom-4 {
+	background: #f093fb;
+	background: linear-gradient(
+		to left,
+		rgba(240, 147, 251, 1),
+		rgba(245, 87, 108, 1)
+	);
+}
+
+/* ========================================
+   MEDIA QUERIES
+   ======================================== */
+
+/* Mobile Layout (<650px) */
 @media screen and (max-width: 650px) {
-	
-	.container-sm, .container {
+	.container-sm,
+	.container {
 		max-width: 650px;
 	}
 
+	/* Single column layout */
 	.timeline-4 {
 		width: 100%;
 		padding-left: 70px;
 		padding-right: 25px;
 	}
 
+	/* All arrows point right */
 	.timeline-4::before {
 		left: 35px;
 		border: medium solid white;
 		border-width: 10px 10px 10px 0;
 		border-color: transparent var(--line) transparent transparent;
 	}
+
+	/* Move vertical line to left */
 	.main-timeline-4::after {
 		left: 15px;
 	}
-	
+
+	/* Align all dots to left line */
 	.left-4::after,
 	.right-4::after {
-		left: 15px;
-	 }
+		left: 8px;
+	}
 
+	/* Reset left arrow */
 	.left-4::before {
 		right: auto;
 	}
 
+	/* Reset right positioning */
 	.right-4 {
 		left: 0%;
 	}
-  
-  	.left-4 {
-		padding: 0px 0px 10px 44px;
+
+	/* Consistent padding for all items */
+	.left-4 {
+		padding: 0 0 10px 44px;
 	}
-	
+
 	.right-4 {
-		padding: 0px 0px 10px 44px;
+		padding: 0 0 10px 44px;
 	}
-	
-	.icon {
-	  width: var(--icon-width-small);
-	  height: var(--icon-height-small);
-	}
-	.icon-left {
-	  width: var(--icon-width-small)!important;
-	  height: var(--icon-height-small)!important;
-	  float:left;
-	  margin-left:20px;
-	  margin-bottom:-5px;
-	}
+
+	/* Smaller icons for mobile */
+	.icon,
+	.icon-left,
 	.icon-right {
-	  width: var(--icon-width-small)!important;
-	  height: var(--icon-height-small)!important;
-	  float:right;
-	  margin-right:20px;
-	  margin-bottom:-5px;
-	}	
-}
-@media (min-width: 651px) {
-	.container-sm, .container {
-		max-width: 95vw;
+		width: var(--icon-width-small) !important;
+		height: var(--icon-height-small) !important;
 	}
-	
-}
-	
-/* =========== VERTICAL Timeline Container Gradient =========== */
-.gradient-custom {
-	/* fallback for old browsers */
-	background: #252c33;
-	/* Chrome 10-25, Safari 5.1-6 */
-	background: -webkit-linear-gradient(
-    to bottom,
-    rgba(106, 17, 203, 1),
-    rgba(37, 117, 252, 1)
-	);
-	border: solid 1px var(--line);
-	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-	background: linear-gradient(to bottom, #252c33, #212529);
+
+	.icon-left {
+		float: left;
+		margin-left: 20px;
+		margin-bottom: -5px;
+	}
+
+	.icon-right {
+		float: right;
+		margin-right: 20px;
+		margin-bottom: -5px;
+	}
 }
 
-.gradient-custom-4 {
-	/* fallback for old browsers */
-	background: #f093fb;
-	/* Chrome 10-25, Safari 5.1-6 */
-	background: -webkit-linear-gradient(
-		to left,
-		rgba(240, 147, 251, 1),
-		rgba(245, 87, 108, 1)
-	);
-	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-	background: linear-gradient(
-		to left,
-		rgba(240, 147, 251, 1),
-		rgba(245, 87, 108, 1)
-	);
+/* Tablet/Desktop (>650px) */
+@media (min-width: 651px) {
+	.container-sm,
+	.container {
+		max-width: 95vw;
+	}
 }
