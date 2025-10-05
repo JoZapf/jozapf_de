@@ -1,12 +1,1 @@
-[
-    {
-        "ip": "2003:e9:6f31:2d00:2100:b209:16b0:f4bf",
-        "reason": "test",
-        "addedAt": "2025-10-04T13:46:44+02:00",
-        "expiresAt": "2025-10-05T13:46:44+02:00",
-        "metadata": {
-            "blockedBy": "dashboard",
-            "userAgent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/141.0.0.0 Safari\/537.36"
-        }
-    }
-]
+[]
