@@ -1,0 +1,372 @@
+<?php
+/**
+ * Contact Form Handler (PHPMailer)
+ * --------------------------------
+ * Ziele:
+ *  - Keine 500er mehr: Jede Exception wird abgefangen und als JSON-Fehler
+ *    zurückgegeben; so bleibt das Frontend berechenbar.
+ *  - Keine externen Dotenv-Abhängigkeiten: Ein kleiner .env-Parser genügt.
+ *  - Sichere Header: korrekte Absender-Politik (From/Reply-To/Envelope-From),
+ *    um Ablehnungen durch SPF/DMARC zu vermeiden (Hetzner).
+ *  - Diagnosemodus: Per POST __diag=1 eine Sofort-Analyse ohne Mailversand.
+ *  - Nachvollziehbarkeit: ausführliche, aber didaktische Kommentare.
+ *
+ * Erwartete Felder (POST, multipart/form-data oder application/x-www-form-urlencoded):
+ *  - firstName, lastName, email, phone, subject, message
+ *  - privacy (optional Checkbox)
+ *  - captchaAnswer oder captcha_answer (optional; simple Zahl)
+ *
+ * Erforderliche Dateien/Struktur:
+ *  - vendor/autoload.php                    (Composer installiert, PHPMailer vorhanden)
+ *  - .env.prod (für APP_ENV=prod) oder .env.local (für APP_ENV=dev) im Projekt-Root
+ *  - assets/php/logs/ (beschreibbar) -> schreibt debug.log, php-errors.log, sent-eml/*.eml
+ *
+ * © Jo Zapf – frei anpassbar
+ */
+
+declare(strict_types=1);
+
+// ---------------------------
+// 0) Immer JSON ausliefern
+// ---------------------------
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    echo '';
+    exit;
+}
+
+// ---------------------------
+// 1) Hilfsfunktionen
+// ---------------------------
+function json_ok(array $extra = []): void {
+    http_response_code(200);
+    echo json_encode(['ok' => true] + $extra, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+function json_error(string $msg, int $status = 400, array $extra = []): void {
+    http_response_code($status);
+    echo json_encode(['ok' => false, 'error' => $msg] + $extra, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+/**
+ * Minimale .env-Ladefunktion (KEY=VALUE, # Kommentare)
+ * - Liest .env.local (falls existiert), sonst .env.prod
+ * - Werte in $_ENV und getenv() sichtbar machen
+ */
+function load_env(string $rootDir): array {
+    $paths = [
+        $rootDir . '/.env.local',
+        $rootDir . '/.env.prod',
+    ];
+    $env = [];
+    foreach ($paths as $p) {
+        if (!is_file($p)) { continue; }
+        $lines = @file($p, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#')) continue;
+            if (!str_contains($line, '=')) continue;
+            [$k, $v] = explode('=', $line, 2);
+            $k = trim($k);
+            $v = trim($v);
+            // Strip optional quotes
+            $v = preg_replace('/^([\'"])(.*)\1$/', '$2', $v);
+            $env[$k] = $v;
+            $_ENV[$k] = $v;
+            // Fallback für getenv()
+            if (function_exists('putenv')) {
+                @putenv("$k=$v");
+            }
+        }
+        // Wenn .env.local gefunden, nicht weiter nach .env.prod suchen
+        if (str_ends_with($p, '.env.local')) break;
+    }
+    return $env;
+}
+
+/** Komfortabel ENV lesen (mit Default) */
+function envv(string $key, ?string $default = null): ?string {
+    $val = $_ENV[$key] ?? getenv($key);
+    if ($val === false || $val === null || $val === '') return $default;
+    return (string)$val;
+}
+
+/** Sanitizer für einfache Plain-Text-Felder */
+function sanitize_line(string $s): string {
+    $s = trim($s);
+    $s = str_replace(["\r", "\n"], ' ', $s);
+    return filter_var($s, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW) ?? '';
+}
+
+/** Sehr einfacher HTML-Escaper */
+function e(string $s): string {
+    return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/** Sichere Log-Schreibfunktion (append) */
+function safe_log(string $file, string $msg): void {
+    @file_put_contents($file, '['.date('c').'] '.$msg.PHP_EOL, FILE_APPEND);
+}
+
+// ----------------------------------------
+// 2) Projekt-Pfade & Autoloader prüfen
+// ----------------------------------------
+$handlerDir = __DIR__;                          // assets/php
+$projectRoot = dirname($handlerDir, 2);         // (..) -> Projekt-Root
+$vendorAutoload = $projectRoot . '/vendor/autoload.php';
+$logsDir = $handlerDir . '/logs';
+if (!is_dir($logsDir)) @mkdir($logsDir, 0775, true);
+$debugLog = $logsDir . '/debug.log';
+$phpErrLog = $logsDir . '/php-errors.log';
+
+// Eigene Fehler auf unser Log umlenken (auch Notices/Warnungen sichtbar machen)
+set_error_handler(function($errno, $errstr, $errfile, $errline) use ($phpErrLog) {
+    safe_log($phpErrLog, "PHP[$errno] $errstr in $errfile:$errline");
+    return false; // normale PHP-Fehlerbehandlung zusätzlich erlauben
+});
+
+// Composer-Autoload laden (PHPMailer)
+if (!is_file($vendorAutoload)) {
+    json_error("vendor/autoload.php fehlt. Bitte 'composer install' ausführen.", 500, [
+        'autoload' => $vendorAutoload
+    ]);
+}
+require_once $vendorAutoload;
+
+// ----------------------------------------
+// 3) ENV laden & Konfiguration ermitteln
+// ----------------------------------------
+$env = load_env($projectRoot); // liest .env.local ODER .env.prod
+$appEnv = envv('APP_ENV', 'prod'); // 'prod' als Default auf Hosting
+
+// E-Mail-Basis
+$recipientEmail = envv('RECIPIENT_EMAIL', 'mail@jozapf.de'); // Zielpostfach
+$noreplyEmail   = envv('NOREPLY_EMAIL',   'noreply@' . ($_SERVER['SERVER_NAME'] ?? 'localhost'));
+$subjectPrefix  = envv('SUBJECT_PREFIX',  'Kontakt: ');
+
+// SMTP
+$smtpHost   = envv('SMTP_HOST', '');
+$smtpPort   = (int) (envv('SMTP_PORT', '0') ?? 0);
+$smtpSecure = strtolower(envv('SMTP_SECURE', '') ?? ''); // '', 'tls', 'ssl'
+$smtpUser   = envv('SMTP_USER', '');
+$smtpPass   = envv('SMTP_PASS', '');
+
+// Dev-Flag (wenn true: Versand geskippt, nur Log)
+$devFakeSend = filter_var(envv('DEV_FAKE_SEND', 'false'), FILTER_VALIDATE_BOOL);
+
+// ----------------------------------------
+// 4) Eingaben lesen & validieren
+// ----------------------------------------
+$firstName = sanitize_line($_POST['firstName'] ?? '');
+$lastName  = sanitize_line($_POST['lastName'] ?? '');
+$email     = sanitize_line($_POST['email'] ?? '');
+$phone     = sanitize_line($_POST['phone'] ?? '');
+$subjectIn = sanitize_line($_POST['subject'] ?? '');
+$message   = trim((string)($_POST['message'] ?? ''));
+
+// Security Question (optional)
+$captchaAnswer = $_POST['captchaAnswer'] ?? $_POST['captcha_answer'] ?? null;
+$captchaAnswer = is_string($captchaAnswer) ? trim($captchaAnswer) : $captchaAnswer;
+
+// Datenschutz-Checkbox (optional)
+$privacy = isset($_POST['privacy']) ? 'on' : 'off';
+
+// Pflichtfelder prüfen (Name + Nachricht)
+if ($firstName === '' && $lastName === '') {
+    json_error('Name ist ein Pflichtfeld.', 422, ['fields' => ['name' => false]]);
+}
+if ($message === '') {
+    json_error('Nachricht ist ein Pflichtfeld.', 422, ['fields' => ['message' => false]]);
+}
+// E-Mail optional, aber falls eingegeben, validieren
+if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    json_error('Die E-Mail-Adresse ist ungültig.', 422, ['fields' => ['email' => false]]);
+}
+
+// Optional: Sehr einfacher Captcha-Check (wenn Wert da, muss eine Zahl sein)
+if ($captchaAnswer !== null && $captchaAnswer !== '') {
+    if (!preg_match('/^\d{1,3}$/', (string)$captchaAnswer)) {
+        json_error('Sicherheitsfrage ungültig.', 422, ['fields' => ['captcha' => false]]);
+    }
+}
+
+// ----------------------------------------
+// 5) Betreff & Nachricht zusammenbauen
+// ----------------------------------------
+$subjectSafe = trim($subjectPrefix . ($subjectIn !== '' ? $subjectIn : 'Kontaktformular'));
+$fullName    = trim($firstName . ' ' . $lastName);
+
+$body  = '';
+$body .= '<h3>Neue Kontaktanfrage</h3>';
+$body .= '<table cellpadding="6" cellspacing="0" border="0">';
+$body .= '<tr><td><strong>Name:</strong></td><td>' . e($fullName ?: '—') . '</td></tr>';
+$body .= '<tr><td><strong>E-Mail:</strong></td><td>' . e($email ?: '—') . '</td></tr>';
+$body .= '<tr><td><strong>Telefon:</strong></td><td>' . e($phone ?: '—') . '</td></tr>';
+$body .= '<tr><td><strong>Betreff:</strong></td><td>' . e($subjectIn ?: '—') . '</td></tr>';
+$body .= '<tr><td><strong>Datenschutz:</strong></td><td>' . e($privacy === 'on' ? 'akzeptiert' : 'nicht bestätigt') . '</td></tr>';
+if ($captchaAnswer !== null && $captchaAnswer !== '') {
+    $body .= '<tr><td><strong>Security:</strong></td><td>Antwort ' . e((string)$captchaAnswer) . '</td></tr>';
+}
+$body .= '</table><hr>';
+$body .= '<div style="white-space:pre-wrap; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;">' . nl2br(e($message)) . '</div>';
+
+// ----------------------------------------
+// 6) Diagnosemodus (kein Versand)
+//     -> Per POST __diag=1 abrufen
+// ----------------------------------------
+if (($_POST['__diag'] ?? '') === '1') {
+    $diag = [
+        'php'           => PHP_VERSION,
+        'sapi'          => PHP_SAPI,
+        'app_env'       => $appEnv,
+        'autoload'      => $vendorAutoload,
+        '.env.local'    => is_file($projectRoot.'/.env.local') ? 'OK' : 'MISSING',
+        '.env.prod'     => is_file($projectRoot.'/.env.prod')  ? 'OK' : 'MISSING',
+        'logsWritable'  => is_writable($logsDir) ? 'YES' : 'NO',
+        'smtp' => [
+            'host'   => $smtpHost,
+            'port'   => $smtpPort,
+            'secure' => $smtpSecure,
+            'auth'   => $smtpUser !== '' ? 'true' : 'false',
+            'user'   => $smtpUser !== '' ? 'SET' : 'EMPTY',
+        ],
+        'from' => [
+            'noreply' => $noreplyEmail,
+            'recipient'=> $recipientEmail,
+        ],
+    ];
+    json_ok($diag);
+}
+
+// ----------------------------------------
+// 7) PHPMailer konfigurieren
+// ----------------------------------------
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+$mail = new PHPMailer(true);
+
+try {
+    // Basis
+    $mail->CharSet    = 'UTF-8';
+    $mail->Encoding   = 'base64';
+    $mail->isHTML(true);
+
+    // SMTP-Setup (wenn Host gesetzt)
+    if ($smtpHost !== '' && $smtpPort > 0) {
+        $mail->isSMTP();
+        $mail->Host = $smtpHost;
+        $mail->Port = $smtpPort;
+
+        // SMTPSecure passend zur Portwahl
+        // - 587 => tls
+        // - 465 => ssl
+        // - 25  => leer
+        if ($smtpSecure === 'tls' || ($smtpSecure === '' && $smtpPort === 587)) {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        } elseif ($smtpSecure === 'ssl' || ($smtpSecure === '' && $smtpPort === 465)) {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        } else {
+            $mail->SMTPSecure = false;
+        }
+
+        $mail->SMTPAuth = ($smtpUser !== '');
+        if ($mail->SMTPAuth) {
+            $mail->Username = $smtpUser;
+            $mail->Password = $smtpPass ?? '';
+        }
+
+        // Optional: Mehr Einblick im Dev
+        if ($appEnv !== 'prod') {
+            $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            $mail->Debugoutput = static function($str) use ($debugLog) {
+                safe_log($debugLog, "[SMTP] $str");
+            };
+        }
+    }
+
+    // ==============================================
+    // 8) Versand-Block (From/Reply-To/Return-Path + EML)
+    //    -> so wie du es explizit wolltest
+    // ==============================================
+    $fromHeader = $noreplyEmail ?: $smtpUser ?: 'no-reply@' . ($_SERVER['SERVER_NAME'] ?? 'localhost');
+    $replyName  = 'Website';
+
+    // 1) Absender-Politik:
+    //    - Header-From = authentifizierte Mailbox (oder Fallback), um DMARC-Reject zu vermeiden.
+    //    - Reply-To auf deine NOREPLY oder User-Mail (hier: NOREPLY), damit Antworten nicht verloren gehen.
+    $headerFromEmail = $smtpUser ?: $fromHeader;
+    $replyToEmail    = $noreplyEmail ?: $headerFromEmail;
+
+    // 2) PHPMailer Adressierung
+    $mail->setFrom($headerFromEmail, $replyName, false); // false => PHPMailer-Validierung nicht erzwingen (mehr Toleranz)
+    $mail->addAddress($recipientEmail);
+    // Falls der Absender eine E-Mail angegeben hat, können wir zusätzlich Reply-To erweitern
+    if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $mail->addReplyTo($email, $fullName !== '' ? $fullName : 'Kontakt');
+    } else {
+        $mail->addReplyTo($replyToEmail, $replyName);
+    }
+
+    // 3) Envelope-From (Return-Path); wichtig für Bounces/SPF/DMARC
+    if (!empty($smtpUser)) {
+        $mail->Sender = $smtpUser;
+    }
+
+    // 4) Pflichtfelder
+    $mail->Subject = $subjectSafe;
+    $mail->Body    = $body;
+    $mail->AltBody = strip_tags(preg_replace('/<br\s*\/?>/i', "\n", $body));
+
+    // 5) Optional: eigene Header (Tracing)
+    if (!empty($_SERVER['REMOTE_ADDR'])) {
+        $mail->addCustomHeader('X-Originating-IP', $_SERVER['REMOTE_ADDR']);
+    }
+    $mail->addCustomHeader('X-App-Env', (string)$appEnv);
+    $mail->addCustomHeader('X-App-Handler', 'contact-php-handler.php');
+
+    // 6) .EML-Mitschnitt vor dem Senden (für Forensik)
+    $emlDir = $logsDir . '/sent-eml';
+    if (!is_dir($emlDir)) { @mkdir($emlDir, 0775, true); }
+    $emlFile = $emlDir . '/mail-' . date('Ymd-His') . '-' . bin2hex(random_bytes(4)) . '.eml';
+
+    try {
+        // preSend() erzeugt die MIME-Message in PHPMailer
+        if ($mail->preSend()) {
+            $raw = $mail->getSentMIMEMessage();
+            @file_put_contents($emlFile, $raw);
+        }
+    } catch (\Throwable $emlEx) {
+        safe_log($debugLog, '[MAIL] EML write failed: ' . $emlEx->getMessage());
+    }
+
+    // 7) Jetzt senden (oder im Dev-Fake nur so tun)
+    if ($devFakeSend) {
+        safe_log($debugLog, '[FAKE_SEND] Mail NICHT gesendet (DEV_FAKE_SEND=true). Betreff: ' . $subjectSafe);
+        json_ok(['sent' => false, 'fake' => true, 'eml' => basename($emlFile)]);
+    } else {
+        $ok = $mail->send();
+        if (!$ok) {
+            // send() liefert false ohne Exception -> dennoch JSON-Fehler
+            safe_log($debugLog, 'send() returned false; ErrorInfo=' . $mail->ErrorInfo);
+            json_error('Versand fehlgeschlagen: ' . $mail->ErrorInfo, 502);
+        }
+        json_ok(['sent' => true]);
+    }
+
+} catch (Exception $ex) {
+    // PHPMailer\Exception
+    safe_log($debugLog, 'PHPMailer Exception: ' . $ex->getMessage());
+    json_error('E-Mail Fehler: ' . $ex->getMessage(), 500);
+} catch (\Throwable $ex) {
+    // Alle anderen Fehler
+    safe_log($debugLog, 'Unhandled Throwable: ' . $ex->getMessage());
+    json_error('Unerwarteter Fehler im Handler.', 500);
+}

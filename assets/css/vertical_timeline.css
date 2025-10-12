@@ -1,0 +1,218 @@
+/**
+ * vertical_timeline.css - Vertical Timeline Styles
+ * Vertical layout for timeline on tablets and mobile devices
+ * 
+ * Breakpoints:
+ * - Desktop: hidden
+ * - Tablet/Mobile (<1400px): shown
+ * - Mobile (<650px): adjusted spacing
+ */
+
+/* ========================================
+   LAYOUT & ALIGNMENT
+   ======================================== */
+.left {
+	text-align: right;
+}
+
+.right {
+	text-align: left;
+}
+
+/* ========================================
+   MAIN TIMELINE STRUCTURE
+   ======================================== */
+
+/* Vertical ruler/line */
+.main-timeline-4 {
+	position: relative;
+}
+
+.main-timeline-4::after {
+	content: "";
+	position: absolute;
+	width: 2px;
+	background-color: var(--line);
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	margin-left: -2px;
+}
+
+/* Timeline container */
+.timeline-4 {
+	position: relative;
+	background-color: inherit;
+	width: 50%;
+}
+
+/* ========================================
+   TIMELINE DOTS & CIRCLES
+   ======================================== */
+
+/* Dots on the vertical line */
+.timeline-4::after {
+	content: "";
+	position: absolute;
+	width: 13px;
+	height: 13px;
+	right: -5px;
+	background-color: var(--line);
+	top: 22px;
+	border-radius: 50%;
+	z-index: 1;
+}
+
+/* ========================================
+   POSITIONING (LEFT/RIGHT)
+   ======================================== */
+
+/* Left-aligned items */
+.left-4 {
+	padding: 0 40px 5px 0;
+	left: 0;
+}
+
+/* Right-aligned items */
+.right-4 {
+	padding: 0 0 5px 40px;
+	left: 50%;
+}
+
+/* ========================================
+   ARROWS/CONNECTORS
+   ======================================== */
+
+/* Arrow pointing right (from left items) */
+.left-4::before {
+	content: " ";
+	position: absolute;
+	top: 18px;
+	z-index: 1;
+	right: 30px;
+	border: medium solid rgba(37, 117, 252, 1);
+	border-width: 10px 0 10px 10px;
+	border-color: transparent transparent transparent var(--line);
+}
+
+/* Arrow pointing left (from right items) */
+.right-4::before {
+	content: " ";
+	position: absolute;
+	top: 18px;
+	z-index: 1;
+	left: 30px;
+	border: medium solid rgba(245, 87, 108, 1);
+	border-width: 10px 10px 10px 0;
+	border-color: transparent var(--line) transparent transparent;
+}
+
+/* Fix circle position for right-side items */
+.right-4::after {
+	left: -8px;
+}
+
+/* ========================================
+   GRADIENT BACKGROUNDS
+   ======================================== */
+
+/* Card background gradient */
+.gradient-custom {
+	background: #252c33;
+	background: linear-gradient(to bottom, #252c33, #212529);
+	border: 1px solid var(--line);
+}
+
+.gradient-custom-4 {
+	background: #f093fb;
+	background: linear-gradient(
+		to left,
+		rgba(240, 147, 251, 1),
+		rgba(245, 87, 108, 1)
+	);
+}
+
+/* ========================================
+   MEDIA QUERIES
+   ======================================== */
+
+/* Mobile Layout (<650px) */
+@media screen and (max-width: 650px) {
+	.container-sm,
+	.container {
+		max-width: 650px;
+	}
+
+	/* Single column layout */
+	.timeline-4 {
+		width: 100%;
+		padding-left: 70px;
+		padding-right: 25px;
+	}
+
+	/* All arrows point right */
+	.timeline-4::before {
+		left: 35px;
+		border: medium solid white;
+		border-width: 10px 10px 10px 0;
+		border-color: transparent var(--line) transparent transparent;
+	}
+
+	/* Move vertical line to left */
+	.main-timeline-4::after {
+		left: 15px;
+	}
+
+	/* Align all dots to left line */
+	.left-4::after,
+	.right-4::after {
+		left: 8px;
+	}
+
+	/* Reset left arrow */
+	.left-4::before {
+		right: auto;
+	}
+
+	/* Reset right positioning */
+	.right-4 {
+		left: 0%;
+	}
+
+	/* Consistent padding for all items */
+	.left-4 {
+		padding: 0 0 10px 44px;
+	}
+
+	.right-4 {
+		padding: 0 0 10px 44px;
+	}
+
+	/* Smaller icons for mobile */
+	.icon,
+	.icon-left,
+	.icon-right {
+		width: var(--icon-width-small) !important;
+		height: var(--icon-height-small) !important;
+	}
+
+	.icon-left {
+		float: left;
+		margin-left: 20px;
+		margin-bottom: -5px;
+	}
+
+	.icon-right {
+		float: right;
+		margin-right: 20px;
+		margin-bottom: -5px;
+	}
+}
+
+/* Tablet/Desktop (>650px) */
+@media (min-width: 651px) {
+	.container-sm,
+	.container {
+		max-width: 95vw;
+	}
+}

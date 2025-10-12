@@ -1,0 +1,558 @@
+/* Base / Theme */
+:root { --bg-333:#333333; --line:#6c757d; --muted:#adb5bd; }
+h6 {color: var(--muted);}
+.btn-outline-light { --bs-btn-hover-bg:#6c757d; --bs-btn-border-color: #6c757d;}
+html, body { height:100%; }
+body.bg-dark-333 { background:#333333; color:#e9ecef; font-family:"Gotham Light","Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif; }
+
+/* Hero */
+.hero { padding-top: 88px; padding-bottom: 75px; }
+.hero-name {
+  font-weight:300;
+  font-size: clamp(2.2rem, 2.6vw + 1rem, 4rem);
+  line-height:1.1;
+  margin: .25rem 0 0.5rem 0;
+  display:inline-block;
+  padding:.35rem 1.25rem;
+}
+.hero-quote {
+  font-weight:300;
+  font-size:clamp(1rem, .9vw + .6rem, 1.4rem);
+  color: var(--muted);
+  margin: .35rem 0 0;
+  position: relative;
+}
+.hero-quote::before,
+.hero-quote::after{
+  content:"";
+  display:block;
+  height:1px;
+  background:var(--line);
+  width:min(650px, 80vw);
+  margin:.75rem auto 0.35rem auto;
+}
+
+/* Avatar */
+.avatar {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(circle at 35% 35%, #555 0, #444 60%, #3a3a3a 100%);
+  background-size: cover;        
+  background-position: center;   
+  background-repeat: no-repeat;
+}
+.avatar-initial { font-weight:500; font-size:2rem; color:#ddd; opacity:.85; }
+
+/* Footer */
+footer { color: var(--muted); }
+
+/* Helpers */
+.border-secondary-subtle { border-color: rgba(255,255,255,.15)!important; }
+
+/* ========== GESTAFFELTE TIMELINE ========== */
+.staggered-timeline {
+    --connector: 48px;
+    --dot-offset: 5px;
+    --line: rgba(255,255,255,.15);
+    --dash: rgba(255,255,255,.35);
+    --dot: #e9ecef;
+    --line-spacing: 12px;
+    position: relative;
+    padding-top: 20px;
+    overflow: visible;
+}
+
+.timeline-container {
+    position: relative;
+    min-height: 200px;
+    overflow: visible;
+}
+
+/* Milestone items */
+.milestone-item {
+  position: relative;
+  text-align: center;
+}
+
+/* =========== DESKTOP HORIZONTAL (>=1400px) =========== */
+@media (min-width: 1400px) {
+	.milestones-wrapper {
+		display: flex;
+		align-items: flex-start;
+		position: relative;
+		z-index: 10;
+		overflow: hidden;
+	}
+  
+  .milestone-item {
+    flex: 1;
+    margin-top: calc(var(--connector) + 40px); /* 40px Abstand für bessere Trennung */
+  }
+  
+  /* Freelance-Timeline - oberhalb aller anderen */
+	.milestones-wrapper::before {
+		content: "";
+		position: absolute;
+		top: calc(-1 * var(--connector) - var(--line-spacing));
+		left: 30%;
+		width: calc(66.66% - 110px);
+		height: 2px;
+		background: var(--line);
+		z-index: 0;
+		top: 28px;
+	}
+  
+  /* Gestaffelte Timeline-Linien - über die gesamte Container-Breite */
+  .milestone-item:nth-child(1)::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector));
+    left: 50%;
+    width: 100vw;
+    height: 2px;
+    background: var(--line);
+    z-index: 1;
+  }
+  
+  .milestone-item:nth-child(2)::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing));
+    left: 50%;
+    width: 100vw;
+    height: 2px;
+    background: var(--line);
+    z-index: 2;
+  }
+  
+  .milestone-item:nth-child(3)::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing) * 2);
+    left: 50%;
+    width: 100vw;
+    height: 2px;
+    background: var(--line);
+    z-index: 3;
+  }
+  
+  .milestone-item:nth-child(4)::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing) * 3);
+    left: 50%;
+    width: 100vw;
+    height: 2px;
+    background: var(--line);
+    z-index: 4;
+  }
+  
+  .milestone-item:nth-child(5)::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing) * 4);
+    left: 50%;
+    width: 100vw;
+    height: 2px;
+    background: var(--line);
+    z-index: 5;
+  }
+  
+  .milestone-item:nth-child(6)::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing) * 5);
+    left: 50%;
+    width: 100vw;
+    height: 2px;
+    background: var(--line);
+    z-index: 6;
+  }
+  
+  /* Vertikale Verbinder zu den jeweiligen Linien - zurück zur ursprünglichen Nummerierung */
+  .milestone-item:nth-child(1)::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector));
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(var(--connector) + 50px);
+    border-right: 2px dashed var(--dash);
+  }
+  
+  .milestone-item:nth-child(2)::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing));
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(var(--connector) - var(--line-spacing) + 50px);
+    border-right: 2px dashed var(--dash);
+  }
+  
+  .milestone-item:nth-child(3)::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing) * 2);
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(var(--connector) - var(--line-spacing) * 2 + 50px);
+    border-right: 2px dashed var(--dash);
+  }
+  
+  .milestone-item:nth-child(4)::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing) * 3);
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(var(--connector) - var(--line-spacing) * 3 + 50px);
+    border-right: 2px dashed var(--dash);
+  }
+  
+  .milestone-item:nth-child(5)::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing) * 4);
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(var(--connector) - var(--line-spacing) * 4 + 50px);
+    border-right: 2px dashed var(--dash);
+  }
+  
+  .milestone-item:nth-child(6)::after {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--connector) + var(--line-spacing) * 5);
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(var(--connector) - var(--line-spacing) * 5 + 50px);
+    border-right: 2px dashed var(--dash);
+  }
+  
+  /* Dots auf den Timeline-Linien - zurück zur ursprünglichen Nummerierung */
+  .milestone-item:nth-child(1) .timeline-dot { top: calc(-1 * var(--connector) - 2px); }
+  .milestone-item:nth-child(2) .timeline-dot { top: calc(-1 * var(--connector) + var(--line-spacing) - 2px); }
+  .milestone-item:nth-child(3) .timeline-dot { top: calc(-1 * var(--connector) + var(--line-spacing) * 2 - 2px); }
+  .milestone-item:nth-child(4) .timeline-dot { top: calc(-1 * var(--connector) + var(--line-spacing) * 3 - 2px); }
+  .milestone-item:nth-child(5) .timeline-dot { top: calc(-1 * var(--connector) + var(--line-spacing) * 4 - 2px); }
+  .milestone-item:nth-child(6) .timeline-dot { top: calc(-1 * var(--connector) + var(--line-spacing) * 5 - 2px); }
+  
+  .freelance-milestone-float {
+    position: absolute;
+    left: 27.66%;
+    top: calc(-1 * var(--connector) - 20px);
+    text-align: center;
+    z-index: 20;
+  }
+}
+
+/* =========== VERTICAL MULTI-STRAND (<1400px) =========== */
+@media (max-width: 1399.98px) {
+  .staggered-timeline {
+    padding-top: 80px;
+    padding-bottom: 40px;
+  }
+  
+  .milestones-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    min-height: 800px;
+    flex-direction: row;
+  }
+  
+  /* Milestone Items - jetzt als vertikale Säulen */
+  .milestone-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column-reverse; /* Umkehrung: 1999 unten, 2025 oben */
+    align-items: center;
+    position: relative;
+    margin: 0 8px;
+    min-height: 700px;
+    justify-content: flex-start;
+  }
+  
+  /* Vertikale Timeline-Linien für jeden Milestone */
+  .milestone-item::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--line);
+    z-index: 1;
+  }
+  
+  /* Milestone Content Positionierung */
+  .milestone-content {
+    position: relative;
+    z-index: 10;
+    margin: 20px 0;
+    padding: 0 8px;
+    text-align: center;
+    max-width: 140px;
+  }
+  
+  /* Abwechselnde Positionierung links/rechts der jeweiligen Linie */
+  .milestone-item:nth-child(odd) .milestone-content {
+    align-self: flex-start;
+    margin-left: -60px;
+    text-align: right;
+  }
+  
+  .milestone-item:nth-child(even) .milestone-content {
+    align-self: flex-end;
+    margin-right: -60px;
+    text-align: left;
+  }
+  
+  /* Horizontale Verbinder zur jeweiligen Linie */
+  .milestone-item::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 2px;
+    width: 30px;
+    background: var(--dash);
+    z-index: 5;
+  }
+  
+  .milestone-item:nth-child(odd)::after {
+    right: 50%;
+  }
+  
+  .milestone-item:nth-child(even)::after {
+    left: 50%;
+  }
+  
+  /* Timeline Dots */
+  .milestone-item .timeline-dot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: var(--dot);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(255,255,255,.12);
+    z-index: 15;
+  }
+  
+  /* Freelance Integration */
+  .freelance-milestone-float {
+    position: absolute;
+    right: 16.66%; /* Positionierung bei der 2. Säule von rechts (2011) */
+    top: 25%; /* Etwa bei 2011 positioniert */
+    z-index: 20;
+    text-align: center;
+  }
+  
+  .freelance-content {
+    margin-bottom: 10px;
+    max-width: 100px;
+  }
+  
+  .freelance-connector {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 30px;
+    width: 2px;
+    background: var(--dash);
+    z-index: 19;
+  }
+  
+  .freelance-dot-float {
+    position: absolute;
+    top: calc(100% + 30px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: var(--dot);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(255,255,255,.12);
+    z-index: 21;
+  }
+}
+
+/* =========== SEHR SCHMALE BILDSCHIRME (<=700px) =========== */
+@media (max-width: 700px) {
+  .milestone-item {
+    margin: 0 4px;
+    min-height: 600px;
+  }
+  
+  .milestone-content {
+    max-width: 100px;
+    font-size: 0.85rem;
+  }
+  
+  .milestone-item:nth-child(odd) .milestone-content {
+    margin-left: -45px;
+  }
+  
+  .milestone-item:nth-child(even) .milestone-content {
+    margin-right: -45px;
+  }
+  
+  .freelance-content {
+    max-width: 80px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Dots auf den Timeline-Linien */
+.milestone-item .timeline-dot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: var(--dot);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.12) inset;
+  z-index: 20;
+}
+
+/* Typography */
+.track {
+    font-weight: 400;
+    letter-spacing: .12em;
+    color: #e9ecef;
+    opacity: .9;
+    border-bottom: 2px solid var(--line);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 2px 1em;
+    margin-top: 55px;
+    width: 96%;
+}
+
+.event-date {
+  font-size: .95rem;
+  color: #e9ecef;
+  opacity: .85;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.note {
+  color: #cfd4da;
+  font-size: .9rem;
+  line-height: 1.35;
+  margin-top: .25rem;
+  padding: 0 20px;
+}
+
+/* Responsive positioning */
+@media (min-width: 1400px) {
+  .event-date {
+    position: absolute;
+    top: calc(-1 * var(--connector) - 44px);
+    left: 0;
+    right: 0;
+    width: 80px;
+    margin: 0 auto;
+    padding-top: 6px;
+  }
+  
+	.freelance-milestone-float {
+		position: absolute;
+		left: 27.0%;
+		top: calc(-1 * var(--connector) - -2px);
+		text-align: center;
+		z-index: 20;
+	}
+}
+
+@media (max-width: 1399.98px) {
+  .track {
+    font-size: .75rem;
+    letter-spacing: .14em;
+    margin-top: 10px;
+    padding: 2px 0.5em;
+  }
+  
+  .event-date {
+    position: static;
+    display: inline-block;
+    margin-bottom: .25rem;
+    padding: 0;
+    font-size: 0.85rem;
+  }
+  
+  .note {
+    padding: 0 8px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Freelance Milestone Styling */
+.freelance-content {
+  margin-bottom: 40px;
+}
+
+.freelance-date {
+    font-size: .95rem;
+    color: #cfd4da;
+    opacity: .85;
+    font-weight: 500;
+    margin-bottom: -0.5rem;
+}
+
+.freelance-track {
+  font-weight: 400;
+  letter-spacing: .12em;
+  color: #cfd4da;
+  opacity: .9;
+  border-bottom: 2px solid var(--line);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  display: inline-block;
+  padding-bottom: 2px;
+  margin-top: 0;
+  margin-bottom: -0.5rem;
+}
+
+.freelance-note {
+  color: #ff6b6b;
+  format: .9rem;
+  line-height: 1.35;
+  margin: 0px;
+}
+
+.freelance-connector {
+    position: absolute;
+    top: 51%;
+    left: 43%;
+    transform: translateX(-50%);
+    height: 40px;
+    border-right: 2px dashed var(--dash);
+    z-index: 19;
+}
+
+.freelance-dot-float {
+    position: absolute;
+    top: calc(100% + 50px - 42px);
+    left: 43%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: var(--dot);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(255,255,255,.12) inset;
+    z-index: 21;
+}

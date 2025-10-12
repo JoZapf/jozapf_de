@@ -1,0 +1,85 @@
+# =========================
+# .htaccess – jozapf.de
+# =========================
+
+# 0) Rewrite einschalten
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1) Canonical: HTTPS + non-www (Legacy-Pfade ausnehmen, damit nur ein Hop erfolgt)
+  RewriteCond %{REQUEST_URI} !^/(impressum|datenschutz)\.html$
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} ^www\.jozapf\.de$ [NC]
+  RewriteRule ^ https://jozapf.de%{REQUEST_URI} [R=301,L]
+
+  # 1b) Legacy: impressum.html & datenschutz.html -> Startseite (direkt final)
+  RewriteRule ^(impressum|datenschutz)\.html$ https://jozapf.de/ [R=301,L]
+
+  # 2) robots.txt auf Kleinschreibung kanonisieren
+  #    (Nur redirecten, wenn NICHT bereits exakt /robots.txt angefragt)
+  RewriteCond %{REQUEST_URI} !^/robots\.txt$
+  RewriteRule ^robots\.txt$ /robots.txt [R=301,L,NC]
+
+  # 3) Legacy/Fehl-Endpoints
+  Redirect 301 /sitemap.txt https://jozapf.de/sitemap.xml
+  Redirect gone /test11.1/
+  Redirect gone /feed/
+
+  # 4) Sensible Dateien/Dirs blocken
+  #    - Alle Dotfiles/-dirs sperren, außer .well-known (Let's Encrypt etc.)
+  RewriteRule "(^|/)\.(?!well-known/)" - [F]
+  #    - Häufige Config-/Env-Dateien überall sperren
+  #      - Schütze sowohl '.app.env' als auch 'app.env' (mit und ohne führenden Punkt)
+  RewriteRule "(^|/)(\.?app\.env|composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|wp-config\.php(\.bak)?|config\.(json|ya?ml)|\.env(\..*)?)$" - [F]
+
+  # 5) Server-seitigen Helferbereich: nur ausgewählte Dashboard-Dateien erlauben,
+  #    den Rest von assets/php sperren (so werden intern genutzte Helfer geschützt)
+  #    Zulassen: dashboard-login.php und dashboard.php
+  RewriteRule ^assets/php/(dashboard-login\.php|dashboard\.php|dashboard-api\.php|dashboard-blocklist\.php|contact-php-handler\.php)$ - [L]
+  #    Alles andere im assets/php-Verzeichnis sperren
+  RewriteRule ^assets/php/ - [F]
+</IfModule>
+
+# 6) Security-Header
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# 7) Caching & Kompression
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType application/x-javascript "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresDefault "access plus 1 month"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain text/html text/css application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+# 8) Directory Listing aus
+Options -Indexes
+
+# 9) Custom Error-Seiten (Dateien bereitstellen!)
+ErrorDocument 404 /404.html
+ErrorDocument 403 /403.html
+
+# 10) Optional: .map-Anfragen als Gone markieren, wenn du keine Source-Maps auslieferst
+#    (entkommentieren, um Bot/Browser-Anfragen zu beruhigen)
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteRule \.map$ - [G]
+# </IfModule>
+
+# Minimaler Server-Footprint
+ServerSignature Off

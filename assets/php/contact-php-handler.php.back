@@ -1,0 +1,343 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * contact-php-handler.php
+ * ---------------------------------------------
+ * - Gibt immer JSON zurück
+ * - Lädt .env.prod bei APP_ENV=prod
+ * - Nutzt Composer (vendor/autoload.php) für PHPMailer
+ * - Schreibt Fehler nach assets/php/logs/php-errors.log
+ * - Validiert Request-Felder analog zur aktuellen JS-Logik
+ * - SMTP-Setup für Hetzner (oder leer -> mail())
+ *
+ * Verzeichnisstruktur (relativ zu dieser Datei):
+ *   assets/php/contact-php-handler.php    (diese Datei)
+ *   assets/php/logs/                      (wird automatisch erstellt)
+ *   vendor/autoload.php                   (Composer installiert)
+ */
+
+// ---------- HTTP-Header & CORS ----------
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    echo '';
+    exit;
+}
+
+// ---------- Fehler-Logging einrichten ----------
+$baseDir = dirname(__FILE__);               // .../assets/php
+$logDir  = $baseDir . '/logs';
+if (!is_dir($logDir)) { @mkdir($logDir, 0775, true); }
+$phpErr  = $logDir . '/php-errors.log';
+
+// Fehler in Logfile schreiben (nicht an den Client leaken)
+@ini_set('log_errors', '1');
+@ini_set('error_log', $phpErr);
+@ini_set('display_errors', '0');
+
+/** Wandelt PHP-Warnings/Notices in Exceptions, damit wir sauber JSON liefern können. */
+set_error_handler(static function (int $errno, string $errstr, string $errfile, int $errline): bool {
+    // Respect error_reporting (z. B. bei @-Operator)
+    if (!(error_reporting() & $errno)) {
+        return false;
+    }
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+});
+
+// ---------- Hilfsfunktionen ----------
+/** Minimaler .env-Parser (einfaches KEY=VALUE, ohne Arrays) */
+function parse_dotenv_file(string $file): array {
+    if (!is_readable($file)) return [];
+    $out = [];
+    $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if ($lines === false) return $out;
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#' || $line[0] === ';') continue;
+
+        // Kommentarteil abschneiden (außer innerhalb von Quotes)
+        if (strpos($line, '#') !== false && !preg_match('/["\'].*#.*["\']/', $line)) {
+            $line = trim(substr($line, 0, strpos($line, '#')));
+        }
+        if (strpos($line, '=') === false) continue;
+
+        [$k, $v] = explode('=', $line, 2);
+        $k = trim($k);
+        $v = trim($v);
+
+        if ((strlen($v) >= 2) && (
+            ($v[0] === '"' && substr($v, -1) === '"') ||
+            ($v[0] === "'" && substr($v, -1) === "'")
+        )) {
+            $v = substr($v, 1, -1);
+        }
+        $out[$k] = $v;
+    }
+    return $out;
+}
+
+/** getenv() bevorzugen, sonst $_ENV, sonst Default */
+function envv(string $key, $default = null) {
+    $v = getenv($key);
+    if ($v !== false && $v !== '') return $v;
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return $_ENV[$key];
+    return $default;
+}
+
+/** JSON-Response Helper */
+function json_ok(array $extra = []): void {
+    http_response_code(200);
+    echo json_encode(['ok' => true] + $extra, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    exit;
+}
+function json_fail(int $status, string $msg, array $extra = []): void {
+    http_response_code($status);
+    echo json_encode(['ok' => false, 'error' => $msg] + $extra, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// ---------- Env laden ----------
+try {
+    // Basis: PROD only – wir lesen .env.prod, wenn APP_ENV nicht schon im Prozess gesetzt ist
+    $appEnv = getenv('APP_ENV') ?: null;
+
+    // .env.prod liegt im gleichen Ordner wie diese Datei (assets/php/.env.prod) ODER ein Level höher:
+    $candidates = [
+        $baseDir . '/.env.prod',
+        dirname($baseDir) . '/.env.prod',               // assets/.env.prod
+        dirname($baseDir, 2) . '/.env.prod',            // test11.1/.env.prod
+    ];
+    $env = [];
+    foreach ($candidates as $f) {
+        if (is_readable($f)) { $env = parse_dotenv_file($f); break; }
+    }
+
+    if (!$appEnv) {
+        $appEnv = $env['APP_ENV'] ?? 'prod';
+        $_ENV['APP_ENV'] = $appEnv;
+    }
+
+    // Werte aus .env in $_ENV “einblenden”, sofern nicht via getenv gesetzt
+    foreach ($env as $k => $v) {
+        if (($g = getenv($k)) !== false && $g !== '') { continue; }
+        $_ENV[$k] = $v;
+    }
+
+} catch (Throwable $e) {
+    error_log('[BOOT] ENV load failed: ' . $e->getMessage());
+    // wir machen trotzdem weiter – einige Werte kommen ggf. aus getenv()
+}
+
+// ---------- Composer/PHPMailer laden ----------
+try {
+    // Autoloader suchen (vendor liegt auf Projektwurzel test11.1/)
+    $autoloadCandidates = [
+        dirname($baseDir, 2) . '/vendor/autoload.php',     // test11.1/vendor/autoload.php
+        dirname($baseDir) . '/vendor/autoload.php',        // assets/vendor/autoload.php (fallback)
+    ];
+    $autoload = null;
+    foreach ($autoloadCandidates as $a) {
+        if (is_readable($a)) { $autoload = $a; break; }
+    }
+    if (!$autoload) {
+        throw new RuntimeException('Composer autoload.php not found – bitte vendor/ bereitstellen.');
+    }
+    require $autoload;
+} catch (Throwable $e) {
+    error_log('[BOOT] Autoload failed: ' . $e->getMessage());
+    json_fail(500, 'Server-Fehler: Autoload fehlgeschlagen.');
+}
+
+// ---------- Nur POST akzeptieren ----------
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    json_fail(405, 'Nur POST erlaubt.');
+}
+
+// ---------- Request lesen & validieren ----------
+try {
+    // Feldnamen gem. deiner aktuellen JS:
+    $firstName     = trim((string)($_POST['firstName'] ?? ''));
+    $lastName      = trim((string)($_POST['lastName'] ?? ''));
+    $email         = trim((string)($_POST['email'] ?? ''));
+    $phone         = trim((string)($_POST['phone'] ?? ''));
+    $subject       = trim((string)($_POST['subject'] ?? ''));
+    $message       = trim((string)($_POST['message'] ?? ''));
+    $privacy       = (string)($_POST['privacy'] ?? '');
+    $captchaAnswer = (string)($_POST['captchaAnswer'] ?? $_POST['captcha_answer'] ?? '');
+
+    $name = trim($firstName . ' ' . $lastName);
+
+    $errors = [];
+
+    if ($name === '')          { $errors['name'] = 'Bitte Name angeben.'; }
+    if ($message === '')       { $errors['message'] = 'Bitte eine Nachricht eingeben.'; }
+    if ($privacy !== 'on')     { $errors['privacy'] = 'Bitte Datenschutzhinweis akzeptieren.'; }
+
+    if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Ungültige E-Mail-Adresse.';
+    }
+
+    // Captcha-Check optional (Client-seitig generiert). Wenn vorhanden, sehr einfache Prüfung:
+    if ($captchaAnswer !== '' && !preg_match('/^\d+$/', $captchaAnswer)) {
+        $errors['captcha'] = 'Captcha ungültig.';
+    }
+
+    if ($errors) {
+        json_fail(422, 'Bitte Eingaben prüfen.', ['fields' => $errors]);
+    }
+
+    // ---------- Mail-Parameter aus ENV ----------
+    $appEnv        = envv('APP_ENV', 'prod');
+    $devFakeSend   = strtolower((string)envv('DEV_FAKE_SEND', 'false')) === 'true';
+
+    $recipientEmail = (string)envv('RECIPIENT_EMAIL', '');
+    $noreplyEmail   = (string)envv('NOREPLY_EMAIL', '');
+    $subjectPrefix  = (string)envv('SUBJECT_PREFIX', 'Kontakt: ');
+
+    $smtpHost   = (string)envv('SMTP_HOST', '');
+    $smtpPort   = (int)envv('SMTP_PORT', 0);
+    $smtpSecure = strtolower((string)envv('SMTP_SECURE', '')); // tls|ssl|''
+    $smtpUser   = (string)envv('SMTP_USER', '');
+    $smtpPass   = (string)envv('SMTP_PASS', '');
+
+    if ($recipientEmail === '') {
+        json_fail(500, 'Server-Fehler: RECIPIENT_EMAIL fehlt.');
+    }
+
+    // ---------- Mail-Text(e) ----------
+    $subjectSafe = trim($subjectPrefix . ($subject !== '' ? $subject : 'Neue Nachricht'));
+    $bodyLines = [
+        "Kontaktanfrage über die Website",
+        "--------------------------------",
+        "Name:    {$name}",
+        "E-Mail:  " . ($email !== '' ? $email : '-'),
+        "Telefon: " . ($phone !== '' ? $phone : '-'),
+        "Betreff: " . ($subject !== '' ? $subject : '-'),
+        "",
+        "Nachricht:",
+        $message,
+        "",
+        "Datenschutz akzeptiert: " . ($privacy === 'on' ? 'ja' : 'nein'),
+        "Captcha (Info): " . ($captchaAnswer !== '' ? $captchaAnswer : '-'),
+        "",
+        "Client-IP: " . ($_SERVER['REMOTE_ADDR'] ?? '-'),
+        "User-Agent: " . ($_SERVER['HTTP_USER_AGENT'] ?? '-'),
+        "Zeit: " . date('Y-m-d H:i:s'),
+    ];
+    $bodyText = implode("\n", $bodyLines);
+
+    // Sehr einfache HTML-Variante
+    $bodyHtml = nl2br(htmlentities($bodyText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
+
+    // ---------- DEV-FAKE-SEND ----------
+    if ($devFakeSend) {
+        // Schreiben wir ins Log und tun so, als hätten wir gesendet
+        @file_put_contents($logDir . '/dev-fake-mails.log',
+            '[' . date('Y-m-d H:i:s') . "] FAKE SEND\nTO: {$recipientEmail}\nSUBJ: {$subjectSafe}\n\n{$bodyText}\n\n",
+            FILE_APPEND
+        );
+        json_ok(['message' => 'Testmodus: Nachricht protokolliert, nicht gesendet.']);
+    }
+
+    // ---------- PHPMailer einrichten ----------
+    /** @var \PHPMailer\PHPMailer\PHPMailer $mail */
+    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+    $mail->CharSet  = 'UTF-8';
+    $mail->isHTML(true);
+    $mail->Subject  = $subjectSafe;
+    $mail->Body     = $bodyHtml;
+    $mail->AltBody  = $bodyText;
+
+    // SMTP verwenden, wenn Host gesetzt
+    if ($smtpHost !== '') {
+        $mail->isSMTP();
+        $mail->Host = $smtpHost;
+        if ($smtpPort > 0) { $mail->Port = $smtpPort; }
+
+        // TLS/SSL nur, wenn sinnvoll (Hetzner: 587/tls oder 465/ssl)
+        if ($smtpSecure === 'tls') {
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        } elseif ($smtpSecure === 'ssl') {
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+        } else {
+            $mail->SMTPSecure = false; // z.B. lokales MailHog
+        }
+
+        if ($smtpUser !== '') {
+            $mail->SMTPAuth = true;
+            $mail->Username = $smtpUser;
+            $mail->Password = $smtpPass;
+        } else {
+            $mail->SMTPAuth = false;
+        }
+
+        // Debug nur in dev
+        if ($appEnv === 'dev') {
+            $mail->SMTPDebug  = 2;
+            $mail->Debugoutput = static function ($str): void {
+                error_log('[SMTP] ' . $str);
+            };
+        } else {
+            $mail->SMTPDebug = 0;
+        }
+    }
+
+    // ===== Versand-Block (From/Reply-To/Return-Path + .eml) =====
+    $fromHeader = $noreplyEmail ?: $smtpUser ?: 'no-reply@' . ($_SERVER['SERVER_NAME'] ?? 'localhost');
+    $replyName  = 'Website';
+
+    // 1) Absender-Politik
+    $headerFromEmail = $smtpUser ?: $fromHeader;
+    $replyToEmail    = $noreplyEmail ?: $headerFromEmail;
+
+    // 2) Adressierung
+    $mail->setFrom($headerFromEmail, $replyName, false);
+    $mail->addAddress($recipientEmail);
+    if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        // Optional: Antworten direkt an den Absender statt noreply
+        $mail->addReplyTo($email, $name !== '' ? $name : 'Website-Besucher');
+    } else {
+        $mail->addReplyTo($replyToEmail, $replyName);
+    }
+
+    // 3) Envelope-From / Return-Path (für Bounces)
+    if (!empty($smtpUser)) {
+        $mail->Sender = $smtpUser;
+    }
+
+    // 4) eigene Header (Tracing)
+    if (!empty($_SERVER['REMOTE_ADDR'])) {
+        $mail->addCustomHeader('X-Originating-IP', $_SERVER['REMOTE_ADDR']);
+    }
+    $mail->addCustomHeader('X-App-Env', $appEnv);
+    $mail->addCustomHeader('X-App-Handler', 'contact-php-handler.php');
+
+    // 5) .eml-Mitschnitt
+    $emlDir = $logDir . '/sent-eml';
+    if (!is_dir($emlDir)) { @mkdir($emlDir, 0775, true); }
+    try {
+        if ($mail->preSend()) {
+            $raw = $mail->getSentMIMEMessage();
+            $emlFile = $emlDir . '/mail-' . date('Ymd-His') . '-' . bin2hex(random_bytes(4)) . '.eml';
+            @file_put_contents($emlFile, $raw);
+        }
+    } catch (Throwable $emlEx) {
+        error_log('[MAIL] EML write failed: ' . $emlEx->getMessage());
+        // kein harter Fehler
+    }
+
+    // ---------- Senden ----------
+    $mail->send();
+    json_ok(['message' => 'Nachricht erfolgreich versendet.']);
+
+} catch (\PHPMailer\PHPMailer\Exception $e) {
+    error_log('[MAIL] PHPMailer Exception: ' . $e->getMessage());
+    json_fail(500, 'Versand fehlgeschlagen. Bitte später erneut versuchen.');
+} catch (Throwable $e) {
+    error_log('[FATAL] ' . $e->getMessage());
+    json_fail(500, 'Unerwarteter Fehler. Bitte später erneut versuchen.');
+}

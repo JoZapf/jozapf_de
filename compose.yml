@@ -1,0 +1,93 @@
+# ---------------------------------------------------------------
+# Docker Compose für jozapf-de
+# Ziel: Nginx + PHP-FPM + MariaDB + Mailpit (Dev-Mail) pro Projekt
+# - Xdebug: per ENV toggelbar (nur im DEV-Image vorhanden), default = OFF
+# - PHP-Konfiguration: versionierte Dateien unter ./docker/php/conf.d
+# - Secrets: Echte Werte liegen außerhalb (E:/Secrets/jozapf-de/app.env)
+# ---------------------------------------------------------------
+name: ${PROJECT_SLUG}
+
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on: [php]
+    ports:
+      - "${HTTP_PORT}:80"
+    volumes:
+      # Mount the full project root as the container webroot so /var/www/html/.env is available
+      - ${PROJECT_ROOT_WINDOWS}:/var/www/html:rw
+      # Ensure the repository .env (non-secrets) is visible at container webroot
+      - type: bind
+        source: "${PROJECT_ROOT_WINDOWS}/.env"
+        target: /var/www/html/.env
+        read_only: true
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  php:
+    # Eigene PHP-Images (dev/prod) – Xdebug nur im dev-Target installiert
+    build:
+      context: ./docker/php
+      target: ${DOCKER_TARGET:-prod}               # dev | prod
+      args:
+        PHP_TAG: ${PHP_TAG:-8.3-fpm-alpine}
+
+    # 🔐 Alle APP-Variablen/Secrets aus externer Datei laden (NICHT ins Repo!)
+    env_file:
+      - "${SECRETS_DIR}/app.env"                  # z.B. E:/Secrets/jozapf-de/app.env
+
+    # ✅ Nur nicht-sensitive Toggles hier – KEINE Secrets in Klartext!
+    environment:
+      # Xdebug ist im dev-Image vorhanden, wird aber NUR über diesen Mode aktiviert:
+      # Werte: off | debug | develop | coverage | trace | profile (kombinierbar)
+      XDEBUG_MODE: ${XDEBUG_MODE:-off}
+      # Windows-Host als Debug-Ziel (kannst du bei Bedarf überschreiben):
+      XDEBUG_CONFIG: ${XDEBUG_CONFIG:-client_host=host.docker.internal client_port=9003}
+
+      # Optional: falls dein PHP-Code die .env-Datei SELBST liest (nicht nur ENV),
+      # kannst du ihm hier den Pfad mitteilen (z. B. von einem Loader genutzt)
+      APP_ENV_FILE: /var/www/html/assets/php/app.env
+
+    volumes:
+      # Quellcode ins Container-Webroot (mount project root so webroot .env is present)
+      - ${PROJECT_ROOT_WINDOWS}:/var/www/html:rw
+      # Versionierte PHP-Konfiguration (read-only)
+      - ./docker/php/conf.d:/usr/local/etc/php/conf.d:ro
+
+      # 🔐 Optional aber empfohlen, wenn dein Code die Datei direkt ausliest:
+      #     externe app.env → exakt an den erwarteten Projektpfad im Container
+      - type: bind
+        source: "${SECRETS_DIR}/app.env"          # E:/Secrets/... (Windows → forward slashes!)
+        target: /var/www/html/assets/php/app.env
+        read_only: true
+
+    healthcheck:
+      test: ["CMD-SHELL", "php -v || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      
+
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MARIADB_DATABASE: ${DB_NAME:-app}
+      MARIADB_USER: ${DB_USER:-app}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-app}
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "${DB_PORT}:3306"
+
+  mail:
+    image: axllent/mailpit:latest
+    ports:
+      - "${MAIL_HTTP_PORT}:8025"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8025/healthz || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  dbdata:

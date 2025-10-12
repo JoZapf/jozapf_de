@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="de" class="h-100">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<!-- Primary Meta Tags -->
+	<title>Jo Zapf - Web Development, Application Development & Cross-Media Solutions | Berlin</title>
+	<meta name="description" content="Jo Zapf offers professional web development, application development and cross-media solutions. Specialized in Python, Java, JavaScript, Docker, CI/CD and secure cloud infrastructure.">
+	<meta name="author" content="Jo Zapf">
+	<meta name="keywords" content="Web Development, Application Development, Cross Media, Docker, CI/CD, Python, Java, JavaScript, Linux, DevOps, Berlin">
+	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+	<meta name="theme-color" content="#212529">
+	
+	<!-- Canonical URL -->
+	<link rel="canonical" href="https://jozapf.de/">
+	
+	<!-- Alternate hreflang -->
+	<link rel="alternate" hreflang="en" href="https://jozapf.de/">
+	<link rel="alternate" hreflang="en" href="https://jozapf.com/">
+	<link rel="alternate" hreflang="x-default" href="https://jozapf.de/">
+	
+	<!-- Open Graph / Social Media -->
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="Jo Zapf">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:url" content="https://jozapf.de/">
+	<meta property="og:title" content="Jo Zapf - Web Development, Application Development & Cross-Media Solutions">
+	<meta property="og:description" content="Professional digital solutions: Application Development, Web Development, DevOps, Docker, CI/CD and secure cloud infrastructure from Berlin.">
+	<meta property="og:image" content="https://jozapf.de/assets/png/JoZapf_500x500.png">
+	<meta property="og:image:width" content="500">
+	<meta property="og:image:height" content="500">
+	<meta property="og:image:alt" content="Jo Zapf - Concept & Digital Solutions">
+	
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Jo Zapf - Web Development & Digital Solutions">
+	<meta name="twitter:description" content="Application Development, Web Development, DevOps and Cross-Media Solutions from Berlin.">
+	<meta name="twitter:image" content="https://jozapf.de/assets/png/JoZapf_500x500.png">
+	<meta name="twitter:image:alt" content="Jo Zapf Portfolio">
+	
+	<!-- Structured Data (JSON-LD) -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "Person",
+		"name": "Jo Zapf",
+		"url": "https://jozapf.de",
+		"image": "https://jozapf.de/assets/png/JoZapf_500x500.png",
+		"jobTitle": "Application Developer & Web Developer",
+		"description": "Application Development, Web Development, DevOps, Cross-Media Solutions",
+		"address": {
+			"@type": "PostalAddress",
+			"addressLocality": "Berlin",
+			"addressCountry": "DE"
+		},
+		"sameAs": [
+			"https://www.linkedin.com/in/jo-zapf/",
+			"https://github.com/JoZapf"
+		],
+		"knowsAbout": [
+			"Web Development",
+			"Application Development",
+			"Python",
+			"Java",
+			"JavaScript",
+			"Docker",
+			"CI/CD",
+			"DevOps",
+			"Linux Administration",
+			"Cloud Infrastructure"
+		]
+	}
+	</script>
+	
+	<!-- Additional Structured Data: Professional Service -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "ProfessionalService",
+		"name": "Jo Zapf - Digital Solutions",
+		"description": "Professional Web Development, Application Development and Cross-Media Solutions",
+		"url": "https://jozapf.de",
+		"address": {
+			"@type": "PostalAddress",
+			"addressLocality": "Berlin",
+			"addressCountry": "DE"
+		},
+		"priceRange": "$$"
+	}
+	</script>
+	
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="assets/favicon/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+	<link rel="shortcut icon" href="assets/favicon/favicon.ico">
+	<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+	<meta name="apple-mobile-web-app-title" content="Jo Zapf">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<link rel="manifest" href="assets/favicon/site.webmanifest">
+	
+	<!-- Preload Critical Resources -->
+	<link rel="preload" href="assets/css/bootstrap.css" as="style">
+	<link rel="preload" href="assets/js/bootstrap.bundle.min.js" as="script">
+	<link rel="preload" href="assets/png/JoZapf_500x500.png" as="image">
+	
+	<!-- DNS Prefetch for External Resources -->
+	<link rel="dns-prefetch" href="https://www.linkedin.com">
+	<link rel="dns-prefetch" href="https://github.com">
+	
+	<!-- Stylesheets -->
+	<link href="assets/css/bootstrap.css" rel="stylesheet">
+	<link href="assets/css/fonts.css" rel="stylesheet">
+	<link href="assets/css/cover.css" rel="stylesheet">
+	<link href="assets/css/timeline.css" rel="stylesheet">
+	<link href="assets/css/vertical_timeline.css" rel="stylesheet">
+	<link href="assets/css/contact-form.css" rel="stylesheet">
+</head>
+
+<body class="text-light bg-dark-333 d-flex flex-column min-vh-100">
+	<!-- Skip to main content (Accessibility) -->
+	<a href="#main-content" class="visually-hidden-focusable">Skip to main content</a>
+	
+	<!-- Header / Navigation -->
+	<header data-bs-theme="dark">
+		<nav class="navbar navbar-dark bg-transparent sticky-top border-bottom border-secondary-subtle" aria-label="Main navigation">
+			<div class="container-xxl d-flex justify-content-end">
+				<button
+					class="btn btn-outline-light btn-sm px-2 py-1 rounded-1"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#menuPanel"
+					aria-controls="menuPanel"
+					aria-expanded="false"
+					aria-label="Open navigation menu"
+				>
+					<span class="navbar-toggler-icon small align-middle"></span>
+				</button>
+			</div>
+		</nav>
+
+		<div id="menuPanel" class="collapse bg-dark border-bottom border-secondary-subtle">
+			<div class="container-xxl py-4">
+				<div class="row">
+					<nav class="col-12 col-md-8" aria-label="Social media links">
+						<ul class="list-unstyled mb-0">
+							<li class="mb-2">
+								<a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" 
+								   href="https://www.linkedin.com/in/jo-zapf/" 
+								   target="_blank" 
+								   rel="noopener noreferrer">
+									LinkedIn
+								</a>
+							</li>
+							<li class="mb-2">
+								<a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" 
+								   href="https://github.com/JoZapf" 
+								   target="_blank" 
+								   rel="noopener noreferrer">
+									GitHub
+								</a>
+							</li>
+							<li class="mb-0">
+								<a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" 
+								   href="#contact">
+									Contact
+								</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<!-- Main Content -->
+	<main id="main-content">
+		<!-- Hero Section -->
+		<section class="container-xxl hero d-flex flex-column align-items-center justify-content-center text-center">
+			<div class="avatar mb-3" role="img" aria-label="Jo Zapf profile picture">
+				<span class="avatar-initial" aria-hidden="true"></span>
+			</div>
+			
+			<h1 class="hero-name">
+				Jo Zapf
+				<span class="hero-subtitle">Web & Application Development</span>
+			</h1>
+			
+			<p class="hero-quote">
+				"everything you can imagine is real"
+			</p>
+
+			<p>
+				<span id="years-count" aria-live="polite"></span> years autodidactic journey*
+			</p>
+
+			<!-- Intro Section -->
+			<div class="intro">
+				<section aria-labelledby="areas-of-focus">
+					<h2 id="areas-of-focus" class="h5">Areas of focus beside recent studies:</h2>
+					<ul>
+						<li>Secure operations for Linux & Windows platforms (hardening, patching, monitoring, backup & recovery)</li>
+						<li>Private cloud infrastructure (VPN-only access, network segmentation, secure container orchestration, compliance-ready environment for sensitive workloads and internal applications)</li>
+						<li>Containerized services from development to production with Docker/Compose (reproducible builds, secure runtime, logging & metrics, automated rollbacks)</li>
+						<li>CI/CD with GitHub Actions (versioned releases, peer reviews, staged deployments: develop → staging → production)</li>
+						<li>On-prem AI agents (Model Context Protocol, MCP): evaluation and integration into internal workflows with data-privacy compliance</li>
+					</ul>
+				</section>
+			</div>
+		</section>
+
+		<!-- Horizontal Timeline (Desktop) -->
+		<section class="container-xxl pb-5 horizontal_timeline" aria-label="Career timeline">
+			<div class="staggered-timeline">
+				<div class="timeline-container">
+					<div class="milestones-wrapper">
+						<!-- Milestone 1999 -->
+						<article class="milestone-item">
+							<div class="timeline-dot" aria-hidden="true"></div>
+							<div class="milestone-content">
+								<time class="event-date" datetime="1999">1999</time>
+								<h3 class="track">Graphic</h3>
+								<div class="note note-bg">
+									<img src="assets/png/graphic_icon_150x142.png" 
+									     class="icon" 
+									     alt="Graphic design icon" 
+									     width="150" 
+									     height="142"
+									     loading="lazy">
+									<p>continued expressive artificial sketching | reinforcing visual media</p>
+								</div>
+								<div class="note hashtags" aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#intrinsic motivation</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#cross media</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#adobe</span>
+								</div>
+							</div>
+						</article>
+						
+						<!-- Milestone 2007 -->
+						<article class="milestone-item">
+							<div class="timeline-dot" aria-hidden="true"></div>
+							<div class="milestone-content">
+								<time class="event-date" datetime="2007">2007</time>
+								<h3 class="track">Web</h3>
+								<div class="note note-bg">
+									<img src="assets/png/web_icon_150x142.png" 
+									     class="icon" 
+									     alt="Web development icon" 
+									     width="150" 
+									     height="142"
+									     loading="lazy">
+									<p>started with: html | css | dbms | javascript | php</p>
+								</div>
+								<div class="note hashtags" aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#cms</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#framework</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#static</span>
+								</div>
+							</div>
+						</article>
+						
+						<!-- Milestone 2011 -->
+						<article class="milestone-item">
+							<div class="timeline-dot" aria-hidden="true"></div>
+							<div class="milestone-content">
+								<time class="event-date" datetime="2011">2011</time>
+								<h3 class="track">Video</h3>
+								<div class="note note-bg">
+									<img src="assets/png/video_icon_150x142.png" 
+									     class="icon" 
+									     alt="Video production icon" 
+									     width="150" 
+									     height="142"
+									     loading="lazy">
+									<p>film | cross-media- & post- production | motion graphics | 3D</p>
+								</div>
+								<div class="note hashtags" aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#motion graphic</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#animation</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#3D</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#authoring</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#vfx</span>
+								</div>
+							</div>
+						</article>
+						
+						<!-- Milestone 2013 -->
+						<article class="milestone-item">
+							<div class="timeline-dot" aria-hidden="true"></div>
+							<div class="milestone-content">
+								<time class="event-date" datetime="2013">2013</time>
+								<h3 class="track">Photo</h3>
+								<div class="note note-bg">
+									<img src="assets/png/photo_icon_150x142.png" 
+									     class="icon" 
+									     alt="Photography icon" 
+									     width="150" 
+									     height="142"
+									     loading="lazy">
+									<p>products | locations | people</p>
+								</div>
+								<div class="note hashtags" aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#product</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#events & locations</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#portrait</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#wedding</span>
+								</div>
+							</div>
+						</article>
+						
+						<!-- Milestone 2016 -->
+						<article class="milestone-item">
+							<div class="timeline-dot" aria-hidden="true"></div>
+							<div class="milestone-content">
+								<time class="event-date" datetime="2016">2016</time>
+								<h3 class="track">Net Admin / IT</h3>
+								<div class="note note-bg">
+									<img src="assets/png/it_icon_150x142.png" 
+									     class="icon" 
+									     alt="IT administration icon" 
+									     width="150" 
+									     height="142"
+									     loading="lazy">
+									<p>head of it | network administration | automation | cross-media production</p>
+								</div>
+								<div class="note hashtags" aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#project management</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#it responsibility</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#customer service</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#team lead</span>
+								</div>
+							</div>
+						</article>
+						
+						<!-- Milestone 2025 -->
+						<article class="milestone-item">
+							<div class="timeline-dot" aria-hidden="true"></div>
+							<div class="milestone-content">
+								<time class="event-date" datetime="2025">2025</time>
+								<h3 class="track">Application Dev.</h3>
+								<div class="note note-bg">
+									<img src="assets/png/devel_icon_150x142.png" 
+									     class="icon" 
+									     alt="Application development icon" 
+									     width="150" 
+									     height="142"
+									     loading="lazy">
+									<p>in consequence of the past: setting up a new level *<em><small>(studies until early 2027)</small></em></p>
+								</div>
+								<div class="note hashtags" aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#python</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#java</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#javascript</span>
+								</div>
+							</div>
+						</article>
+					
+						<!-- Floating Freelance Milestone -->
+						<div class="freelance-milestone-float" aria-hidden="true">
+							<div class="freelance-dot-float"></div>
+							<div class="freelance-content">
+								<h3 class="freelance-track">Freelance</h3>
+								<p class="freelance-note"></p>
+							</div>
+							<div class="freelance-connector"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Vertical Timeline (Mobile/Tablet) -->
+		<section class="vertical_timeline" aria-label="Career timeline">
+			<div class="container py-5">
+				<div class="main-timeline-4 text-white">
+					<!-- 2025 -->
+					<article class="timeline-4 left-4">
+						<div class="card gradient-custom">
+							<div class="card-body p-4">
+								<img src="assets/png/devel_icon_w_150x142.png" 
+								     class="icon icon-left" 
+								     alt="Application development icon" 
+								     width="150" 
+								     height="142"
+								     loading="lazy">
+								<h3 class="h4 left">2025</h3>
+								<p class="small text-white-50 mb-4 left">Application Development</p>
+								<p class="timeline_content left">in consequence of the past: setting up a new level<br>*(studies until early 2027)</p>
+								<div aria-label="Skills">
+									<span class="badge bg-body-tertiary-left text-black mb-0">#python</span>
+									<span class="badge bg-body-tertiary-left text-black mb-0">#java</span>
+									<span class="badge bg-body-tertiary-left text-black mb-0">#javascript</span>
+								</div>
+							</div>
+						</div>
+					</article>
+					
+					<!-- 2016 -->
+					<article class="timeline-4 right-4">
+						<div class="card gradient-custom">
+							<div class="card-body p-4">
+								<img src="assets/png/it_icon_w_150x142.png" 
+								     class="icon icon-right" 
+								     alt="IT administration icon" 
+								     width="150" 
+								     height="142"
+								     loading="lazy">
+								<h3 class="h4 right">2016</h3>
+								<p class="small text-white-50 mb-4">Net Admin / IT / Project Management</p>
+								<p class="timeline_content right">head of it | network administration | automation | cross-media production</p>
+								<div aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#project management</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#IT responsibility</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#customer service</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#team lead</span>
+								</div>
+							</div>
+						</div>
+					</article>
+					
+					<!-- 2013 -->
+					<article class="timeline-4 left-4">
+						<div class="card gradient-custom">
+							<div class="card-body p-4">
+								<img src="assets/png/photo_icon_w_150x142.png" 
+								     class="icon icon-left" 
+								     alt="Photography icon" 
+								     width="150" 
+								     height="142"
+								     loading="lazy">
+								<h3 class="h4 left">2013</h3>
+								<p class="small text-white-50 mb-4 left">Photo</p>
+								<p class="timeline_content left">products | locations | people</p>
+								<div aria-label="Skills">
+									<span class="badge bg-body-tertiary-left text-black mb-0">#product</span>
+									<span class="badge bg-body-tertiary-left text-black mb-0">#events & locations</span>
+									<span class="badge bg-body-tertiary-left text-black mb-0">#portrait</span>
+									<span class="badge bg-body-tertiary-left text-black mb-0">#wedding</span>
+								</div>
+							</div>
+						</div>
+					</article>
+					
+					<!-- 2011 -->
+					<article class="timeline-4 right-4">
+						<div class="card gradient-custom">
+							<div class="card-body p-4">
+								<img src="assets/png/video_icon_w_150x142.png" 
+								     class="icon icon-right" 
+								     alt="Video production icon" 
+								     width="150" 
+								     height="142"
+								     loading="lazy">
+								<h3 class="h4 right">2011</h3>
+								<p class="small text-white-50 mb-4 right">Video</p>
+								<p class="timeline_content right">film | cross-media- & post- production | motion graphics | 3D</p>
+								<div aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#motion graphics</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#animation</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#3D</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#dvd authoring</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#green Screen</span>
+								</div>
+							</div>
+						</div>
+					</article>
+					
+					<!-- 2007 -->
+					<article class="timeline-4 left-4">
+						<div class="card gradient-custom">
+							<div class="card-body p-4">
+								<img src="assets/png/web_icon_w_150x142.png" 
+								     class="icon icon-left" 
+								     alt="Web development icon" 
+								     width="150" 
+								     height="142"
+								     loading="lazy">
+								<h3 class="h4 left">2007</h3>
+								<p class="small text-white-50 mb-4 left">Web</p>
+								<p class="timeline_content left">started with: html | css | dbms | javascript | php</p>
+								<div aria-label="Skills">
+									<span class="badge bg-body-tertiary-left text-black mb-0">#cms</span>
+									<span class="badge bg-body-tertiary-left text-black mb-0">#framework</span>
+									<span class="badge bg-body-tertiary-left text-black mb-0">#static</span>
+								</div>
+							</div>
+						</div>
+					</article>
+					
+					<!-- 1999 -->
+					<article class="timeline-4 right-4">
+						<div class="card gradient-custom">
+							<div class="card-body p-4">
+								<img src="assets/png/graphic_icon_w_150x142.png" 
+								     class="icon icon-right" 
+								     alt="Graphic design icon" 
+								     width="150" 
+								     height="142"
+								     loading="lazy">
+								<h3 class="h4 right">1999</h3>
+								<p class="small text-white-50 mb-4">Graphic</p>
+								<p class="timeline_content right">continued artificial sketching | reinforcing visual media</p>
+								<div aria-label="Skills">
+									<span class="badge bg-body-tertiary text-black mb-0">#intrinsic motivation</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#cross media</span>
+									<span class="badge bg-body-tertiary text-black mb-0">#adobe</span>
+								</div>
+							</div>
+						</div>
+					</article>
+				</div>
+			</div>
+		</section>
+		
+		<!-- Contact Form Mount Point -->
+		<div class="contact_form" id="contact-form-anchor"></div>
+	</main>
+
+	<!-- Footer -->
+	<footer class="mt-auto py-4 border-top border-secondary-subtle small text-center opacity-75">
+		<p id="copyright" class="mb-0"></p>
+	</footer>
+
+	<!-- Privacy Modal -->
+	<aside id="privacyModal" class="modal-overlay" style="display: none;" role="dialog" aria-labelledby="privacy-modal-title" aria-modal="true">
+		<div class="modal-content">
+			<header class="modal-header">
+				<h2 id="privacy-modal-title" class="h3">Privacy Policy</h2>
+				<button type="button" class="btn-close" id="closePrivacyModal" aria-label="Close privacy policy">×</button>
+			</header>
+			<div class="modal-body">
+				<iframe id="privacyFrame" src="" title="Privacy Policy Content" loading="lazy"></iframe>
+			</div>
+		</div>
+	</aside>
+
+	<!-- Scripts -->
+	<script src="assets/js/bootstrap.bundle.min.js"></script>
+	
+	<!-- Years Counter -->
+	<script>
+		(function() {
+			const startDate = new Date('1999-01-01');
+			const currentDate = new Date();
+			let years = currentDate.getFullYear() - startDate.getFullYear();
+			const monthDiff = currentDate.getMonth() - startDate.getMonth();
+			const dayDiff = currentDate.getDate() - startDate.getDate();
+			
+			if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+				years--;
+			}
+			
+			const counter = document.getElementById('years-count');
+			if (counter) {
+				counter.textContent = years;
+			}
+		})();
+	</script>
+	
+	<!-- Copyright Year -->
+	<script>
+		const copyrightEl = document.getElementById('copyright');
+		if (copyrightEl) {
+			const year = new Date().getFullYear();
+			copyrightEl.innerHTML = `&copy; 1999–${year} | Jo Zapf | DE-Berlin`;
+		}
+	</script>
+	
+	<!-- Contact Form Loader -->
+	<script type="module">
+		const CONFIG = {
+			formURL: './assets/html/contact-form-wrapper.html',
+			logicURL: './assets/js/contact-form-logic.js',
+			triggerSelectors: '#menuPanel a[href*="contact"], a[href="#contact"], a[data-action="contact"]'
+		};
+
+		async function loadContactForm() {
+			const mount = document.querySelector('.contact_form');
+			if (!mount || mount.dataset.loaded) return;
+
+			try {
+				const response = await fetch(CONFIG.formURL, { 
+					headers: { 'X-Requested-With': 'fetch' } 
+				});
+				
+				if (!response.ok) {
+					throw new Error(`Form snippet ${response.status}`);
+				}
+
+				mount.innerHTML = await response.text();
+
+				const module = await import(CONFIG.logicURL);
+				if (typeof module?.initContactForm === 'function') {
+					module.initContactForm();
+				} else {
+					throw new Error('initContactForm not exported');
+				}
+
+				mount.dataset.loaded = '1';
+
+				// Smooth scroll to form
+				const anchor = document.getElementById('contact-form-anchor') || mount;
+				anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			} catch (error) {
+				console.error('ContactForm load error:', error);
+			}
+		}
+
+		// Event delegation for contact links
+		document.addEventListener('click', (event) => {
+			const trigger = event.target.closest(CONFIG.triggerSelectors);
+			if (trigger) {
+				event.preventDefault();
+				loadContactForm();
+			}
+		});
+
+		// Deep-link support
+		if (location.hash === '#contact') {
+			loadContactForm();
+		}
+	</script>
+	
+	<!-- Privacy Modal Handler -->
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const modal = document.getElementById('privacyModal');
+			const closeBtn = document.getElementById('closePrivacyModal');
+			const iframe = document.getElementById('privacyFrame');
+
+			if (!modal) return;
+
+			const closeModal = () => {
+				modal.style.display = 'none';
+				iframe.src = '';
+			};
+
+			// Event delegation for privacy links
+			document.addEventListener('click', (event) => {
+				const link = event.target.closest('a[id="privacyLink"], a[data-privacy-url]');
+				if (link) {
+					event.preventDefault();
+					const url = link.dataset.privacyUrl || 'https://www.jozapf.de/test11/privacy.html';
+					iframe.src = url;
+					modal.style.display = 'flex';
+				}
+			});
+
+			// Close button
+			if (closeBtn) {
+				closeBtn.addEventListener('click', closeModal);
+			}
+
+			// Click outside modal
+			modal.addEventListener('click', (event) => {
+				if (event.target === modal) {
+					closeModal();
+				}
+			});
+
+			// ESC key
+			document.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape' && modal.style.display === 'flex') {
+					closeModal();
+				}
+			});
+		});
+	</script>
+</body>
+</html>

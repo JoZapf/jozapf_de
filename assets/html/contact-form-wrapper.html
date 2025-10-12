@@ -1,0 +1,83 @@
+<!-- assets/html/contact-form-wrapper.html -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h2 class="h3 mb-3">Contact</h2>
+
+    <!-- Alerts -->
+    <div id="cf-success" class="alert alert-success d-none" role="alert">
+      Thank you! Your message has been sent.
+    </div>
+    <div id="cf-error" class="alert alert-danger d-none" role="alert">
+      <span id="cf-error-text">Sending failed. Please try again later.</span>
+    </div>
+
+    <form id="contactForm" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="firstName" class="form-label">First Name *</label>
+          <input type="text" id="firstName" name="firstName" class="form-control" required>
+          <div class="invalid-feedback">Please enter your first name.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="lastName" class="form-label">Last Name *</label>
+          <input type="text" id="lastName" name="lastName" class="form-control" required>
+          <div class="invalid-feedback">Please enter your last name.</div>
+        </div>
+
+        <div class="col-md-6">
+          <label for="email" class="form-label">Email *</label>
+          <input type="email" id="email" name="email" class="form-control" required>
+          <div class="invalid-feedback">Please enter a valid email.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="phone" class="form-label">Phone</label>
+          <input type="tel" id="phone" name="phone" class="form-control">
+          <div class="invalid-feedback">Please enter a valid phone (optional).</div>
+        </div>
+
+        <div class="col-12">
+          <label for="subject" class="form-label">Subject *</label>
+          <input type="text" id="subject" name="subject" class="form-control" required>
+          <div class="invalid-feedback">Please enter a subject.</div>
+        </div>
+
+        <div class="col-12">
+          <label for="message" class="form-label">Message *</label>
+          <textarea id="message" name="message" class="form-control" rows="6" required></textarea>
+          <div class="invalid-feedback">Please enter your message.</div>
+        </div>
+
+        <!-- SECURITY QUESTION (Captcha) -->
+        <div class="col-md-8">
+          <label class="form-label d-flex align-items-center justify-content-between">
+            <span>Security question *</span>
+            <span id="captchaQuestion" class="fw-semibold"></span>
+          </label>
+          <div class="input-group">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="captchaAnswer" name="captchaAnswer" class="form-control" placeholder="Answer" required>
+            <button type="button" id="captchaRefresh" class="btn btn-outline-secondary">New task</button>
+          </div>
+          <div class="invalid-feedback">Please solve the security question.</div>
+          <!-- Hinweis: Das Hidden-Feld "captcha_answer" wird von JS automatisch ergänzt -->
+        </div>
+
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+            <label class="form-check-label" for="privacy">
+              I agree to the <a href="#" id="privacyLink" data-privacy-url="/privacy.html">privacy policy</a>
+            </label>
+            <div class="invalid-feedback">Please agree to the privacy policy.</div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <button id="submitBtn" type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="/test11/assets/js/contact-form-logic.js?v=4" defer></script>
