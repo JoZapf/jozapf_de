@@ -1,4 +1,13 @@
-# Font-Ordner komplett
+# ============================
+# Projekt: jozapf-de (.gitignore)
+# Ziel:
+#  - Keine Build-Artefakte/Out-Verzeichnisse commiten
+#  - Keine Secrets/Env ins Repo
+#  - GitHub Actions Workflows SICHER NICHT ignorieren
+# ============================
+
+# --- Assets (Fonts) ---------------------------------------------------------
+# kompletter Font-Ordner im Repo
 assets/fonts/
 
 # Font-Dateien überall
@@ -7,13 +16,58 @@ assets/fonts/
 *.woff2
 *.otf
 
-# Umgebungsvariablen
+# --- Env & Secrets ----------------------------------------------------------
 .env
-assets/php/.env
+.env.*
+!.env.example
 
-# ganze Ordner
+# serverseitige env (shared hosting)
+assets/php/.env
+assets/php/app.env
+
+# Alt-/Archiv-Assets (falls vorhanden)
+assets/php/assets.old/
+
+# --- Logs / Cron / Docs (wie von dir konfiguriert) --------------------------
+assets/php/logs/
 assets/php/logs/archive/
 assets/php/logs/sent-eml/
+docs/
+cron/
 
-# Log-Dateien rekursiv in allen Unterordnern:
+# Log-Dateien rekursiv (Fix: vorher fehlte ein Zeilenumbruch)
 assets/php/logs/**/*.log
+
+# --- Node / Next.js / Build -------------------------------------------------
+node_modules/
+.next/
+out/
+dist/
+coverage/
+
+# TypeScript Build Info
+*.tsbuildinfo
+
+# Logs allgemein
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- OS / Editor ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Docker lokale Overrides (optional) -------------------------------------
+*.local.yml
+docker/*local*
+docker/*override*
+
+# --- GitHub Actions (Workflows dürfen NICHT ignoriert werden!) -------------
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
+!.github/workflows/*.yaml

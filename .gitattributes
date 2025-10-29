@@ -1,0 +1,39 @@
+# --- Text: auto-normalize (LF intern in Git) ---
+* text=auto
+
+# --- Unix/LF-Dateien ---
+*.conf  text eol=lf
+*.nginx text eol=lf
+*.sh    text eol=lf
+*.js    text eol=lf
+*.mjs   text eol=lf
+*.ts    text eol=lf
+*.tsx   text eol=lf
+*.jsx   text eol=lf
+*.css   text eol=lf
+*.scss  text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.md    text eol=lf
+Dockerfile text eol=lf
+docker/nginx/*.conf text eol=lf
+
+# --- Windows/CRLF-Dateien ---
+*.ps1   text eol=crlf
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# --- Binärformate (nicht normalisieren) ---
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.avif binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
+*.zip  binary
