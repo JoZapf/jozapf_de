@@ -34,11 +34,9 @@ jobs:
       SITE_DIR: out
 
     steps:
-      # --- Checkout ----------------------------------------------------------
       - name: Checkout
         uses: actions/checkout@v4
 
-      # --- Node / Build ------------------------------------------------------
       - name: Setup Node.js (v20)
         uses: actions/setup-node@v4
         with:
@@ -47,7 +45,6 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      # CI build metadata (override .env.local)
       - name: Set build metadata (GIT_TAG, BUILD_DATE)
         run: |
           echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
@@ -65,7 +62,6 @@ jobs:
         run: |
           test -f "$SITE_DIR/index.html" || { echo "::error::Missing $SITE_DIR/index.html"; exit 1; }
 
-      # --- SSH preparation (secure) ------------------------------------------
       - name: Prepare SSH key and known_hosts
         run: |
           mkdir -p ~/.ssh
@@ -73,7 +69,6 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -p "$SFTP_PORT" "$SFTP_HOST" >> ~/.ssh/known_hosts
 
-      # --- Non-destructive pre-check (always) --------------------------------
       - name: List remote (pre-check)
         run: |
           {
@@ -84,7 +79,6 @@ jobs:
           } > list_pre.sftp
           sftp -b list_pre.sftp -oBatchMode=yes -i ~/.ssh/deploy_key -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST"
 
-      # --- Upload SITE (guarded by dry_run) ----------------------------------
       - name: Upload SITE (out -> $DOCROOT_SITE)
         if: ${{ inputs.dry_run != 'true' }}
         run: |
@@ -95,17 +89,14 @@ jobs:
           } > upload_site.sftp
           sftp -b upload_site.sftp -oBatchMode=yes -i ~/.ssh/deploy_key -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST"
 
-      # --- Upload ASSETS (selected folders from out -> $DOCROOT_ASSETS) ------
       - name: Upload ASSETS (selected folders from out -> $DOCROOT_ASSETS)
         if: ${{ inputs.dry_run != 'true' }}
         run: |
           set -e
           FOLDERS="png jpg svg fonts ico favicon"
-
           : > upload_assets.sftp
           printf 'cd %s\n' "$DOCROOT_ASSETS" >> upload_assets.sftp
           printf 'lcd %s\n' "$SITE_DIR"       >> upload_assets.sftp
-
           queued=0
           for d in $FOLDERS; do
             if [ -d "$SITE_DIR/$d" ]; then
@@ -115,7 +106,6 @@ jobs:
               echo "Skip: $SITE_DIR/$d not found" >&2
             fi
           done
-
           if [ "$queued" -eq 1 ]; then
             echo "Starting ASSETS upload to $DOCROOT_ASSETS"
             sftp -b upload_assets.sftp -oBatchMode=yes -i ~/.ssh/deploy_key -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST"
@@ -123,7 +113,6 @@ jobs:
             echo "No matching asset folders found in $SITE_DIR – skipping ASSETS upload."
           fi
 
-      # --- Optional post listing (non-blocking) -------------------------------
       - name: List remote (post)
         continue-on-error: true
         run: |

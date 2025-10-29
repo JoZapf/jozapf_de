@@ -1,68 +1,39 @@
-# ============================
-# Projekt: jozapf-de (.gitattributes)
-# Ziel:
-#  - Verlässliche Zeilenenden pro Dateityp (LF vs. CRLF)
-#  - Saubere Diffs (Text vs. Binary)
-#  - CI/Deploy-Skripte nicht durch CRLF brechen
-# ============================
-
-# --- Basiseinstellung: Text auto-normalisieren ------------------------------
-# Git erkennt Textdateien automatisch und speichert intern mit LF.
+# --- Text: auto-normalize (LF intern in Git) ---
 * text=auto
 
-# --- Linux-/CI-relevante Textdateien: ERZWUNGENE LF -------------------------
-# Begründung:
-#  - GitHub Actions Runner -> Linux
-#  - Shell-Befehle in YAML/SH dürfen kein CRLF enthalten
-#  - Serverseitige Configs (nginx/Apache) sind Linux-orientiert
-*.conf     text eol=lf
-*.nginx    text eol=lf
-*.sh       text eol=lf
-*.js       text eol=lf
-*.mjs      text eol=lf
-*.ts       text eol=lf
-*.tsx      text eol=lf
-*.jsx      text eol=lf
-*.css      text eol=lf
-*.scss     text eol=lf
-*.json     text eol=lf
-*.yml      text eol=lf     # GitHub Workflows / CI-Konfig
-*.yaml     text eol=lf     # GitHub Workflows / CI-Konfig
-*.md       text eol=lf
-*.html     text eol=lf
-*.htm      text eol=lf
-*.xml      text eol=lf
-*.svg      text eol=lf     # SVG ist XML -> Text, kein Binary
-.htaccess  text eol=lf     # Apache-Config-Datei
+# --- Unix/LF-Dateien ---
+*.conf  text eol=lf
+*.nginx text eol=lf
+*.sh    text eol=lf
+*.js    text eol=lf
+*.mjs   text eol=lf
+*.ts    text eol=lf
+*.tsx   text eol=lf
+*.jsx   text eol=lf
+*.css   text eol=lf
+*.scss  text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.md    text eol=lf
 Dockerfile text eol=lf
 docker/nginx/*.conf text eol=lf
 
-# --- Windows-native Skripte: ERZWUNGENE CRLF -------------------------------
-# Begründung:
-#  - PowerShell/CMD-Skripte laufen bei dir unter Windows
-#  - CRLF vermeidet gelegentliche Parser-Irritationen
-*.ps1      text eol=crlf
-*.bat      text eol=crlf
-*.cmd      text eol=crlf
+# --- Windows/CRLF-Dateien ---
+*.ps1   text eol=crlf
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
 
-# --- Binärdateien: niemals konvertieren oder diffen -------------------------
-# Begründung:
-#  - Fonts/Images dürfen von Git nicht "umformatiert" werden
-#  - Verhindert korrupte Artefakte
-*.png      binary
-*.jpg      binary
-*.jpeg     binary
-*.gif      binary
-*.webp     binary
-*.avif     binary
-*.ico      binary
-*.woff     binary
-*.woff2    binary
-*.ttf      binary
-*.otf      binary
-*.eot      binary
-*.zip      binary
-
-# --- Optional: weitere Binary-Typen (bei Bedarf aktivieren) -----------------
-# *.pdf     binary
-# *.ico     binary   # bereits oben enthalten
+# --- Binärformate (nicht normalisieren) ---
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.avif binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
+*.zip  binary
