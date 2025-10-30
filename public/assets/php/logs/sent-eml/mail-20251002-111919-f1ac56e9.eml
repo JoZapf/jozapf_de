@@ -1,0 +1,40 @@
+Date: Thu, 2 Oct 2025 11:19:19 +0200
+From: "jozapf.de" <noreply@jozapf.de>
+Reply-To: Jo Zapf <mail@jozapf.de>
+Message-ID: <rOSbq6nhbM7PgnZjmraaNtswv6mtLxTfkjKsDGtkEz8@jozapf.de>
+X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+X-Originating-IP: 2003:e9:6f0c:4200:f1be:5a19:6011:68ea
+X-App-Env: prod
+X-App-Handler: contact-php-handler.php
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="b1=_rOSbq6nhbM7PgnZjmraaNtswv6mtLxTfkjKsDGtkEz8"
+To: mail@jozapf.de
+Subject: Kontakt: Log File Test
+
+--b1=_rOSbq6nhbM7PgnZjmraaNtswv6mtLxTfkjKsDGtkEz8
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+TmV1ZSBLb250YWt0YW5mcmFnZU5hbWU6Sm8gWmFwZkUtTWFpbDptYWlsQGpvemFwZi5kZVRlbGVm
+b246MDE3NjM0NzI4MDA0QmV0cmVmZjpMb2cgRmlsZSBUZXN0RGF0ZW5zY2h1dHo6YWt6ZXB0aWVy
+dFNlY3VyaXR5OkFudHdvcnQgN0xvZyBGaWxlIFRlc3Q=
+
+--b1=_rOSbq6nhbM7PgnZjmraaNtswv6mtLxTfkjKsDGtkEz8
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+PGgzPk5ldWUgS29udGFrdGFuZnJhZ2U8L2gzPjx0YWJsZSBjZWxscGFkZGluZz0iNiIgY2VsbHNw
+YWNpbmc9IjAiIGJvcmRlcj0iMCI+PHRyPjx0ZD48c3Ryb25nPk5hbWU6PC9zdHJvbmc+PC90ZD48
+dGQ+Sm8gWmFwZjwvdGQ+PC90cj48dHI+PHRkPjxzdHJvbmc+RS1NYWlsOjwvc3Ryb25nPjwvdGQ+
+PHRkPm1haWxAam96YXBmLmRlPC90ZD48L3RyPjx0cj48dGQ+PHN0cm9uZz5UZWxlZm9uOjwvc3Ry
+b25nPjwvdGQ+PHRkPjAxNzYzNDcyODAwNDwvdGQ+PC90cj48dHI+PHRkPjxzdHJvbmc+QmV0cmVm
+Zjo8L3N0cm9uZz48L3RkPjx0ZD5Mb2cgRmlsZSBUZXN0PC90ZD48L3RyPjx0cj48dGQ+PHN0cm9u
+Zz5EYXRlbnNjaHV0ejo8L3N0cm9uZz48L3RkPjx0ZD5ha3plcHRpZXJ0PC90ZD48L3RyPjx0cj48
+dGQ+PHN0cm9uZz5TZWN1cml0eTo8L3N0cm9uZz48L3RkPjx0ZD5BbnR3b3J0IDc8L3RkPjwvdHI+
+PC90YWJsZT48aHI+PGRpdiBzdHlsZT0id2hpdGUtc3BhY2U6cHJlLXdyYXA7IGZvbnQtZmFtaWx5
+OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIFNlZ29lIFVJLCBSb2JvdG8sIEFyaWFsLCBzYW5z
+LXNlcmlmOyI+TG9nIEZpbGUgVGVzdDwvZGl2Pg==
+
+
+--b1=_rOSbq6nhbM7PgnZjmraaNtswv6mtLxTfkjKsDGtkEz8--

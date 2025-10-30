@@ -1,0 +1,40 @@
+Date: Tue, 30 Sep 2025 11:37:41 +0200
+From: "jozapf.de" <noreply@jozapf.com>
+Reply-To: Jo Zapf <mail@jozapf.de>
+Message-ID: <6I5NiInLFvdlJ5GTpzsctCRrWSjZd8qX7nA8HS2REA@jozapf.com>
+X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+X-Originating-IP: 2003:e9:6f19:7100:1c9f:903:cbbb:5429
+X-App-Env: prod
+X-App-Handler: contact-php-handler.php
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="b1=_6I5NiInLFvdlJ5GTpzsctCRrWSjZd8qX7nA8HS2REA"
+To: mail@jozapf.de
+Subject: Kontakt: Berlin
+
+--b1=_6I5NiInLFvdlJ5GTpzsctCRrWSjZd8qX7nA8HS2REA
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+TmV1ZSBLb250YWt0YW5mcmFnZU5hbWU6Sm8gWmFwZkUtTWFpbDptYWlsQGpvemFwZi5kZVRlbGVm
+b246MDE3NjM0NzI4MDA0QmV0cmVmZjpCZXJsaW5EYXRlbnNjaHV0ejpha3plcHRpZXJ0U2VjdXJp
+dHk6QW50d29ydCAxMWpvemFwZi5jb20=
+
+--b1=_6I5NiInLFvdlJ5GTpzsctCRrWSjZd8qX7nA8HS2REA
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+PGgzPk5ldWUgS29udGFrdGFuZnJhZ2U8L2gzPjx0YWJsZSBjZWxscGFkZGluZz0iNiIgY2VsbHNw
+YWNpbmc9IjAiIGJvcmRlcj0iMCI+PHRyPjx0ZD48c3Ryb25nPk5hbWU6PC9zdHJvbmc+PC90ZD48
+dGQ+Sm8gWmFwZjwvdGQ+PC90cj48dHI+PHRkPjxzdHJvbmc+RS1NYWlsOjwvc3Ryb25nPjwvdGQ+
+PHRkPm1haWxAam96YXBmLmRlPC90ZD48L3RyPjx0cj48dGQ+PHN0cm9uZz5UZWxlZm9uOjwvc3Ry
+b25nPjwvdGQ+PHRkPjAxNzYzNDcyODAwNDwvdGQ+PC90cj48dHI+PHRkPjxzdHJvbmc+QmV0cmVm
+Zjo8L3N0cm9uZz48L3RkPjx0ZD5CZXJsaW48L3RkPjwvdHI+PHRyPjx0ZD48c3Ryb25nPkRhdGVu
+c2NodXR6Ojwvc3Ryb25nPjwvdGQ+PHRkPmFremVwdGllcnQ8L3RkPjwvdHI+PHRyPjx0ZD48c3Ry
+b25nPlNlY3VyaXR5Ojwvc3Ryb25nPjwvdGQ+PHRkPkFudHdvcnQgMTE8L3RkPjwvdHI+PC90YWJs
+ZT48aHI+PGRpdiBzdHlsZT0id2hpdGUtc3BhY2U6cHJlLXdyYXA7IGZvbnQtZmFtaWx5OiBzeXN0
+ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIFNlZ29lIFVJLCBSb2JvdG8sIEFyaWFsLCBzYW5zLXNlcmlm
+OyI+am96YXBmLmNvbTwvZGl2Pg==
+
+
+--b1=_6I5NiInLFvdlJ5GTpzsctCRrWSjZd8qX7nA8HS2REA--
