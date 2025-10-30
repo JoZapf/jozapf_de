@@ -1,0 +1,8 @@
+// data/facts.json
+{
+  "key_points": [
+    "Edge-basiertes Processing mit MQTT",
+    "Lizenz: MIT",
+    "API: /api/v1 ... (später)"
+  ]
+}

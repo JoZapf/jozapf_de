@@ -1,0 +1,46 @@
+services:
+  next-dev:
+    image: node:20-alpine
+    profiles: ["next"]         # <-- nur mit --profile next aktiv
+    working_dir: /app
+    environment:
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Stabileres File-Watching auf gemounteten Windows/WSL-Pfaden:
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      WATCHPACK_POLLING_INTERVAL: "1000"
+    volumes:
+      - ${NEXT_DIR:-.}:/app
+      - next_node_modules:/app/node_modules
+    command: >
+      sh -lc '
+        set -e
+        if [ ! -d node_modules ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
+          echo "[next-dev] Installing dependencies into named volume...";
+          npm ci || npm i;
+        fi;
+        exec npx next@16 dev -p 3000 -H 0.0.0.0
+      '
+    ports:
+      - "3000:3000"
+
+  next-static:
+    image: nginx:1.27-alpine
+    profiles: ["next"]
+    volumes:
+      - ${NEXT_DIR:-.}/out:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    # WICHTIG: Schreibbare tmpfs für Nginx-Temp und PID/Runtime
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      # optional (nur falls Logs auf FS schreiben sollen):
+      # - /var/log/nginx
+    environment:
+      # unterdrückt harmlose Entrypoint-Hinweise zum IPv6-Template
+      NGINX_ENTRYPOINT_QUIET_LOGS: "1"
+    read_only: true
+
+volumes:
+  next_node_modules:

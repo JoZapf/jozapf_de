@@ -3,8 +3,9 @@
   "scripts": {
     "predev": "powershell -NoProfile -Command \"try { npx kill-port 3000 3002 } catch {} ; Remove-Item .\\.next\\dev\\lock -Force -ErrorAction Ignore ; exit 0\" && node scripts/remove-sourcemap.mjs",
     "dev": "npx next@16 dev -p 3000 -H 0.0.0.0",
-    "prebuild": "bash -lc \"[ -f scripts/generate-summary.ts ] && npx --yes tsx scripts/generate-summary.ts || echo 'prebuild skipped: scripts/generate-summary.ts not found'\"",
+    "prebuild": "tsx scripts/generate-summary.ts",
     "build": "next build",
+    "export": "next export",
     "preview": "npx --yes serve out -l tcp://0.0.0.0:8080",
     "preview:docker": "docker compose -f compose.preview.yml up -d",
     "preview:down": "docker compose -f compose.preview.yml down",
