@@ -1,0 +1,14 @@
+# compose.preview.yml
+services:
+  next-static:
+    image: nginx:1.29-alpine
+    ports:
+      - "${PREVIEW_PORT:-8080}:80"
+    volumes:
+      - ./out:/usr/share/nginx/html:ro
+      - ./docker/nginx/preview.conf:/etc/nginx/conf.d/default.conf:ro
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+

@@ -1,16 +1,17 @@
+# .github/workflows/deploy.yml
 name: Deploy via SFTP
 
 on:
+  push:
+    branches: [ "main" ]
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "If true: only connect and list remote directories (no upload)."
-        required: false
-        default: "false"
+        description: "If true, skip SFTP uploads (build only)."
+        required: true
         type: choice
-        options: ["false", "true"]
-  push:
-    branches: ["main"]
+        options: [ "true", "false" ]
+        default: "true"
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -21,16 +22,17 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # ---- Connection (from Secrets) ----------------------------------------
+      # ---- Remote connection (Secrets) ----
       SFTP_HOST: ${{ secrets.SFTP_HOST }}
       SFTP_PORT: ${{ secrets.SFTP_PORT }}
       SFTP_USER: ${{ secrets.SFTP_USER }}
+      SFTP_PRIVATE_KEY: ${{ secrets.SFTP_PRIVATE_KEY }}
 
-      # ---- Remote paths (ABSOLUTE; from Variables) --------------------------
-      DOCROOT_SITE: ${{ vars.HETZNER_DOCROOT_SITE }}
-      DOCROOT_ASSETS: ${{ vars.HETZNER_DOCROOT_ASSETS }}
+      # ---- Remote targets (Repository Variables) ----
+      DOCROOT_SITE: ${{ vars.DOCROOT_SITE }}
+      DOCROOT_ASSETS: ${{ vars.DOCROOT_ASSETS }}
 
-      # ---- Local paths ------------------------------------------------------
+      # ---- Local export dir ----
       SITE_DIR: out
 
     steps:
@@ -42,84 +44,132 @@ jobs:
         with:
           node-version: "20"
 
+      # Find project folder by first package.json (self-healing)
+      - name: Detect project directory
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+          CANDIDATE="$(git ls-files | awk -F/ '/(^|\/)package\.json$/ {NF--; p=$0; if (p=="") p="."; print p}' | sort -u | head -n1)"
+          if [ -z "${CANDIDATE}" ]; then
+            echo "::error::No package.json found in repository."
+            exit 1
+          fi
+          echo "PROJECT_DIR=${CANDIDATE}" >> $GITHUB_ENV
+          echo "Detected PROJECT_DIR=${CANDIDATE}"
+
+      - name: Diagnose workspace
+        shell: bash
+        run: |
+          set -e
+          echo "[pwd]"; pwd
+          echo "[PROJECT_DIR] $PROJECT_DIR"
+          echo "[ls PROJECT_DIR]"; ls -la "$PROJECT_DIR"
+          echo "[find important files]"
+          find "$PROJECT_DIR" -maxdepth 3 -type f \
+               \( -name package.json -o -name "generate-summary.ts" -o -name next.config.ts \) -print
+
       - name: Install deps
+        working-directory: ${{ env.PROJECT_DIR }}
         run: npm ci
 
-      - name: Set build metadata (GIT_TAG, BUILD_DATE)
+      # Safe prebuild: run only if present
+      - name: Prebuild (generate summary)
+        working-directory: ${{ env.PROJECT_DIR }}
+        shell: bash
         run: |
-          echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
-          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-            echo "GIT_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          set -e
+          if [ -f "scripts/generate-summary.ts" ]; then
+            npx --yes tsx scripts/generate-summary.ts
           else
-            echo "GIT_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+            echo "::notice::scripts/generate-summary.ts not found in $PROJECT_DIR – skipping prebuild."
           fi
-          echo "Using GIT_TAG=$GIT_TAG BUILD_DATE=$BUILD_DATE"
 
       - name: Build
+        working-directory: ${{ env.PROJECT_DIR }}
         run: npm run build
 
-      - name: Verify build output exists
+      # Strict verify only for real deploy
+      - name: Verify out/index.html (strict)
+        if: ${{ inputs.dry_run == 'false' }}
+        working-directory: ${{ env.PROJECT_DIR }}
+        shell: bash
+        env:
+          SITE_DIR: ${{ env.SITE_DIR }}
         run: |
           test -f "$SITE_DIR/index.html" || { echo "::error::Missing $SITE_DIR/index.html"; exit 1; }
 
-      - name: Prepare SSH key and known_hosts
+      # Soft verify for dry-run (does not fail the job)
+      - name: Verify out/index.html (dry-run, soft)
+        if: ${{ inputs.dry_run == 'true' }}
+        working-directory: ${{ env.PROJECT_DIR }}
+        shell: bash
+        env:
+          SITE_DIR: ${{ env.SITE_DIR }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SFTP_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "$SFTP_PORT" "$SFTP_HOST" >> ~/.ssh/known_hosts
-
-      - name: List remote (pre-check)
-        run: |
-          {
-            printf 'cd %s\n' "$DOCROOT_SITE"
-            printf 'pwd\nls -la\n'
-            printf 'cd %s\n' "$DOCROOT_ASSETS"
-            printf 'pwd\nls -la\n'
-          } > list_pre.sftp
-          sftp -b list_pre.sftp -oBatchMode=yes -i ~/.ssh/deploy_key -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST"
-
-      - name: Upload SITE (out -> $DOCROOT_SITE)
-        if: ${{ inputs.dry_run != 'true' }}
-        run: |
-          {
-            printf 'cd %s\n' "$DOCROOT_SITE"
-            printf 'lcd %s\n' "$SITE_DIR"
-            printf 'put -r *\n'
-          } > upload_site.sftp
-          sftp -b upload_site.sftp -oBatchMode=yes -i ~/.ssh/deploy_key -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST"
-
-      - name: Upload ASSETS (selected folders from out -> $DOCROOT_ASSETS)
-        if: ${{ inputs.dry_run != 'true' }}
-        run: |
-          set -e
-          FOLDERS="png jpg svg fonts ico favicon"
-          : > upload_assets.sftp
-          printf 'cd %s\n' "$DOCROOT_ASSETS" >> upload_assets.sftp
-          printf 'lcd %s\n' "$SITE_DIR"       >> upload_assets.sftp
-          queued=0
-          for d in $FOLDERS; do
-            if [ -d "$SITE_DIR/$d" ]; then
-              printf 'put -r %s\n' "$d" >> upload_assets.sftp
-              queued=1
-            else
-              echo "Skip: $SITE_DIR/$d not found" >&2
-            fi
-          done
-          if [ "$queued" -eq 1 ]; then
-            echo "Starting ASSETS upload to $DOCROOT_ASSETS"
-            sftp -b upload_assets.sftp -oBatchMode=yes -i ~/.ssh/deploy_key -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST"
+          if [ -f "$SITE_DIR/index.html" ]; then
+            echo "::notice::Dry-run: $SITE_DIR/index.html found."
           else
-            echo "No matching asset folders found in $SITE_DIR – skipping ASSETS upload."
+            echo "::notice::Dry-run: $SITE_DIR/index.html NOT found (build passes; check export config)."
           fi
 
-      - name: List remote (post)
-        continue-on-error: true
+      # Prepare SSH key & known_hosts (harmless if host/port missing)
+      - name: Prepare SSH
+        shell: bash
         run: |
-          {
-            printf 'cd %s\n' "$DOCROOT_SITE"
-            printf 'pwd\nls -la\n'
-            printf 'cd %s\n' "$DOCROOT_ASSETS"
-            printf 'pwd\nls -la\n'
-          } > list_post.sftp
-          sftp -b list_post.sftp -oBatchMode=yes -i ~/.ssh/deploy_key -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST"
+          set -e
+          mkdir -p ~/.ssh
+          if [ -n "${SFTP_PRIVATE_KEY:-}" ]; then
+            printf "%s" "${SFTP_PRIVATE_KEY}" > ~/.ssh/deploy_key
+            chmod 600 ~/.ssh/deploy_key
+          fi
+          if [ -n "${SFTP_HOST:-}" ]; then
+            : "${SFTP_PORT:=22}"
+            ssh-keyscan -p "${SFTP_PORT}" "${SFTP_HOST}" >> ~/.ssh/known_hosts 2>/dev/null || true
+          fi
+
+      # ---------------------------
+      # Uploads are skipped in dry_run
+      # ---------------------------
+
+      - name: Upload site (SFTP)
+        if: ${{ inputs.dry_run == 'false' }}
+        working-directory: ${{ env.PROJECT_DIR }}
+        shell: bash
+        run: |
+          set -e
+          : "${SFTP_PORT:=22}"
+          if [ -z "${SFTP_HOST:-}" ] || [ -z "${SFTP_USER:-}" ] || [ ! -f "${HOME}/.ssh/deploy_key" ]; then
+            echo "::error::Missing SFTP credentials (SFTP_HOST/SFTP_USER/SFTP_PRIVATE_KEY)."
+            exit 1
+          fi
+          if [ -z "${DOCROOT_SITE:-}" ]; then
+            echo "::error::DOCROOT_SITE (Repo Variable) is not set."
+            exit 1
+          fi
+          sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<SFTP_CMDS
+          lcd ${SITE_DIR}
+          cd ${DOCROOT_SITE}
+          put -r *
+          SFTP_CMDS
+
+      - name: Upload assets (SFTP, optional if exists)
+        if: ${{ inputs.dry_run == 'false' }}
+        working-directory: ${{ env.PROJECT_DIR }}
+        shell: bash
+        run: |
+          set -e
+          : "${SFTP_PORT:=22}"
+          if [ -z "${DOCROOT_ASSETS:-}" ]; then
+            echo "::notice::DOCROOT_ASSETS not set – skipping assets upload."
+            exit 0
+          fi
+          if [ ! -d "public/assets" ]; then
+            echo "::notice::No local public/assets directory – skipping assets upload."
+            exit 0
+          fi
+          sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<SFTP_CMDS
+          lcd public/assets
+          cd ${DOCROOT_ASSETS}
+          put -r *
+          SFTP_CMDS

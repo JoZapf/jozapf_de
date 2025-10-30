@@ -71,3 +71,10 @@ docker/*override*
 !.github/workflows/
 !.github/workflows/*.yml
 !.github/workflows/*.yaml
+public/assets/php/logs/
+public/assets/php/assets.old/
+public/assets/php/*.eml
+
+# Build-Output
+out/
+
