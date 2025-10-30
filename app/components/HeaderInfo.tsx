@@ -1,1 +1,1 @@
-export default function HeaderInfo() { return null; }
+export default function HeaderInfo(){ return null; }
