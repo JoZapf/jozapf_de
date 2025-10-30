@@ -89,13 +89,29 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}
         run: npm run build
 
-      - name: Verify out/index.html
+      # Strict verify only for real deploy
+      - name: Verify out/index.html (strict)
+        if: ${{ inputs.dry_run == 'false' }}
         working-directory: ${{ env.PROJECT_DIR }}
         shell: bash
         env:
           SITE_DIR: ${{ env.SITE_DIR }}
         run: |
           test -f "$SITE_DIR/index.html" || { echo "::error::Missing $SITE_DIR/index.html"; exit 1; }
+
+      # Soft verify for dry-run (does not fail the job)
+      - name: Verify out/index.html (dry-run, soft)
+        if: ${{ inputs.dry_run == 'true' }}
+        working-directory: ${{ env.PROJECT_DIR }}
+        shell: bash
+        env:
+          SITE_DIR: ${{ env.SITE_DIR }}
+        run: |
+          if [ -f "$SITE_DIR/index.html" ]; then
+            echo "::notice::Dry-run: $SITE_DIR/index.html found."
+          else
+            echo "::notice::Dry-run: $SITE_DIR/index.html NOT found (build passes; check export config)."
+          fi
 
       # Prepare SSH key & known_hosts (harmless if host/port missing)
       - name: Prepare SSH
@@ -104,7 +120,7 @@ jobs:
           set -e
           mkdir -p ~/.ssh
           if [ -n "${SFTP_PRIVATE_KEY:-}" ]; then
-            echo "${SFTP_PRIVATE_KEY}" > ~/.ssh/deploy_key
+            printf "%s" "${SFTP_PRIVATE_KEY}" > ~/.ssh/deploy_key
             chmod 600 ~/.ssh/deploy_key
           fi
           if [ -n "${SFTP_HOST:-}" ]; then
@@ -131,9 +147,9 @@ jobs:
             echo "::error::DOCROOT_SITE (Repo Variable) is not set."
             exit 1
           fi
-          sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<'SFTP_CMDS'
-          lcd out
-          cd "$DOCROOT_SITE"
+          sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<SFTP_CMDS
+          lcd ${SITE_DIR}
+          cd ${DOCROOT_SITE}
           put -r *
           SFTP_CMDS
 
@@ -152,10 +168,8 @@ jobs:
             echo "::notice::No local public/assets directory – skipping assets upload."
             exit 0
           fi
-          sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<'SFTP_CMDS'
+          sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<SFTP_CMDS
           lcd public/assets
-          cd "$DOCROOT_ASSETS"
+          cd ${DOCROOT_ASSETS}
           put -r *
           SFTP_CMDS
-
-      # Optional: post-list / verification could be added here
