@@ -54,7 +54,7 @@ function Start-JZStacks {
   # Wenn kein Ziel gewählt → alle starten
   if(-not ($Dev -or $Preview -or $Main)) { $Dev=$true; $Preview=$true; $Main=$true }
 
-  Write-Host "▶ Wechsel ins Projekt: $Root" -ForegroundColor Cyan
+  Write-Host "[>>] Wechsel ins Projekt: $Root" -ForegroundColor Cyan
   if(!(Test-Path $Root)){ throw "Projektpfad nicht gefunden: $Root" }
   Set-Location $Root
 
@@ -71,16 +71,16 @@ function Start-JZStacks {
 
   # ---- PREVIEW (8080) -------------------------------------------------------
   if($Preview){
-    Write-Host "▶ Preview-Stack (nginx static) vorbereiten…" -ForegroundColor Cyan
+    Write-Host "[>>] Preview-Stack (nginx static) vorbereiten..." -ForegroundColor Cyan
     $outIndex = Join-Path $Root "out\index.html"
     if($ForceBuild -or -not (Test-Path $outIndex)){
-      Write-Host "… kein out/index.html gefunden → baue Export (npm ci + npm run build)" -ForegroundColor Yellow
+      Write-Host "... kein out/index.html gefunden -> baue Export (npm ci + npm run build)" -ForegroundColor Yellow
       npm ci
       if($LASTEXITCODE -ne 0){ throw "npm ci fehlgeschlagen." }
       npm run build
       if($LASTEXITCODE -ne 0){ throw "npm run build fehlgeschlagen." }
     } else {
-      Write-Host "… out/index.html vorhanden → Build übersprungen" -ForegroundColor DarkGray
+      Write-Host "... out/index.html vorhanden -> Build uebersprungen" -ForegroundColor DarkGray
     }
 
     docker compose -f compose.preview.yml up -d --force-recreate
@@ -88,26 +88,28 @@ function Start-JZStacks {
 
     $prevPort = Get-ComposePort "compose.preview.yml" "next-static" 80
     if(!$prevPort){ Write-Warning "Konnte Preview-Port nicht ermitteln."; } else {
-      Write-Host ("✓ Preview erreichbar: http://localhost:{0}/" -f $prevPort) -ForegroundColor Green
+      Write-Host "[OK] Preview erreichbar: http://localhost:${prevPort}/" -ForegroundColor Green
+      Start-Sleep -Seconds 2
       try {
-        $null = Invoke-WebRequest ("http://localhost:{0}/" -f $prevPort) -UseBasicParsing -TimeoutSec 5
+        $null = Invoke-WebRequest "http://localhost:${prevPort}/" -UseBasicParsing -TimeoutSec 5
       } catch { Write-Warning "HTTP-Check Preview fehlgeschlagen: $($_.Exception.Message)" }
     }
   }
 
   # ---- MAIN (8088) ----------------------------------------------------------
   if($Main){
-    Write-Host "▶ Main-Stack (nginx + php-fpm) starten…" -ForegroundColor Cyan
+    Write-Host "[>>] Main-Stack (nginx + php-fpm) starten..." -ForegroundColor Cyan
     docker compose -f compose.yml up -d nginx php
     if($LASTEXITCODE -ne 0){ throw "Main-Stack konnte nicht gestartet werden." }
 
     $mainPort = Get-ComposePort "compose.yml" "nginx" 80
     if(!$mainPort){ Write-Warning "Konnte Main-Port nicht ermitteln."; } else {
-      Write-Host ("✓ Main erreichbar: http://localhost:{0}/" -f $mainPort) -ForegroundColor Green
+      Write-Host "[OK] Main erreichbar: http://localhost:${mainPort}/" -ForegroundColor Green
+      Start-Sleep -Seconds 3
       try {
-        $res = Invoke-WebRequest ("http://localhost:{0}/assets/php/health.php" -f $mainPort) -UseBasicParsing -TimeoutSec 5
+        $res = Invoke-WebRequest "http://localhost:${mainPort}/assets/php/health.php" -UseBasicParsing -TimeoutSec 5
         if($res.StatusCode -eq 200 -and $res.Content -match "OK"){
-          Write-Host "✓ PHP-Health OK" -ForegroundColor Green
+          Write-Host "[OK] PHP-Health OK" -ForegroundColor Green
         } else {
           Write-Warning "PHP-Health unerwartete Antwort."
         }
@@ -117,11 +119,17 @@ function Start-JZStacks {
 
   # ---- DEV (3000) -----------------------------------------------------------
   if($Dev){
-    Write-Host "▶ Dev-Stack (Next HMR) starten…" -ForegroundColor Cyan
+    Write-Host "[>>] Dev-Stack (Next HMR) starten..." -ForegroundColor Cyan
 
-    # Falls node_modules im Volume leer wäre: einmalige Befüllung (robust)
-    docker compose -f compose.yml -f compose.next.yml run --rm next-dev sh -lc "if [ ! -d node_modules ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then npm ci || npm i; fi"
-    if($LASTEXITCODE -ne 0){ Write-Warning "Vor-Install im Dev-Container evtl. fehlgeschlagen (prüfe Logs)." }
+    # Node-Module-Check in Container mit Here-String (kein PowerShell-Escaping)
+    $shellCmd = @'
+if [ ! -d node_modules ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then npm ci || npm i; fi
+'@
+    
+    docker compose -f compose.yml -f compose.next.yml run --rm next-dev sh -c $shellCmd
+    if($LASTEXITCODE -ne 0){ 
+      Write-Warning "Vor-Install im Dev-Container evtl. fehlgeschlagen (pruefe Logs)." 
+    }
 
     docker compose -f compose.yml -f compose.next.yml --profile next up -d next-dev
     if($LASTEXITCODE -ne 0){ throw "Dev-Stack konnte nicht gestartet werden." }
@@ -129,11 +137,14 @@ function Start-JZStacks {
     $devPort = Get-ComposePort "compose.yml;compose.next.yml" "next-dev" 3000
     # Bei zusammengesetzten Compose-Dateien löst 'port' nicht immer korrekt auf → als Fallback: 3000
     if(!$devPort){ $devPort = "3000" }
-    Write-Host ("✓ Dev erreichbar: http://localhost:{0}/" -f $devPort) -ForegroundColor Green
+    Write-Host "[OK] Dev erreichbar: http://localhost:${devPort}/" -ForegroundColor Green
+    Start-Sleep -Seconds 4
     try {
-      $null = Invoke-WebRequest ("http://localhost:{0}/robots.txt" -f $devPort) -UseBasicParsing -TimeoutSec 5
-    } catch { Write-Warning "HTTP-Check Dev fehlgeschlagen: $($_.Exception.Message)" }
+      $null = Invoke-WebRequest "http://localhost:${devPort}/robots.txt" -UseBasicParsing -TimeoutSec 5
+    } catch { 
+      Write-Warning "HTTP-Check Dev fehlgeschlagen: $($_.Exception.Message)" 
+    }
   }
 
-  Write-Host "✔ Fertig." -ForegroundColor Green
+  Write-Host "[FERTIG] Alle gewaehlten Stacks gestartet." -ForegroundColor Green
 }

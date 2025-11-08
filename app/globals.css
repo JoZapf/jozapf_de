@@ -4,3 +4,16 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
 }
+
+.build-info { 
+  margin: .25rem 0 0; 
+  font-size: .9rem; 
+  opacity: .85; 
+  color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity)) !important;
+  float:right;
+}
+.build-info .sep { 
+  margin: 0 .4rem; 
+  opacity: .6; 
+  color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity)) !important; }
+ 

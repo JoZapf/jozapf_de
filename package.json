@@ -1,4 +1,6 @@
 {
+  "name": "jozapf-de",
+  "version": "2.0.1",
   "private": true,
   "scripts": {
     "predev": "powershell -NoProfile -Command \"try { npx kill-port 3000 3002 } catch {} ; Remove-Item .\\.next\\dev\\lock -Force -ErrorAction Ignore ; exit 0\" && node scripts/remove-sourcemap.mjs",
@@ -11,7 +13,10 @@
     "preview:down": "docker compose -f compose.preview.yml down",
     "clean": "powershell -NoProfile -Command \"Remove-Item .\\.next -Recurse -Force -ErrorAction Ignore; Remove-Item .\\out -Recurse -Force -ErrorAction Ignore\"",
     "diagnose": "node scripts/diagnose.mjs",
-    "diagnose:fix": "node scripts/diagnose.mjs --fix"
+    "diagnose:fix": "node scripts/diagnose.mjs --fix",
+    "version:patch": "node scripts/bump-version.mjs patch",
+    "version:minor": "node scripts/bump-version.mjs minor",
+    "version:major": "node scripts/bump-version.mjs major"
   },
   "dependencies": {
     "next": "^16.0.0",

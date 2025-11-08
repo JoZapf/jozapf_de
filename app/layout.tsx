@@ -1,4 +1,4 @@
-﻿// app/layout.tsx
+// app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Script from "next/script";
@@ -218,91 +218,103 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             triggers: '#menuPanel a[href*="contact"], a[href="#contact"], a[data-action="contact"]'
           };
 
-          function setupSecurityQuestion(root) {
-            if (!root) return;
-            if (root.querySelector('[data-security-bound="true"]')) return;
-            const form = root.querySelector('form');
-            if (!form) return;
-
-            let qTextEl = root.querySelector('[data-security-question], #security-question, .security-question');
-            let ansInput = root.querySelector('input[name*="security"], input[id*="security"], input[name*="captcha"], input[id*="captcha"]');
-
-            if (!qTextEl || !ansInput) {
-              const group = document.createElement('div');
-              group.className = 'mb-3';
-              group.innerHTML = \`
-                <label class="form-label">Security question: <span class="security-q-text"></span></label>
-                <input type="text" class="form-control" name="security_answer" required>
-                <div class="invalid-feedback">Please answer the question correctly.</div>
-              \`;
-              const submitWrap = form.querySelector('[type="submit"]')?.closest('.mb-3, .form-group') || form.lastElementChild;
-              form.insertBefore(group, submitWrap?.nextSibling || null);
-
-              qTextEl = group.querySelector('.security-q-text');
-              ansInput = group.querySelector('input[name="security_answer"]');
+          async function loadContactForm(shouldScroll = false) {
+            const mount = document.querySelector('.contact_form');
+            if (!mount) {
+              console.error('Contact form mount point not found');
+              return;
             }
 
-            const a = Math.floor(1 + Math.random() * 9);
-            const b = Math.floor(1 + Math.random() * 9);
-            const usePlus = Math.random() < 0.6;
-            const question = usePlus ? \`\${a} + \${b}\` : \`\${Math.max(a,b)} - \${Math.min(a,b)}\`;
-            const expected = eval(question);
+            // Add ID for anchor jumping
+            if (!mount.id) {
+              mount.id = 'contact';
+            }
 
-            if (qTextEl) qTextEl.textContent = question;
-            if (ansInput) ansInput.setAttribute('data-expected', String(expected));
-
-            form.addEventListener('submit', (ev) => {
-              const el = ansInput;
-              if (!el) return;
-              const ok = (el.value || '').trim() === String(el.getAttribute('data-expected'));
-              if (!ok) {
-                ev.preventDefault();
-                ev.stopImmediatePropagation();
-                el.classList.add('is-invalid');
-                try { el.focus(); } catch {}
-              } else {
-                el.classList.remove('is-invalid');
+            if (mount.getAttribute('data-loaded') === 'true') {
+              if (shouldScroll) {
+                mount.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }
-            }, { once: true });
-
-            const marker = document.createElement('input');
-            marker.type = 'hidden';
-            marker.setAttribute('data-security-bound', 'true');
-            form.appendChild(marker);
-          }
-
-          async function loadContactForm() {
-            const mount = document.querySelector('.contact_form');
-            if (!mount || mount.getAttribute('data-loaded') === 'true') return;
+              return;
+            }
 
             try {
               const res = await fetch(CONFIG.formURL, { headers: { 'X-Requested-With': 'fetch' } });
               if (!res.ok) throw new Error('HTTP ' + res.status);
+              
               const html = await res.text();
               mount.innerHTML = html;
-              mount.setAttribute('data-loaded','true');
+              mount.setAttribute('data-loaded', 'true');
 
+              // Import and initialize the contact form logic
               let mod = null;
-              try { mod = await import(CONFIG.logicURL); } catch (e) { console.warn('contact-form-logic.js not found or failed to import:', e); }
+              try {
+                mod = await import(CONFIG.logicURL);
+              } catch (e) {
+                console.error('Failed to import contact-form-logic.js:', e);
+              }
 
-              try { if (mod?.init) await mod.init(mount); } catch {}
-              try { if (typeof mod?.default === 'function') await mod.default(mount); } catch {}
-              try { if (typeof window !== 'undefined' && typeof window.initContactForm === 'function') await window.initContactForm(mount); } catch {}
+              // Try different initialization methods
+              let initialized = false;
+              
+              if (mod && typeof mod.initContactForm === 'function') {
+                try {
+                  mod.initContactForm(mount);
+                  initialized = true;
+                } catch (e) {
+                  console.error('initContactForm failed:', e);
+                }
+              }
+              
+              if (!initialized && mod && typeof mod.default === 'function') {
+                try {
+                  mod.default(mount);
+                  initialized = true;
+                } catch (e) {
+                  console.error('default export failed:', e);
+                }
+              }
+              
+              if (!initialized && typeof window !== 'undefined' && typeof window.initContactForm === 'function') {
+                try {
+                  window.initContactForm(mount);
+                  initialized = true;
+                } catch (e) {
+                  console.error('window.initContactForm failed:', e);
+                }
+              }
 
-              setupSecurityQuestion(mount);
+              if (!initialized) {
+                console.warn('Contact form loaded but not initialized - no valid init function found');
+              }
+
               mount.dispatchEvent(new CustomEvent('contact:ready', { bubbles: true }));
+
+              // Scroll to form if requested
+              if (shouldScroll) {
+                setTimeout(() => {
+                  mount.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+              }
+
             } catch (e) {
               console.error('Contact form failed to load:', e);
             }
           }
 
+          // Handle click events on contact links
           document.addEventListener('click', (ev) => {
             const target = ev.target instanceof Element ? ev.target : null;
             const link = target && target.closest(CONFIG.triggers);
-            if (link) { ev.preventDefault(); loadContactForm(); }
+            if (link) {
+              ev.preventDefault();
+              loadContactForm(true);
+            }
           });
 
-          if (location.hash === '#contact') { loadContactForm(); }`}
+          // Check for hash on page load
+          if (location.hash && (location.hash === '#contact' || location.hash === '#contact-form-anchor')) {
+            loadContactForm(true);
+          }`}
         </Script>
 
         {/* Strukturierte Daten */}
