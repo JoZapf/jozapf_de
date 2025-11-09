@@ -18,7 +18,6 @@
 <!-- Quality & Compliance -->
 [![GDPR](https://img.shields.io/badge/GDPR-Compliant-success)](https://gdpr.eu/)
 [![Status](https://img.shields.io/badge/Status-Production-success)](/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 <!-- Learning Context -->
