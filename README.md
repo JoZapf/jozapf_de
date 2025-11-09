@@ -5,22 +5,16 @@
 [![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=node.js)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://reactjs.org/)
-
----
 <!-- Infrastructure -->
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions)](https://github.com/features/actions)
 [![Deployment](https://img.shields.io/badge/Deploy-FTPS-success?logo=files)](https://github.com/features/actions)
-
----
 <!-- Security -->
 [![Security](https://img.shields.io/badge/Security-Hardened-success?logo=github)](MIGRATION_SECURITY.md)
 [![Secrets](https://img.shields.io/badge/Secrets-External-critical?logo=1password)](MIGRATION_SECURITY.md)
 [![CodeQL](https://img.shields.io/badge/CodeQL-enabled-success?logo=github)](https://github.com/JoZapf/jozapf_de/security/code-scanning)
 [![npm audit](https://img.shields.io/badge/npm%20audit-passing-success?logo=npm)](/)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/dependabot)
-
----
 <!-- Quality & Compliance -->
 [![GDPR](https://img.shields.io/badge/GDPR-Compliant-success)](https://gdpr.eu/)
 [![Status](https://img.shields.io/badge/Status-Production-success)](/)
