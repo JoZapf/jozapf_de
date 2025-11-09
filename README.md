@@ -64,7 +64,7 @@ This document details the migration of **jozapf.de** from a containerized Bootst
 
 ### Learning Objectives
 
-As an **IT specialist apprentice** (Fachinformatiker für Anwendungsentwicklung), this project demonstrates:
+As an **IT specialist apprentice** (Application Development), this project demonstrates:
 
 ✅ Modern web development workflows  
 ✅ Container orchestration and multi-stage Docker builds  
@@ -77,7 +77,7 @@ As an **IT specialist apprentice** (Fachinformatiker für Anwendungsentwicklung)
 
 ### Development Methodology
 
-**Transparency Notice:** This project was developed with **AI assistance** using Claude (Anthropic) via the Model Context Protocol (MCP). As an apprentice 6 months into training, I believe in honest documentation of all tools and methods used.
+**Transparency Notice:** This project was developed with **AI assistance** using Claude-Code via the Model Context Protocol (MCP).
 
 **How AI was integrated into development:**
 - **Local LLM setup**: Configured and deployed Claude via MCP for offline-capable development assistance
@@ -89,11 +89,10 @@ As an **IT specialist apprentice** (Fachinformatiker für Anwendungsentwicklung)
 
 **What this is NOT:**
 - ❌ Copy-paste development without understanding
-- ❌ Claiming AI-generated work as sole human achievement
 - ❌ Bypassing proper learning fundamentals
 
 **What this IS:**
-- ✅ Modern software development practices (AI as a sophisticated tool, like IDEs or Stack Overflow)
+- ✅ Modern software development practices
 - ✅ Honest representation of the development process
 - ✅ Demonstration of effective use of emerging technologies
 - ✅ Proof of ability to critically evaluate and integrate AI suggestions
