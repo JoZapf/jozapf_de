@@ -1049,25 +1049,10 @@ This project serves as a **practical learning platform** during my apprenticeshi
 
 ---
 
-## Acknowledgments
-
-- **Next.js Team**: For the excellent SSG export mode
-- **SamKirkland/FTP-Deploy-Action**: Reliable FTPS deployment solution
-- **Anthropic Claude**: For MCP-based development assistance
-- **Hetzner**: For reliable shared hosting infrastructure
-
----
-
-## License
-
-MIT License - See [LICENSE](LICENSE) file for details.
-
----
-
 ## Contact
 
 **Jo Zapf**  
-Web Development & Application Development  
+Web- & Application Development, Cross-Media Solutions  
 Berlin, Germany
 
 - Website: [jozapf.de](https://jozapf.de)
