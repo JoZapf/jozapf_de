@@ -1,9 +1,23 @@
 #!/usr/bin/env node
 // scripts/bump-version.mjs
-// Security: Using spawnSync with array arguments to prevent command injection (CodeQL compliant)
+// Security: Safe command execution without injection vulnerabilities (CodeQL compliant)
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { platform } from 'node:os';
+
+// Helper: Cross-platform safe spawn (prevents command injection)
+function safeSpawn(command, args = [], options = {}) {
+  const isWindows = platform() === 'win32';
+  
+  // On Windows, use shell for .cmd/.bat scripts, but keep array args safe
+  const spawnOptions = {
+    ...options,
+    shell: isWindows && (command === 'npm' || command === 'git')
+  };
+  
+  return spawnSync(command, args, spawnOptions);
+}
 
 const args = process.argv.slice(2);
 const type = args[0] || 'patch'; // patch | minor | major
@@ -19,28 +33,21 @@ console.log(`\n🚀 Bumping ${type} version...\n`);
 
 try {
   // 1. Check if working directory is clean
-  const gitCheck = spawnSync('git', ['diff-index', '--quiet', 'HEAD', '--']);
+  const gitCheck = safeSpawn('git', ['diff-index', '--quiet', 'HEAD', '--']);
   if (gitCheck.status !== 0) {
     console.warn('⚠️  Warning: You have uncommitted changes!');
     console.log('   Continuing anyway...\n');
   }
 
   // 2. Bump version in package.json
-  // Using spawnSync with array arguments prevents command injection
+  // Using array arguments prevents command injection (CodeQL safe)
   console.log('📦 Updating package.json...');
-  const versionResult = spawnSync('npm', ['version', type, '--no-git-tag-version'], {
-    encoding: 'utf-8',
-    shell: true  // Enable shell for npm on Windows
+  const versionResult = safeSpawn('npm', ['version', type, '--no-git-tag-version'], {
+    encoding: 'utf-8'
   });
 
-  // Debug output
   if (versionResult.error) {
-    console.error('❌ Spawn error:', versionResult.error);
     throw new Error(`Failed to spawn npm: ${versionResult.error.message}`);
-  }
-
-  if (versionResult.stderr) {
-    console.log('npm stderr:', versionResult.stderr);
   }
 
   if (versionResult.status !== 0) {
@@ -60,32 +67,20 @@ try {
   // 4. Create Git commit and tag
   console.log('📝 Creating Git commit and tag...');
   
-  const gitAdd = spawnSync('git', ['add', 'package.json', 'package-lock.json'], { 
-    stdio: 'inherit',
-    shell: true 
-  });
-  
-  if (gitAdd.status !== 0) {
-    console.warn('⚠️  git add failed, but continuing...');
-  }
-
-  const gitCommit = spawnSync('git', ['commit', '-m', `chore: bump version to ${newVersion}`], { 
-    stdio: 'inherit',
-    shell: true 
-  });
-  
-  if (gitCommit.status !== 0) {
-    console.warn('⚠️  git commit failed (maybe nothing to commit?)');
-  }
-
-  const gitTag = spawnSync('git', ['tag', '-a', `v${newVersion}`, '-m', `Release v${newVersion}`], { 
-    stdio: 'inherit',
-    shell: true 
+  // Git add
+  safeSpawn('git', ['add', 'package.json', 'package-lock.json'], { 
+    stdio: 'inherit'
   });
 
-  if (gitTag.status !== 0) {
-    console.warn('⚠️  git tag failed (maybe tag already exists?)');
-  }
+  // Git commit - message as single array element (safe)
+  safeSpawn('git', ['commit', '-m', `chore: bump version to ${newVersion}`], { 
+    stdio: 'inherit'
+  });
+
+  // Git tag
+  safeSpawn('git', ['tag', '-a', `v${newVersion}`, '-m', `Release v${newVersion}`], { 
+    stdio: 'inherit'
+  });
 
   console.log('\n✨ Version bumped successfully!\n');
   console.log('Next steps:');

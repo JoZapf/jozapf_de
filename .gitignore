@@ -75,6 +75,11 @@ public/assets/php/logs/
 public/assets/php/assets.old/
 public/assets/php/*.eml
 
+# --- Docs gezielt NICHT ignorieren -------------
+!docs/versioning.svg
+!docs/VERSIONING.md
+
+
 # Build-Output
 out/
 
