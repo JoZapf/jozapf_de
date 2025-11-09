@@ -24,7 +24,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 <!-- Learning Context -->
-[![Apprentice](https://img.shields.io/badge/Fachinformatiker-In%20Training-informational?logo=education)](https://en.wikipedia.org/wiki/Vocational_education)
+[![Apprentice](https://img.shields.io/badge/AppDevelopper-In%20Training-informational?logo=education)](https://en.wikipedia.org/wiki/Vocational_education)
 [![Documentation](https://img.shields.io/badge/Docs-Comprehensive-success?logo=readthedocs)](/)
 
 > **Portfolio Website Migration Journey**  
