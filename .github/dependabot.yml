@@ -1,0 +1,71 @@
+# Dependabot Configuration
+# Automatically checks for dependency updates and security vulnerabilities
+# Docs: https://docs.github.com/en/code-security/dependabot
+
+version: 2
+updates:
+  # NPM Dependencies (Next.js, React, TypeScript, etc.)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    reviewers:
+      - "JoZapf"
+    # Group minor and patch updates
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+    # Always create PR for security updates
+    versioning-strategy: increase
+    # Ignore specific dependencies if needed
+    ignore:
+      # Example: Pin Next.js to major version 16
+      # - dependency-name: "next"
+      #   update-types: ["version-update:semver-major"]
+
+  # Docker base images (if using custom Dockerfiles)
+  - package-ecosystem: "docker"
+    directory: "/docker/php"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Berlin"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "chore(docker)"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Berlin"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci)"

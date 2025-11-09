@@ -1,0 +1,75 @@
+# CodeQL Security Analysis
+# Performs automated security scanning for vulnerabilities and coding errors
+# Docs: https://docs.github.com/en/code-security/code-scanning
+
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run every Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: Analyze Code
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript', 'typescript' ]
+        # Supported languages: 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby', 'typescript'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Override default queries with custom queries
+          # queries: security-extended,security-and-quality
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+        env:
+          # Prevent failures due to missing secrets
+          GIT_TAG: "codeql-scan"
+          BUILD_DATE: ${{ github.event.repository.updated_at }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
+          # Upload results even if there are errors
+          upload: true
+
+      - name: Upload SARIF results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ../results/${{ matrix.language }}.sarif
+          category: "/language:${{matrix.language}}"
