@@ -719,23 +719,6 @@ jobs:
 └─────────────────────┘
 ```
 
-**Key Learnings**:
-- 🎓 FTPS provides adequate security for static sites (TLS encryption in transit)
-- 🎓 `dangerous-clean-slate: false` prevents accidental deletion of server-side files
-- 🎓 `fetch-depth: 0` is crucial for `git describe --tags` to work
-- 🎓 Always test the Action with a staging server first
-- 🎓 Monitor Action runs - failed builds should block deployment
-
-**Limitations & Mitigations**:
-
-| Limitation | Impact | Mitigation |
-|------------|--------|------------|
-| No atomic deployment | Brief inconsistency during upload | Low traffic site, fast upload |
-| No rollback mechanism | Manual revert needed | Maintain Git tags, redeploy previous version |
-| Single failure point | Build or upload failure blocks deploy | GitHub Actions retry mechanism, email alerts |
-
----
-
 ## Deployment Workflow
 
 ### Complete Local → Production Flow
@@ -847,85 +830,6 @@ npm run version:major  # → v3.0.0 (breaking change)
 
 ---
 
-## Lessons Learned
-
-### ✅ Do's
-
-1. **Start with Export Mode Early**
-   - Don't build SSR features first, then realize you need SSG
-   - Define `output: "export"` from day one
-
-2. **Test the Build Output, Not Just Dev Mode**
-   - `npm run dev` ≠ `npm run build` behavior
-   - Always test the `/out` directory with a local server
-
-3. **Use Named Volumes for node_modules**
-   - Prevents Windows/WSL sync issues
-   - Faster container startup (no re-sync)
-
-4. **Document Secrets Architecture Clearly**
-   - Future-you will forget where credentials live
-   - Create a `SECRETS.md` template
-
-5. **Automate Version Injection**
-   - Manual version updates = guaranteed mistakes
-   - Let Git tags be the single source of truth
-
-6. **Separate Dev and Preview Containers**
-   - `next-dev`: For development (hot-reload)
-   - `next-static`: For production verification (serves `/out`)
-
-### ❌ Don'ts
-
-1. **Don't Mix SSR and SSG Patterns**
-   - `getServerSideProps` will break in export mode
-   - Stick to `getStaticProps` or build-time data loading
-
-2. **Don't Commit Secrets (Obviously)**
-   - But also: don't commit secret *paths* that reveal infrastructure
-   - Use `${SECRETS_DIR}` placeholders
-
-3. **Don't Rely on Runtime Environment Variables**
-   - `process.env.XYZ` won't exist in the browser
-   - Inject at build-time or use `publicRuntimeConfig`
-
-4. **Don't Skip the Local Preview Step**
-   - Deploying broken builds wastes time and looks unprofessional
-   - `npm run build && npx serve out` takes 30 seconds
-
-5. **Don't Use `dangerous-clean-slate: true` Carelessly**
-   - Will delete server-side files not in `/out`
-   - Test with `dry-run` option first
-
-### 🎓 Key Insights for Apprentices
-
-1. **Migration ≠ Rewrite**
-   - This was a **gradual migration**, not a big-bang rewrite
-   - Kept Bootstrap markup in fragments during transition
-   - Reduced risk, maintained functionality throughout
-
-2. **Developer Experience Matters**
-   - Hot-reload saves hours of manual refreshing
-   - Type safety catches bugs before runtime
-   - Automated versioning eliminates toil
-
-3. **Documentation Is Code**
-   - This README took ~4 hours to write
-   - Will save ~20 hours for the next person (including future-me)
-   - Good docs = respect for your team and yourself
-
-4. **Security Is Not Optional**
-   - Secrets management was ~30% of migration effort
-   - Proper patterns prevent credentials leakage
-   - GitHub Secrets + external env files = safe default
-
-5. **Understand Your Constraints**
-   - Hetzner = no SSH → drove the SSG decision
-   - Constraints force creative solutions
-   - Sometimes limitations are features (forced simplicity)
-
----
-
 ## Getting Started
 
 ### Prerequisites
@@ -1024,28 +928,6 @@ This project serves as a **practical learning platform** during my apprenticeshi
 ### Related Projects
 
 - **Contact Form Abuse Prevention**: PHP-based contact form with GDPR compliance, CSRF protection, and automated log anonymization
-- **mTLS Nextcloud Login Hardening**: Zero-Trust architecture with Cloudflare Edge services
-- **Java Directory Tree Visualization**: Performance-optimized Java application with internationalized formatting
-
----
-
-## Future Roadmap
-
-### Planned Improvements
-
-- [ ] Migrate Bootstrap fragments to React components (incremental)
-- [ ] Add MDX support for blog posts
-- [ ] Implement GitHub Actions PR preview deployments
-- [ ] Add automated Lighthouse CI checks
-- [ ] Integrate external CMS (Sanity or Contentful)
-- [ ] Add automated screenshot testing (Percy or Chromatic)
-
-### Potential Extensions
-
-- API routes via serverless functions (Vercel/Netlify)
-- i18n support for English/German content
-- RSS feed generation
-- Automated OpenGraph image generation
 
 ---
 
