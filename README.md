@@ -80,7 +80,7 @@ As an **IT specialist apprentice** (Application Development), this project demon
 **Transparency Notice:** This project was developed with **AI assistance** using Claude-Code via the Model Context Protocol (MCP).
 
 **How AI was integrated into development:**
-- **Local LLM setup**: Configured and deployed Claude via MCP for offline-capable development assistance
+- **Local LLM setup**: Configured Claude-Desktop App (Windows) for working locally , installed Claude-Code on WSL
 - **Architecture decisions**: Created through collaborative AI pair-programming sessions
 - **Security implementations & Secrets managemnt**: Researched with AI assistance, then independently validated and tested
 - **Learning acceleration**: Interactive problem-solving with LLMs to understand complex concepts faster
