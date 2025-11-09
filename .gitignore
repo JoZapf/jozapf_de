@@ -34,6 +34,8 @@ assets/php/logs/archive/
 assets/php/logs/sent-eml/
 docs/
 cron/
+public/assets/php/assets.old 
+public/assets/php/data
 
 # Log-Dateien rekursiv (Fix: vorher fehlte ein Zeilenumbruch)
 assets/php/logs/**/*.log
@@ -83,3 +85,24 @@ public/assets/php/*.eml
 # Build-Output
 out/
 
+
+# ============================================
+# Backup-Dateien und Secrets (NEVER commit)
+# ============================================
+**/*.back
+**/.back.*
+**/*.bak
+**/*.backup
+**/*.old
+**/*.swp
+**/*.tmp
+**/assets.old/
+
+# Environment files
+**/.env
+**/.env.*
+!**/.env.example
+
+# Sensitive data
+**/secrets/
+**/*secret*

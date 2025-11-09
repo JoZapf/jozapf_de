@@ -72,7 +72,44 @@ As an **IT specialist apprentice** (Fachinformatiker für Anwendungsentwicklung)
 ✅ TypeScript, React, and Next.js fundamentals  
 ✅ Secrets management and security-first practices  
 ✅ Git-based versioning and changelog maintenance  
-✅ Documentation and knowledge transfer
+✅ Documentation and knowledge transfer  
+✅ Local **AI-assisted development** with Large Language Models (MCP)
+
+### Development Methodology
+
+**Transparency Notice:** This project was developed with **AI assistance** using Claude (Anthropic) via the Model Context Protocol (MCP). As an apprentice 6 months into training, I believe in honest documentation of all tools and methods used.
+
+**How AI was integrated into development:**
+- **Local LLM setup**: Configured and deployed Claude via MCP for offline-capable development assistance
+- **Architecture decisions**: Created through collaborative AI pair-programming sessions
+- **Security implementations & Secrets managemnt**: Researched with AI assistance, then independently validated and tested
+- **Learning acceleration**: Interactive problem-solving with LLMs to understand complex concepts faster
+- **Code review**: AI-suggested patterns evaluated, tested, and often modified before implementation
+- **Documentation**: AI helped structure and expand technical writing, all content human-verified
+
+**What this is NOT:**
+- ❌ Copy-paste development without understanding
+- ❌ Claiming AI-generated work as sole human achievement
+- ❌ Bypassing proper learning fundamentals
+
+**What this IS:**
+- ✅ Modern software development practices (AI as a sophisticated tool, like IDEs or Stack Overflow)
+- ✅ Honest representation of the development process
+- ✅ Demonstration of effective use of emerging technologies
+- ✅ Proof of ability to critically evaluate and integrate AI suggestions
+
+**Why document this openly?**
+- Maintains **professional integrity** and realistic skill representation
+- Shows understanding of when and how to leverage AI effectively
+- Helps other apprentices understand realistic learning paths
+- Demonstrates that using tools doesn't diminish the learning process - it's about **understanding** what you build
+
+**Skills demonstrated:**
+- Critical evaluation of AI-generated solutions
+- Prompt engineering and effective LLM collaboration  
+- Independent validation and security testing
+- Integration of AI tools into professional workflows
+- Knowing when to use AI and when to solve problems independently
 
 ---
 
@@ -159,6 +196,97 @@ services:
 ---
 
 ## Architecture & Key Decisions
+
+### 0. Asset & Service Distribution Strategy
+
+**Current Implementation:**
+- Main domain: `jozapf.de` (Next.js static export)
+- Assets subdomain: `assets.jozapf.de` (static media: images, fonts, icons)
+- Static files cached with long expiry times via `.htaccess` rules
+- Cookie-less domain for assets to reduce HTTP overhead
+
+**Planned Architecture Extensions:**
+
+```
+jozapf.de           → Main website (Next.js SSG)
+assets.jozapf.de    → Static media (images, fonts, SVGs) - CDN-ready
+cdn.jozapf.de       → Content Delivery Network endpoint (future exploration)
+api.jozapf.de       → API services (future - serverless/microservices)
+```
+
+**Benefits of this architecture:**
+- ✅ **Domain sharding**: Parallel asset loading (HTTP/1.1 optimization)
+- ✅ **Cookie-less domain**: Reduced request overhead for static assets
+- ✅ **Cache control**: Independent cache policies per service
+- ✅ **Security isolation**: API/assets separated from main application
+- ✅ **Scalability**: Easy migration to CDN providers (Cloudflare, etc.)
+- ✅ **CORS flexibility**: Fine-grained cross-origin resource control
+
+#### Main Site `.htaccess` (jozapf.de)
+
+```apache
+# Selective redirect: Only media assets → assets.jozapf.de
+# JS/CSS/PHP/HTML stay on main domain
+RewriteCond %{HTTP_HOST} !^assets\.jozapf\.de$ [NC]
+RewriteRule ^assets/(png|jpe?g|svg|ico|favicon|fonts)/(.*)$ https://assets.jozapf.de/$1/$2 [R=302,L]
+
+# Security: Block sensitive files
+RewriteRule ^assets/php/(dashboard-login\.php|dashboard\.php|contact-php-handler\.php)$ - [L]
+RewriteRule ^assets/php/ - [F]
+
+# Security Headers
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+```
+
+**Key implementation details:**
+- `[R=302,L]` for testing phase (switch to 301 after verification)
+- Only image/font paths redirected - preserves Next.js JS/CSS on main domain
+- Prevents redirect loops with `RewriteCond %{HTTP_HOST}` check
+
+#### Assets Subdomain `.htaccess` (assets.jozapf.de)
+
+```apache
+# CORS: Allow cross-origin requests from main domain
+<FilesMatch "\.(woff2?|ttf|otf|eot|svg|png|jpe?g|ico)$">
+  Header set Access-Control-Allow-Origin "https://jozapf.de"
+  Header set Access-Control-Allow-Methods "GET, OPTIONS"
+  Header set Access-Control-Allow-Headers "Accept, Origin, Content-Type"
+</FilesMatch>
+
+# Aggressive caching: 30 days for all static media
+ExpiresByType image/png  "access plus 30 days"
+ExpiresByType image/jpeg "access plus 30 days"
+ExpiresByType image/svg+xml "access plus 30 days"
+ExpiresByType font/woff2 "access plus 30 days"
+```
+
+**Why separate assets subdomain:**
+- **Performance**: Browser can make more parallel requests to different domains
+- **Security**: No cookies sent with asset requests (reduces bandwidth)
+- **Caching**: Can set aggressive cache headers without affecting main site
+- **Future-proof**: Easy to swap to a CDN provider later
+
+#### Future CDN/API Strategy
+
+**cdn.jozapf.de** (Planned):
+- Potential Cloudflare Workers integration
+- Edge caching for global distribution
+- Image optimization/WebP conversion at edge
+- Still learning: Difference between CDN and simple subdomain hosting
+
+**api.jozapf.de** (Planned):
+- Serverless functions (Vercel/Netlify/Cloudflare Workers)
+- Separate authentication domain
+- Microservices for contact form, analytics, etc.
+- Still researching: When to use vs. traditional PHP backend
+
+**Learning journey:**
+- Understanding domain separation benefits (practical experience in progress)
+- Exploring CDN concepts and edge computing (theoretical knowledge building)
+- Researching microservices vs. monolithic architecture (evaluating trade-offs)
+- Investigating serverless deployment options (not yet clear when to use)
 
 ### 1. Static Site Generation (SSG) Strategy
 
