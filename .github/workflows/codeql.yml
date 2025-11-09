@@ -28,21 +28,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript', 'typescript' ]
-        # Supported languages: 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby', 'typescript'
+        # Use 'javascript' for both JS and TS (CodeQL treats them the same)
+        language: [ 'javascript' ]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          # Override default queries with custom queries
-          # queries: security-extended,security-and-quality
+          # Scan both JavaScript and TypeScript files
+          queries: security-extended
           
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -63,13 +61,4 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:${{matrix.language}}"
-          # Upload results even if there are errors
-          upload: true
-
-      - name: Upload SARIF results
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: ../results/${{ matrix.language }}.sarif
           category: "/language:${{matrix.language}}"
