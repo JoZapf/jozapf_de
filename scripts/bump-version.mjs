@@ -22,19 +22,32 @@ try {
   const gitCheck = spawnSync('git', ['diff-index', '--quiet', 'HEAD', '--']);
   if (gitCheck.status !== 0) {
     console.warn('⚠️  Warning: You have uncommitted changes!');
-    console.log('   Commit your changes first for clean versioning.\n');
+    console.log('   Continuing anyway...\n');
   }
 
   // 2. Bump version in package.json
   // Using spawnSync with array arguments prevents command injection
   console.log('📦 Updating package.json...');
   const versionResult = spawnSync('npm', ['version', type, '--no-git-tag-version'], {
-    stdio: 'inherit',
-    encoding: 'utf-8'
+    encoding: 'utf-8',
+    shell: true  // Enable shell for npm on Windows
   });
 
+  // Debug output
+  if (versionResult.error) {
+    console.error('❌ Spawn error:', versionResult.error);
+    throw new Error(`Failed to spawn npm: ${versionResult.error.message}`);
+  }
+
+  if (versionResult.stderr) {
+    console.log('npm stderr:', versionResult.stderr);
+  }
+
   if (versionResult.status !== 0) {
-    throw new Error('npm version command failed');
+    console.error('❌ npm version failed with exit code:', versionResult.status);
+    console.error('stdout:', versionResult.stdout);
+    console.error('stderr:', versionResult.stderr);
+    throw new Error(`npm version command failed with exit code ${versionResult.status}`);
   }
 
   // 3. Read new version
@@ -47,11 +60,32 @@ try {
   // 4. Create Git commit and tag
   console.log('📝 Creating Git commit and tag...');
   
-  spawnSync('git', ['add', 'package.json', 'package-lock.json'], { stdio: 'inherit' });
+  const gitAdd = spawnSync('git', ['add', 'package.json', 'package-lock.json'], { 
+    stdio: 'inherit',
+    shell: true 
+  });
   
-  spawnSync('git', ['commit', '-m', `chore: bump version to ${newVersion}`], { stdio: 'inherit' });
+  if (gitAdd.status !== 0) {
+    console.warn('⚠️  git add failed, but continuing...');
+  }
+
+  const gitCommit = spawnSync('git', ['commit', '-m', `chore: bump version to ${newVersion}`], { 
+    stdio: 'inherit',
+    shell: true 
+  });
   
-  spawnSync('git', ['tag', '-a', `v${newVersion}`, '-m', `Release v${newVersion}`], { stdio: 'inherit' });
+  if (gitCommit.status !== 0) {
+    console.warn('⚠️  git commit failed (maybe nothing to commit?)');
+  }
+
+  const gitTag = spawnSync('git', ['tag', '-a', `v${newVersion}`, '-m', `Release v${newVersion}`], { 
+    stdio: 'inherit',
+    shell: true 
+  });
+
+  if (gitTag.status !== 0) {
+    console.warn('⚠️  git tag failed (maybe tag already exists?)');
+  }
 
   console.log('\n✨ Version bumped successfully!\n');
   console.log('Next steps:');
