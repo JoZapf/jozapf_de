@@ -16,7 +16,7 @@
 <!-- Security -->
 [![Security](https://img.shields.io/badge/Security-Hardened-success?logo=github)](MIGRATION_SECURITY.md)
 [![Secrets](https://img.shields.io/badge/Secrets-External-critical?logo=1password)](MIGRATION_SECURITY.md)
-[![CodeQL](https://img.shields.io/badge/CodeQL-enabled-success?logo=github)](https://github.com/JoZapf/jozapf-de/security/code-scanning)
+[![CodeQL](https://img.shields.io/badge/CodeQL-enabled-success?logo=github)](https://github.com/JoZapf/jozapf_de/security/code-scanning)
 [![npm audit](https://img.shields.io/badge/npm%20audit-passing-success?logo=npm)](/)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/dependabot)
 
@@ -819,8 +819,8 @@ npm run version:major  # → v3.0.0 (breaking change)
 
 1. **Clone the repository**
    ```bash
-   git clone git@github.com:JoZapf/jozapf-de.git
-   cd jozapf-de
+   git clone git@github.com:JoZapf/jozapf_de.git
+   cd jozapf_de
    ```
 
 2. **Install dependencies**
