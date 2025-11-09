@@ -6,11 +6,13 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://reactjs.org/)
 
+---
 <!-- Infrastructure -->
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions)](https://github.com/features/actions)
 [![Deployment](https://img.shields.io/badge/Deploy-FTPS-success?logo=files)](https://github.com/features/actions)
 
+---
 <!-- Security -->
 [![Security](https://img.shields.io/badge/Security-Hardened-success?logo=github)](MIGRATION_SECURITY.md)
 [![Secrets](https://img.shields.io/badge/Secrets-External-critical?logo=1password)](MIGRATION_SECURITY.md)
@@ -18,11 +20,13 @@
 [![npm audit](https://img.shields.io/badge/npm%20audit-passing-success?logo=npm)](/)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/dependabot)
 
+---
 <!-- Quality & Compliance -->
 [![GDPR](https://img.shields.io/badge/GDPR-Compliant-success)](https://gdpr.eu/)
 [![Status](https://img.shields.io/badge/Status-Production-success)](/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+---
 <!-- Learning Context -->
 [![Apprentice](https://img.shields.io/badge/AppDevelopper-In%20Training-informational?logo=education)](https://en.wikipedia.org/wiki/Vocational_education)
 [![Documentation](https://img.shields.io/badge/Docs-Comprehensive-success?logo=readthedocs)](/)
