@@ -101,7 +101,7 @@
 	border-right: 1px solid var(--line);
 	border-left: 1px solid var(--line);
 	font-size: 0.9em;
-	min-height: 9rem;
+	min-height: 10rem;
 }
 
 /* Timeline dots on the lines */
