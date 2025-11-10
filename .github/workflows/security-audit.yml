@@ -130,12 +130,19 @@ jobs:
               body: comment
             });
 
-  # Optional: Snyk scanning (requires SNYK_TOKEN secret)
+  # Snyk Security Scanning (Enhanced vulnerability detection)
+  # Provides deeper analysis than npm audit:
+  # - Larger vulnerability database
+  # - Container image scanning
+  # - Reachability analysis
+  # - Automatic fix PRs
+  # Setup: https://snyk.io/
   snyk:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
     # Only run if SNYK_TOKEN is configured
-    if: vars.SNYK_TOKEN != ''
+    # Get free token: https://app.snyk.io/login (Sign up with GitHub)
+    if: secrets.SNYK_TOKEN != ''
     
     steps:
       - name: Checkout repository
@@ -145,6 +152,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
@@ -152,10 +163,18 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high
+          args: --severity-threshold=high --json-file-output=snyk-report.json
 
       - name: Upload Snyk results to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: snyk.sarif
+
+      - name: Upload Snyk JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-report
+          path: snyk-report.json
+          retention-days: 30

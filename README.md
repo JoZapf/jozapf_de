@@ -24,6 +24,17 @@
 [![Apprentice](https://img.shields.io/badge/AppDevelopper-In%20Training-informational?logo=education)](https://en.wikipedia.org/wiki/Vocational_education)
 [![Documentation](https://img.shields.io/badge/Docs-Comprehensive-success?logo=readthedocs)](/)
 
+---
+
+## Security Scanning
+
+Multi-layered security approach:
+- **npm audit**: Baseline security scanning
+- **Snyk**: Enhanced vulnerability detection with reachability analysis
+- **Dependabot**: Automated dependency updates
+- **CodeQL**: Static code analysis
+
+---
 > **Portfolio Website Migration Journey**  
 > From containerized Bootstrap/PHP development to modern Next.js static export with automated CI/CD deployment to shared hosting.
 
