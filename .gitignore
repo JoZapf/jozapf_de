@@ -1,10 +1,8 @@
 # ============================
 # Projekt: jozapf-de (.gitignore)
-# Ziel:
-#  - Keine Build-Artefakte/Out-Verzeichnisse commiten
-#  - Keine Secrets/Env ins Repo
-#  - GitHub Actions Workflows SICHER NICHT ignorieren
 # ============================
+# --- webroot .htaccess ------------------------------------------------------
+.htaccess
 
 # --- Assets (Fonts) ---------------------------------------------------------
 # kompletter Font-Ordner im Repo
