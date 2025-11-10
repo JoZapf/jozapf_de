@@ -137,12 +137,11 @@ jobs:
   # - Reachability analysis
   # - Automatic fix PRs
   # Setup: https://snyk.io/
+  # To enable: Add SNYK_TOKEN secret (get free token at https://app.snyk.io/login)
+  # The job will skip gracefully if token is not configured
   snyk:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
-    # Only run if SNYK_TOKEN is configured
-    # Get free token: https://app.snyk.io/login (Sign up with GitHub)
-    if: secrets.SNYK_TOKEN != ''
     
     steps:
       - name: Checkout repository
