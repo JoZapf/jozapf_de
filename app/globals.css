@@ -16,4 +16,120 @@ body {
   margin: 0 .4rem; 
   opacity: .6; 
   color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity)) !important; }
+
+/* Language Toggle Styling */
+.lang-toggle {
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  min-width: 40px;
+  background-repeat: no-repeat !important;
+}
+
+.lang-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-1px);
+}
+
+/* German Flag Colors */
+.lang-toggle-de {
+  background: linear-gradient(to bottom, 
+    #000000 0%, #000000 33%,
+    #DD0000 33%, #DD0000 66%,
+    #FFCE00 66%, #FFCE00 100%) !important;
+  background-repeat: no-repeat !important;
+}
+
+.lang-toggle-de:hover {
+  background: linear-gradient(to bottom, 
+    #000000 0%, #000000 33%,
+    #FF0000 33%, #FF0000 66%,
+    #FFD700 66%, #FFD700 100%) !important;
+  background-repeat: no-repeat !important;
+}
+
+/* British Flag Colors (simplified Union Jack) */
+.lang-toggle-en {
+  background: linear-gradient(to bottom,
+    #012169 0%, #012169 40%,
+    #FFFFFF 40%, #FFFFFF 60%,
+    #C8102E 60%, #C8102E 100%) !important;
+  background-repeat: no-repeat !important;
+}
+
+.lang-toggle-en:hover {
+  background: linear-gradient(to bottom,
+    #0A2C7A 0%, #0A2C7A 40%,
+    #FFFFFF 40%, #FFFFFF 60%,
+    #E03C45 60%, #E03C45 100%) !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Flag Text Styling */
+.lang-flag-text {
+  position: relative;
+  z-index: 1;
+  color: #FFFFFF;
+  text-shadow: 
+    -1px -1px 0 rgba(0, 0, 0, 0.8),
+     1px -1px 0 rgba(0, 0, 0, 0.8),
+    -1px  1px 0 rgba(0, 0, 0, 0.8),
+     1px  1px 0 rgba(0, 0, 0, 0.8),
+     0    0   3px rgba(0, 0, 0, 0.9);
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+/* Timeline Box Height Fixes */
+/* Horizontal Timeline - Equal height based on tallest content */
+.milestone-item .milestone-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.milestone-item .note.note-bg {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center; /* Center images horizontally */
+  text-align: center;
+  min-height: 240px; /* Accommodate longest German text */
+}
+
+.milestone-item .note.note-bg img.icon {
+  margin: 0 auto; /* Ensure centering */
+}
+
+.milestone-item .note.note-bg p {
+  width: 100%;
+}
+
+/* Set equal height for all milestones within the timeline */
+.horizontal_timeline .milestone-item {
+  display: flex;
+  align-items: stretch;
+}
+
+/* Vertical Timeline - Equal height for all cards */
+.vertical_timeline .main-timeline-4 {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.vertical_timeline .timeline-4 .card {
+  display: flex;
+  flex-direction: column;
+  min-height: 280px; /* Accommodate longest text content */
+}
+
+.vertical_timeline .timeline-4 .card-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+}
  

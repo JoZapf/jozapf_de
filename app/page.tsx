@@ -1,8 +1,21 @@
 // app/page.tsx
 import fs from "node:fs";
 import path from "node:path";
+import type { Metadata } from "next";
 
 export const dynamic = "force-static"; // SSG/Export erzwingen
+
+// SEO Metadata für deutsche Version (überschreibt layout.tsx)
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+    languages: {
+      'de': "https://jozapf.de/",
+      'en': "https://jozapf.de/en/",
+      "x-default": "https://jozapf.de/",
+    },
+  },
+};
 
 function readFragment(name: string) {
   const candidates = [

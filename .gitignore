@@ -93,10 +93,15 @@ out/
 **/.back.*
 **/*.bak
 **/*.backup
+**/*_bkp.*
+**/*_bkp/
 **/*.old
 **/*.swp
 **/*.tmp
 **/assets.old/
+
+# BFG Repo-Cleaner Reports
+..bfg-report/
 
 # Environment files
 **/.env

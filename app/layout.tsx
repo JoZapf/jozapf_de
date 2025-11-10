@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Script from "next/script";
 import HeaderInfo from "@/components/HeaderInfo";
+import LangAttribute from "@/components/LangAttribute";
 import "./globals.css";
 
 /**
@@ -36,9 +37,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
     languages: {
-      en: "https://jozapf.de/",
+      'de': "https://jozapf.de/",
+      'en': "https://jozapf.de/en/",
       "x-default": "https://jozapf.de/",
-      "en-001": "https://jozapf.com/",
     },
   },
   robots: {
@@ -164,7 +165,7 @@ const serviceSchema = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="de" data-bs-theme="dark" className="h-100">
+    <html lang="de" data-bs-theme="dark" className="h-100" suppressHydrationWarning>
       <head>
         {/* DNS Prefetch */}
         <link rel="dns-prefetch" href="https://www.linkedin.com" />
@@ -182,15 +183,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href="/assets/css/timeline.css" rel="stylesheet" />
         <link href="/assets/css/vertical_timeline.css" rel="stylesheet" />
         <link href="/assets/css/contact-form.css" rel="stylesheet" />
+        <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
       </head>
 
       <body className="d-flex flex-column min-vh-100 text-bg-dark">
+        <LangAttribute />
         <HeaderInfo />
         {children}
 
         {/* JS */}
         <Script src="/assets/js/bootstrap.bundle.min.js" strategy="afterInteractive" />
         <Script src="/assets/js/experience.js" strategy="afterInteractive" />
+        <Script src="/assets/js/lang-detect.js" strategy="afterInteractive" />
 
         {/* Fallbacks (Jahre/©) */}
         <Script id="boot-fallback" strategy="afterInteractive">

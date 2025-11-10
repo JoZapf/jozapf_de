@@ -1,0 +1,89 @@
+/* ============================================
+   Language Toggle Styles
+   ============================================ */
+
+/* Base Toggle Buttons */
+.lang-toggle {
+  min-width: 42px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.lang-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Text Styles */
+.lang-flag-text {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* German Flag Background (horizontal stripes) */
+.lang-toggle-de {
+  background: linear-gradient(
+    to bottom,
+    #000000 0%, 
+    #000000 33.33%, 
+    #DD0000 33.33%, 
+    #DD0000 66.66%, 
+    #FFCE00 66.66%, 
+    #FFCE00 100%
+  );
+}
+
+/* English Flag Background (Union Jack simplified) */
+.lang-toggle-en {
+  background: linear-gradient(
+    to bottom,
+    #012169 0%,
+    #012169 40%,
+    #FFFFFF 40%,
+    #FFFFFF 60%,
+    #C8102E 60%,
+    #C8102E 100%
+  );
+}
+
+/* Active State - Brighten */
+.lang-toggle.active {
+  border: 2px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+.lang-toggle.active .lang-flag-text {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Focus State for Accessibility */
+.lang-toggle:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Responsive: Smaller on mobile */
+@media (max-width: 576px) {
+  .lang-toggle {
+    min-width: 38px;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem !important;
+  }
+}
+
+/* Dark mode compatibility */
+[data-bs-theme="dark"] .lang-toggle {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-bs-theme="dark"] .lang-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
