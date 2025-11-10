@@ -121,7 +121,20 @@ const personSchema = {
   "@id": "https://jozapf.de/#person",
   name: "Jo Zapf",
   url: "https://jozapf.de",
-  image: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+  image: {
+    "@type": "ImageObject",
+    "@id": "https://jozapf.de/#personimage",
+    url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+    width: 500,
+    height: 500,
+    caption: "Jo Zapf - Web Developer & IT Specialist",
+  },
+  logo: {
+    "@type": "ImageObject",
+    url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+    width: 500,
+    height: 500,
+  },
   jobTitle:
     "IT specialist for application development in training & Web Developer, Cross-Media Artist & Multimedia-Designer",
   description:
@@ -155,6 +168,18 @@ const serviceSchema = {
   description:
     "Professional Web Development, Application Development and Cross-Media Solutions",
   url: "https://jozapf.de",
+  logo: {
+    "@type": "ImageObject",
+    url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+    width: 500,
+    height: 500,
+  },
+  image: {
+    "@type": "ImageObject",
+    url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+    width: 500,
+    height: 500,
+  },
   address: {
     "@type": "PostalAddress",
     addressLocality: "Berlin",
