@@ -61,6 +61,7 @@ This document details the migration of **jozapf.de** from a containerized Bootst
 | **Versioning** | Automated Git tag + timestamp injection into `summary.json` |
 | **Security** | GitHub Secrets for credentials, env-based configuration |
 | **Export Mode** | Pure static HTML/CSS/JS - runs on any webspace |
+| **Internationalization** | Bilingual DE/EN with dynamic routing and SEO |
 
 ### Learning Objectives
 
@@ -132,6 +133,7 @@ As an **IT specialist apprentice** (Application Development), this project demon
 | **SEO** | Manual meta tags | Built-in metadata API |
 | **Deployment** | Manual FTPS | Automated CI/CD |
 | **Versioning** | Manual updates | Auto-injected from Git |
+| **Internationalization** | Manual duplicate pages | Route-based DE/EN with SEO |
 
 ---
 
@@ -335,7 +337,97 @@ next-static:
 
 **Key Learning**: Named volumes for `node_modules` prevent permission/sync issues on Windows/WSL
 
-### 3. Single Source of Truth (SoT) for Versioning
+### 3. Bilingual Content Strategy (DE/EN)
+
+**Decision**: Implement client-side dynamic `lang` attribute switching without breaking static generation  
+**Rationale**: Support international audience while maintaining SSG compatibility and avoiding hydration mismatches
+
+**Architecture**:
+```typescript
+// app/layout.tsx - Static-friendly approach
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="de" data-bs-theme="dark" className="h-100" suppressHydrationWarning>
+      <body>
+        <LangAttribute />  {/* Client component updates lang dynamically */}
+        {children}
+      </body>
+    </html>
+  );
+}
+
+// app/components/LangAttribute.tsx - Client-side lang switcher
+'use client';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+
+export default function LangAttribute() {
+  const pathname = usePathname();
+  useEffect(() => {
+    const locale = pathname?.startsWith('/en') ? 'en' : 'de';
+    if (document.documentElement.lang !== locale) {
+      document.documentElement.lang = locale;
+    }
+  }, [pathname]);
+  return null;
+}
+```
+
+**URL Structure**:
+```
+jozapf.de/           → German (default)
+jozapf.de/en/        → English
+jozapf.de/en/print/  → English print version
+```
+
+**SEO Implementation**:
+```typescript
+// Metadata with hreflang alternates
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+    languages: {
+      'de': "https://jozapf.de/",
+      'en': "https://jozapf.de/en/",
+      "x-default": "https://jozapf.de/",
+    },
+  },
+};
+```
+
+**Key Challenge**: Initial approach using `headers()` or `cookies()` forced dynamic rendering, breaking static export:
+
+```typescript
+// ❌ This breaks static generation
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const headersList = await headers();  // Forces dynamic rendering!
+  const pathname = headersList.get('x-invoke-path') || '/';
+  const locale = pathname.startsWith('/en') ? 'en' : 'de';
+  return <html lang={locale}>...</html>;
+}
+```
+
+**Solution**: Use `suppressHydrationWarning` + client component for post-hydration updates:
+- Server renders initial `lang="de"` for all pages
+- Client component updates `document.documentElement.lang` after mount
+- `suppressHydrationWarning` prevents React warnings
+- All pages remain statically generated (compatible with `dynamic = "error"`)
+
+**Benefits**:
+- ✅ Full static generation preserved
+- ✅ No hydration mismatches
+- ✅ Proper SEO with hreflang tags
+- ✅ Clean URL structure for both languages
+- ✅ Accessible language switching UI
+- ✅ Compatible with Next.js 16's strict static requirements
+
+**Key Learnings**:
+- 🎓 Server components can't use `headers()` or `cookies()` without forcing dynamic rendering
+- 🎓 `suppressHydrationWarning` prevents console errors when `lang` updates client-side
+- 🎓 Client components can safely update DOM attributes after hydration
+- 🎓 Static export pages maintain `dynamic = "error"` compatibility
+
+### 4. Single Source of Truth (SoT) for Versioning
 
 **Decision**: Generate `summary.json` from Git metadata at build time  
 **Rationale**: Ensure version/timestamp consistency across UI and machine-readable endpoints
@@ -375,7 +467,7 @@ async function main() {
 }
 ```
 
-### 4. Fragment-Based Content Management
+### 5. Fragment-Based Content Management
 
 **Decision**: Keep HTML fragments separate, inject at build time  
 **Rationale**: Preserve existing Bootstrap markup during migration, enable incremental refactoring
@@ -945,4 +1037,4 @@ Berlin, Germany
 
 **⭐ If you find this migration journey helpful, please consider starring this repository!**
 
-*Last Updated: 2024-11-09 | Version: 2.0.2*
+*Last Updated: 2024-11-10 | Version: 2.0.3*
