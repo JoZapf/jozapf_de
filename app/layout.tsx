@@ -49,14 +49,14 @@ export const metadata: Metadata = {
       "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
   },
 
-  manifest: "/assets/favicon/site.webmanifest",
+  manifest: "https://assets.jozapf.de/favicon/site.webmanifest",
   icons: {
     icon: [
-      { url: "/assets/favicon/favicon-96x96.png", type: "image/png", sizes: "96x96" },
-      { url: "/assets/favicon/favicon.svg", type: "image/svg+xml" },
+      { url: "https://assets.jozapf.de/favicon/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+      { url: "https://assets.jozapf.de/favicon/favicon.svg", type: "image/svg+xml" },
     ],
-    shortcut: ["/assets/favicon/favicon.ico"],
-    apple: [{ url: "/assets/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: ["https://assets.jozapf.de/favicon/favicon.ico"],
+    apple: [{ url: "https://assets.jozapf.de/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
 
   appleWebApp: {
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
       "Professional digital solutions: Application Development, Web Development, DevOps, Docker, CI/CD and secure cloud infrastructure from Berlin.",
     images: [
       {
-        url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+        url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
         width: 500,
         height: 500,
         alt: "Jo Zapf - Concept, DevOps, Digital Solutions",
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     title: "Jo Zapf - Web Development & Digital Solutions",
     description:
       "Application Development, Web Development, DevOps and Cross-Media Solutions from Berlin.",
-    images: ["https://jozapf.de/assets/png/JoZapf_500x500.png"],
+    images: ["https://assets.jozapf.de/png/JoZapf_500x500.png"],
   },
 };
 
@@ -124,14 +124,14 @@ const personSchema = {
   image: {
     "@type": "ImageObject",
     "@id": "https://jozapf.de/#personimage",
-    url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+    url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
     width: 500,
     height: 500,
     caption: "Jo Zapf - Web Developer & IT Specialist",
   },
   logo: {
     "@type": "ImageObject",
-    url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+    url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
     width: 500,
     height: 500,
   },
@@ -170,13 +170,13 @@ const serviceSchema = {
   url: "https://jozapf.de",
   logo: {
     "@type": "ImageObject",
-    url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+    url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
     width: 500,
     height: 500,
   },
   image: {
     "@type": "ImageObject",
-    url: "https://jozapf.de/assets/png/JoZapf_500x500.png",
+    url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
     width: 500,
     height: 500,
   },

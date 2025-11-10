@@ -1,8 +1,8 @@
 /* Montserrat Regular */
 @font-face {
     font-family: 'Montserrat';
-    src: url('../fonts/Montserrat-Regular.woff2') format('woff2'),
-         url('../fonts/Montserrat-Regular.ttf') format('truetype');
+    src: url('https://assets.jozapf.de/fonts/Montserrat-Regular.woff2') format('woff2'),
+         url('https://assets.jozapf.de/fonts/Montserrat-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -11,8 +11,8 @@
 /* Montserrat Bold */
 @font-face {
     font-family: 'Montserrat';
-    src: url('../fonts/Montserrat-Bold.woff2') format('woff2'),
-         url('../fonts/Montserrat-Bold.ttf') format('truetype');
+    src: url('https://assets.jozapf.de/fonts/Montserrat-Bold.woff2') format('woff2'),
+         url('https://assets.jozapf.de/fonts/Montserrat-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -21,8 +21,8 @@
 /* Montserrat Italic */
 @font-face {
     font-family: 'Montserrat';
-    src: url('../fonts/Montserrat-Italic.woff2') format('woff2'),
-         url('../fonts/Montserrat-Italic.ttf') format('truetype');
+    src: url('https://assets.jozapf.de/fonts/Montserrat-Italic.woff2') format('woff2'),
+         url('https://assets.jozapf.de/fonts/Montserrat-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
     font-display: swap;
