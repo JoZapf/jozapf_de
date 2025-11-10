@@ -174,7 +174,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Preload kritischer Ressourcen */}
         <link rel="preload" href="/assets/css/bootstrap.css" as="style" />
         <link rel="preload" href="/assets/js/bootstrap.bundle.min.js" as="script" />
-        <link rel="preload" href="/assets/png/JoZapf_500x500.png" as="image" />
 
         {/* Lokale Styles */}
         <link href="/assets/css/bootstrap.css" rel="stylesheet" />
