@@ -8,13 +8,23 @@
 <!-- Infrastructure -->
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions)](https://github.com/features/actions)
-[![Deployment](https://img.shields.io/badge/Deploy-FTPS-success?logo=files)](https://github.com/features/actions)
+[![Deployment](https://img.shields.io/badge/Deploy-SSH-success?logo=githubactions&logoColor=white)](https://github.com/features/actions)
 <!-- Security -->
+## Security Scanning
 [![Security](https://img.shields.io/badge/Security-Hardened-success?logo=github)](MIGRATION_SECURITY.md)
 [![Secrets](https://img.shields.io/badge/Secrets-External-critical?logo=1password)](MIGRATION_SECURITY.md)
 [![CodeQL](https://img.shields.io/badge/CodeQL-enabled-success?logo=github)](https://github.com/JoZapf/jozapf_de/security/code-scanning)
 [![npm audit](https://img.shields.io/badge/npm%20audit-passing-success?logo=npm)](/)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/dependabot)
+
+---
+Multi-layered security approach:
+- **npm audit**: Baseline security scanning
+- **Snyk**: Enhanced vulnerability detection with reachability analysis
+- **Dependabot**: Automated dependency updates
+- **CodeQL**: Static code analysis
+
+---
 <!-- Quality & Compliance -->
 [![GDPR](https://img.shields.io/badge/GDPR-Compliant-success)](https://gdpr.eu/)
 [![Status](https://img.shields.io/badge/Status-Production-success)](/)
@@ -26,15 +36,6 @@
 
 ---
 
-## Security Scanning
-
-Multi-layered security approach:
-- **npm audit**: Baseline security scanning
-- **Snyk**: Enhanced vulnerability detection with reachability analysis
-- **Dependabot**: Automated dependency updates
-- **CodeQL**: Static code analysis
-
----
 > **Portfolio Website Migration Journey**  
 > From containerized Bootstrap/PHP development to modern Next.js static export with automated CI/CD deployment to shared hosting.
 
