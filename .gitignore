@@ -1,8 +1,12 @@
 # ============================
 # Projekt: jozapf-de (.gitignore)
 # ============================
-# --- webroot .htaccess ------------------------------------------------------
-.htaccess
+# --- ignore only the root .htaccess -----------------------------------------
+/.htaccess
+
+# ignore any file or path containing "bkp" (case-insensitive) ----------------
+# Hinweis: Allgemeine Regel. Wird von späteren Whitelists (z. B. .github/workflows) überstimmt.
+*[Bb][Kk][Pp]*
 
 # --- Assets (Fonts) ---------------------------------------------------------
 # kompletter Font-Ordner im Repo
@@ -30,9 +34,12 @@ assets/php/assets.old/
 assets/php/logs/
 assets/php/logs/archive/
 assets/php/logs/sent-eml/
+public/assets/php/logs/
+public/assets/php/assets.old/
+public/assets/php/*.eml
+
 docs/
 cron/
-public/assets/php/assets.old 
 public/assets/php/data
 
 # Log-Dateien rekursiv (Fix: vorher fehlte ein Zeilenumbruch)
@@ -67,22 +74,22 @@ docker/*local*
 docker/*override*
 
 # --- GitHub Actions (Workflows dürfen NICHT ignoriert werden!) -------------
+# Zuerst Whitelists:
 !.github/
 !.github/workflows/
 !.github/workflows/*.yml
 !.github/workflows/*.yaml
-public/assets/php/logs/
-public/assets/php/assets.old/
-public/assets/php/*.eml
 
-# --- Docs gezielt NICHT ignorieren -------------
+# Danach bkp-Sonderfälle TROTZ Whitelists wieder ignorieren (entscheidend!):
+.github/workflows/*[Bb][Kk][Pp]*.yml
+.github/workflows/*[Bb][Kk][Pp]*.yaml
+
+# --- Docs gezielt NICHT ignorieren -----------------------------------------
 !docs/versioning.svg
 !docs/VERSIONING.md
 
-
-# Build-Output
+# Build-Output ---------------------------------------------------------------
 out/
-
 
 # ============================================
 # Backup-Dateien und Secrets (NEVER commit)
@@ -99,7 +106,7 @@ out/
 **/assets.old/
 
 # BFG Repo-Cleaner Reports
-..bfg-report/
+.bfg-report/
 
 # Environment files
 **/.env
