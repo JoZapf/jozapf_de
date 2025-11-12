@@ -1,8 +1,20 @@
-/* ============================================
-   Language Toggle Styles
-   ============================================ */
+/**
+ * lang-toggle.css - Language Toggle Styles
+ * Flag-themed language switcher buttons
+ *
+ * Sorted by specificity (BEM/Best Practice):
+ * 1. Base Element (.lang-toggle)
+ * 2. Child Elements (.lang-flag-text)
+ * 3. Modifiers (.lang-toggle-de, .lang-toggle-en)
+ * 4. States (:hover, :focus, .active)
+ * 5. Theme Overrides ([data-bs-theme])
+ *
+ * Responsive breakpoints moved to breakpoints.css
+ */
 
-/* Base Toggle Buttons */
+/* ========================================
+   1. BASE ELEMENT - .lang-toggle
+   ======================================== */
 .lang-toggle {
   min-width: 42px;
   font-weight: 600;
@@ -13,12 +25,9 @@
   overflow: hidden;
 }
 
-.lang-toggle:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Text Styles */
+/* ========================================
+   2. CHILD ELEMENTS - .lang-flag-text
+   ======================================== */
 .lang-flag-text {
   position: relative;
   z-index: 2;
@@ -28,15 +37,19 @@
   letter-spacing: 0.5px;
 }
 
+/* ========================================
+   3. MODIFIERS - Flag Backgrounds
+   ======================================== */
+
 /* German Flag Background (horizontal stripes) */
 .lang-toggle-de {
   background: linear-gradient(
     to bottom,
-    #000000 0%, 
-    #000000 33.33%, 
-    #DD0000 33.33%, 
-    #DD0000 66.66%, 
-    #FFCE00 66.66%, 
+    #000000 0%,
+    #000000 33.33%,
+    #DD0000 33.33%,
+    #DD0000 66.66%,
+    #FFCE00 66.66%,
     #FFCE00 100%
   );
 }
@@ -54,7 +67,23 @@
   );
 }
 
-/* Active State - Brighten */
+/* ========================================
+   4. STATES - :hover, :focus, .active
+   ======================================== */
+
+/* Hover State */
+.lang-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus State (Accessibility) */
+.lang-toggle:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Active State */
 .lang-toggle.active {
   border: 2px solid rgba(255, 255, 255, 0.9) !important;
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
@@ -64,17 +93,9 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
 }
 
-/* Focus State for Accessibility */
-.lang-toggle:focus {
-  outline: 2px solid #ffffff;
-  outline-offset: 2px;
-}
-
-/* Responsive breakpoints moved to /public/assets/css/breakpoints.css
-   - Mobile: 576px (Smaller button size)
-*/
-
-/* Dark mode compatibility */
+/* ========================================
+   5. THEME OVERRIDES - Dark Mode
+   ======================================== */
 [data-bs-theme="dark"] .lang-toggle {
   border-color: rgba(255, 255, 255, 0.2) !important;
 }
@@ -82,3 +103,11 @@
 [data-bs-theme="dark"] .lang-toggle:hover {
   border-color: rgba(255, 255, 255, 0.4) !important;
 }
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+/* All responsive breakpoints moved to /public/assets/css/breakpoints.css
+   - Mobile: 576px (Smaller button size)
+*/

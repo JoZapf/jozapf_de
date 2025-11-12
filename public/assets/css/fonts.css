@@ -1,3 +1,13 @@
+/**
+ * fonts.css - Font Face Declarations
+ * Montserrat font family with woff2 and ttf fallbacks
+ *
+ * Ordered by weight and style:
+ * 1. Regular (400, normal)
+ * 2. Bold (700, normal)
+ * 3. Italic (400, italic)
+ */
+
 /* Montserrat Regular */
 @font-face {
     font-family: 'Montserrat';
