@@ -16,6 +16,8 @@
 [![CodeQL](https://img.shields.io/badge/CodeQL-enabled-success?logo=github)](https://github.com/JoZapf/jozapf_de/security/code-scanning)
 [![npm audit](https://img.shields.io/badge/npm%20audit-passing-success?logo=npm)](/)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/dependabot)
+[![Snyk](https://img.shields.io/badge/Snyk-Enhanced%20vulnerability%20detection%20with%20reachability%20analysis-success?logo=snyk&logoColor=white)](https://github.com/features/actions)
+
 
 ---
 Multi-layered security approach:
