@@ -1,35 +1,44 @@
 /**
  * timeline.css - Horizontal Timeline Styles
  * Staggered horizontal timeline for desktop view
- * 
- * Features:
- * - 6 milestone items with staggered horizontal lines
- * - Floating "Freelance" milestone above the main timeline
- * - Vertical connectors (dashed lines) from milestones to their lines
- * - Responsive: Desktop horizontal, Mobile/Tablet vertical
- * 
- * Breakpoints:
- * - Desktop (>=1400px): Horizontal staggered layout
- * - Tablet/Mobile (<1400px): Vertical centered layout
+ *
+ * Sorted by DOM order (HTML structure):
+ * 1. .staggered-timeline
+ * 2. .timeline-container
+ * 3. .milestone-item
+ * 4.   .timeline-dot
+ * 5.   .event-date
+ * 6.   .track
+ * 7.   .note
+ * 8.     .note-bg
+ * 9.     .hashtags
+ * 10. .freelance-content
+ * 11.   .freelance-track
+ * 12.   .freelance-note
+ *
+ * Responsive breakpoints moved to breakpoints.css
  */
 
 /* ========================================
-   CSS VARIABLES
+   1. CONTAINER - .staggered-timeline
    ======================================== */
 .staggered-timeline {
+	/* CSS Variables */
 	--connector: 48px;           /* Height of vertical connectors */
 	--dot-offset: 5px;           /* Offset for timeline dots */
 	--line: rgba(255,255,255,.15); /* Timeline line color */
 	--dash: rgba(255,255,255,.35); /* Dashed connector color */
 	--dot: #e9ecef;              /* Dot color */
 	--line-spacing: 12px;        /* Spacing between staggered lines */
+
+	/* Layout */
 	position: relative;
 	padding-top: 20px;
 	overflow: visible;
 }
 
 /* ========================================
-   BASE STRUCTURE
+   2. INNER CONTAINER - .timeline-container
    ======================================== */
 .timeline-container {
 	position: relative;
@@ -37,18 +46,44 @@
 	overflow: visible;
 }
 
+/* ========================================
+   3. MILESTONE ITEM - .milestone-item
+   ======================================== */
 .milestone-item {
 	position: relative;
 	text-align: center;
 }
 
 /* ========================================
-   TYPOGRAPHY & CONTENT
+   4. TIMELINE DOT - .timeline-dot
    ======================================== */
-.timeline_content {
-	color: #cfd4da !important;
+.milestone-item .timeline-dot {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 6px;
+	height: 6px;
+	background: var(--dot);
+	border-radius: 50%;
+	box-shadow: 0 0 0 2px rgba(255,255,255,.12) inset;
+	z-index: 20;
 }
 
+/* ========================================
+   5. EVENT DATE - .event-date
+   ======================================== */
+.event-date {
+	font-size: 0.95rem;
+	color: #e9ecef;
+	opacity: 0.85;
+	font-weight: 500;
+	margin-bottom: 0.5rem;
+	text-align: center;
+}
+
+/* ========================================
+   6. TRACK - .track
+   ======================================== */
 .track {
 	font-weight: 400;
 	letter-spacing: 0.12em;
@@ -64,15 +99,9 @@
 	width: 96%;
 }
 
-.event-date {
-	font-size: 0.95rem;
-	color: #e9ecef;
-	opacity: 0.85;
-	font-weight: 500;
-	margin-bottom: 0.5rem;
-	text-align: center;
-}
-
+/* ========================================
+   7. NOTE CONTENT - .note
+   ======================================== */
 .note {
 	color: #cfd4da;
 	font-size: 1rem;
@@ -82,6 +111,7 @@
 	min-height: 14rem;
 }
 
+/* Note with background */
 .note-bg {
 	background-color: var(--line);
 	border-top-right-radius: 10px;
@@ -90,6 +120,9 @@
 	border-left: 1px solid var(--line);
 }
 
+/* ========================================
+   8. HASHTAGS - .hashtags
+   ======================================== */
 .hashtags {
 	color: #cfd4da;
 	text-transform: uppercase;
@@ -104,30 +137,15 @@
 	min-height: 10rem;
 }
 
-/* Timeline dots on the lines */
-.milestone-item .timeline-dot {
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 6px;
-	height: 6px;
-	background: var(--dot);
-	border-radius: 50%;
-	box-shadow: 0 0 0 2px rgba(255,255,255,.12) inset;
-	z-index: 20;
+/* ========================================
+   9. TIMELINE CONTENT - .timeline_content
+   ======================================== */
+.timeline_content {
+	color: #cfd4da !important;
 }
 
 /* ========================================
-   RESPONSIVE BREAKPOINTS
-   ======================================== */
-
-/* All media queries moved to /public/assets/css/breakpoints.css
-   - Desktop (>=1400px): Horizontal staggered timeline layout
-   - Tablet/Mobile (<1400px): Vertical centered timeline layout
-*/
-
-/* ========================================
-   FREELANCE MILESTONE STYLES
+   10. FREELANCE MILESTONE - .freelance-content
    ======================================== */
 .freelance-content {
 	margin-bottom: 40px;
@@ -161,3 +179,12 @@
 	line-height: 1.35;
 	margin: 0;
 }
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+/* All media queries moved to /public/assets/css/breakpoints.css
+   - Desktop (>=1400px): Horizontal staggered timeline layout
+   - Tablet/Mobile (<1400px): Vertical centered timeline layout
+*/

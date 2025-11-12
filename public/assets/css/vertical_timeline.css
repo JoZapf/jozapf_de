@@ -1,33 +1,25 @@
 /**
  * vertical_timeline.css - Vertical Timeline Styles
  * Vertical layout for timeline on tablets and mobile devices
- * 
- * Breakpoints:
- * - Desktop: hidden
- * - Tablet/Mobile (<1400px): shown
- * - Mobile (<650px): adjusted spacing
+ *
+ * Sorted by DOM order (HTML structure):
+ * 1. .main-timeline-4
+ * 2. .timeline-4
+ * 3.   .left-4 / .right-4
+ * 4.   .card.gradient-custom
+ * 5. .left / .right (text alignment)
+ *
+ * Responsive breakpoints moved to breakpoints.css
  */
 
 /* ========================================
-   LAYOUT & ALIGNMENT
+   1. MAIN CONTAINER - .main-timeline-4
    ======================================== */
-.left {
-	text-align: right;
-}
-
-.right {
-	text-align: left;
-}
-
-/* ========================================
-   MAIN TIMELINE STRUCTURE
-   ======================================== */
-
-/* Vertical ruler/line */
 .main-timeline-4 {
 	position: relative;
 }
 
+/* Vertical ruler/center line */
 .main-timeline-4::after {
 	content: "";
 	position: absolute;
@@ -39,18 +31,16 @@
 	margin-left: -2px;
 }
 
-/* Timeline container */
+/* ========================================
+   2. TIMELINE ITEM - .timeline-4
+   ======================================== */
 .timeline-4 {
 	position: relative;
 	background-color: inherit;
 	width: 50%;
 }
 
-/* ========================================
-   TIMELINE DOTS & CIRCLES
-   ======================================== */
-
-/* Dots on the vertical line */
+/* Timeline dot on vertical line */
 .timeline-4::after {
 	content: "";
 	position: absolute;
@@ -64,7 +54,7 @@
 }
 
 /* ========================================
-   POSITIONING (LEFT/RIGHT)
+   3. LEFT/RIGHT POSITIONING - .left-4 / .right-4
    ======================================== */
 
 /* Left-aligned items */
@@ -79,8 +69,13 @@
 	left: 50%;
 }
 
+/* Fix circle position for right-side items */
+.right-4::after {
+	left: -8px;
+}
+
 /* ========================================
-   ARROWS/CONNECTORS
+   4. ARROW CONNECTORS - ::before pseudo-elements
    ======================================== */
 
 /* Arrow pointing right (from left items) */
@@ -107,13 +102,8 @@
 	border-color: transparent var(--line) transparent transparent;
 }
 
-/* Fix circle position for right-side items */
-.right-4::after {
-	left: -8px;
-}
-
 /* ========================================
-   GRADIENT BACKGROUNDS
+   5. CARD STYLING - .gradient-custom
    ======================================== */
 
 /* Card background gradient */
@@ -133,7 +123,18 @@
 }
 
 /* ========================================
-   MEDIA QUERIES
+   6. TEXT ALIGNMENT - .left / .right
+   ======================================== */
+.left {
+	text-align: right;
+}
+
+.right {
+	text-align: left;
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
    ======================================== */
 
 /* All responsive breakpoints moved to /public/assets/css/breakpoints.css
