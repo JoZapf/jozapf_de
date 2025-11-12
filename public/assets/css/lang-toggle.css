@@ -70,14 +70,9 @@
   outline-offset: 2px;
 }
 
-/* Responsive: Smaller on mobile */
-@media (max-width: 576px) {
-  .lang-toggle {
-    min-width: 38px;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem !important;
-  }
-}
+/* Responsive breakpoints moved to /public/assets/css/breakpoints.css
+   - Mobile: 576px (Smaller button size)
+*/
 
 /* Dark mode compatibility */
 [data-bs-theme="dark"] .lang-toggle {

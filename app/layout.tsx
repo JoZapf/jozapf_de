@@ -203,6 +203,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Lokale Styles */}
         <link href="/assets/css/bootstrap.css" rel="stylesheet" />
         <link href="/assets/css/fonts.css" rel="stylesheet" />
+        <link href="/assets/css/breakpoints.css" rel="stylesheet" />
         <link href="/assets/css/cover.css" rel="stylesheet" />
         <link href="/assets/css/timeline.css" rel="stylesheet" />
         <link href="/assets/css/vertical_timeline.css" rel="stylesheet" />
