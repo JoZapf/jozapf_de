@@ -209,8 +209,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href="/assets/css/contact-form.css" rel="stylesheet" />
         <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
         
-        {/* Swiper.js CSS - Lokal gehostet */}
-        <link rel="stylesheet" href="/vendor/swiper/swiper-bundle.min.css" />
+        {/* Swiper.js CSS - CDN */}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
       </head>
 
       <body className="d-flex flex-column min-vh-100 text-bg-dark">
@@ -219,8 +219,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
 
         {/* JS */}
-        {/* Swiper.js - Lokal gehostet (muss VOR github-repos.js geladen werden) */}
-        <Script src="/vendor/swiper/swiper-bundle.min.js" strategy="afterInteractive" />
+        {/* Swiper.js - CDN (muss VOR github-repos.js geladen werden) */}
+        <Script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" strategy="afterInteractive" />
         
         {/* GitHub Repositories Display */}
         <Script src="/assets/js/github-repos.js" strategy="afterInteractive" />
