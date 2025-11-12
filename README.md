@@ -18,15 +18,6 @@
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-success?logo=dependabot)](https://github.com/dependabot)
 [![Snyk](https://img.shields.io/badge/Snyk-Enhanced%20vulnerability%20detection%20with%20reachability%20analysis-success?logo=snyk&logoColor=white)](https://github.com/features/actions)
 
-
----
-Multi-layered security approach:
-- **npm audit**: Baseline security scanning
-- **Snyk**: Enhanced vulnerability detection with reachability analysis
-- **Dependabot**: Automated dependency updates
-- **CodeQL**: Static code analysis
-
----
 <!-- Quality & Compliance -->
 [![GDPR](https://img.shields.io/badge/GDPR-Compliant-success)](https://gdpr.eu/)
 [![Status](https://img.shields.io/badge/Status-Production-success)](/)
