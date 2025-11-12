@@ -10,7 +10,7 @@
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions)](https://github.com/features/actions)
 [![Deployment](https://img.shields.io/badge/Deploy-SSH-success?logo=githubactions&logoColor=white)](https://github.com/features/actions)
 <!-- Security -->
-## Security Scanning
+---
 [![Security](https://img.shields.io/badge/Security-Hardened-success?logo=github)](MIGRATION_SECURITY.md)
 [![Secrets](https://img.shields.io/badge/Secrets-External-critical?logo=1password)](MIGRATION_SECURITY.md)
 [![CodeQL](https://img.shields.io/badge/CodeQL-enabled-success?logo=github)](https://github.com/JoZapf/jozapf_de/security/code-scanning)
