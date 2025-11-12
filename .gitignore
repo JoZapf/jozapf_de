@@ -116,3 +116,6 @@ out/
 # Sensitive data
 **/secrets/
 **/*secret*
+
+# Next.js TypeScript definitions (auto-generated)
+next-env.d.ts
