@@ -1,8 +1,12 @@
 # ============================
 # Projekt: jozapf-de (.gitignore)
 # ============================
-# --- webroot .htaccess ------------------------------------------------------
-.htaccess
+# --- ignore only the root .htaccess -----------------------------------------
+/.htaccess
+
+# ignore any file or path containing "bkp" (case-insensitive) ----------------
+*[Bb][Kk][Pp]*
+
 
 # --- Assets (Fonts) ---------------------------------------------------------
 # kompletter Font-Ordner im Repo
