@@ -181,6 +181,40 @@
 }
 
 /* ========================================
+   BOX HEIGHT FIXES - Equal Heights
+   ======================================== */
+
+/* Equal height based on tallest content */
+.milestone-item .milestone-content {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.milestone-item .note.note-bg {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center; /* Center images horizontally */
+	text-align: center;
+	min-height: 240px; /* Accommodate longest German text */
+}
+
+.milestone-item .note.note-bg img.icon {
+	margin: 0 auto; /* Ensure centering */
+}
+
+.milestone-item .note.note-bg p {
+	width: 100%;
+}
+
+/* Set equal height for all milestones within the timeline */
+.horizontal_timeline .milestone-item {
+	display: flex;
+	align-items: stretch;
+}
+
+/* ========================================
    RESPONSIVE BREAKPOINTS
    ======================================== */
 

@@ -134,6 +134,30 @@
 }
 
 /* ========================================
+   BOX HEIGHT FIXES - Equal Heights
+   ======================================== */
+
+/* Equal height for all cards in vertical timeline */
+.vertical_timeline .main-timeline-4 {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.vertical_timeline .timeline-4 .card {
+	display: flex;
+	flex-direction: column;
+	min-height: 280px; /* Accommodate longest text content */
+}
+
+.vertical_timeline .timeline-4 .card-body {
+	/* display: flex; */
+	flex-direction: column;
+	flex-grow: 1;
+	height: 100%;
+}
+
+/* ========================================
    RESPONSIVE BREAKPOINTS
    ======================================== */
 
