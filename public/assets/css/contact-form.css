@@ -38,19 +38,21 @@
    ======================================== */
 
 /* Success Alert (inside card-body) */
+/* Specificity: .alert.alert-success = 0,0,2,0 (higher than Bootstrap's 0,0,1,0) */
 .alert.alert-success,
 #cf-success.alert-success {
-  background-color: var(--cf-success-bg-dark) !important;
-  border-color: var(--cf-success-border-dark) !important;
-  color: var(--cf-success-text-dark) !important;
+  background-color: var(--cf-success-bg-dark);
+  border-color: var(--cf-success-border-dark);
+  color: var(--cf-success-text-dark);
 }
 
 /* Error Alert (inside card-body) */
+/* Specificity: .alert.alert-danger = 0,0,2,0 (higher than Bootstrap's 0,0,1,0) */
 .alert.alert-danger,
 #cf-error.alert-danger {
-  background-color: var(--cf-error-bg-dark) !important;
-  border-color: var(--cf-error-border-dark) !important;
-  color: var(--cf-error-text-dark) !important;
+  background-color: var(--cf-error-bg-dark);
+  border-color: var(--cf-error-border-dark);
+  color: var(--cf-error-text-dark);
 }
 
 /* ========================================

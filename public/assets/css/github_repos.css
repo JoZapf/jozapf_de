@@ -32,18 +32,19 @@
 }
 
 /* Repository Name Styling */
+/* Specificity: .repo-card .repo-name a = 0,0,2,1 (much higher than Bootstrap's a = 0,0,0,1) */
 .repo-card .repo-name a {
-	color: var(--muted) !important;
+	color: var(--muted);
 	transition: color 0.2s ease;
 }
 
 .repo-card .repo-name a:visited {
-	color: var(--muted) !important;
+	color: var(--muted);
 }
 
 .repo-card .repo-name a:hover,
 .repo-card .repo-name a:visited:hover {
-	color: #198754 !important;
+	color: #198754;
 }
 
 .repo-card .repo-description {
