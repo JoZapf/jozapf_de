@@ -208,7 +208,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href="/assets/css/cover.css" rel="stylesheet" />
         <link href="/assets/css/timeline.css" rel="stylesheet" />
         <link href="/assets/css/vertical_timeline.css" rel="stylesheet" />
-        <link href="/assets/css/github-repos.css" rel="stylesheet" />
+        <link href="/assets/css/github_repos.css" rel="stylesheet" />
         <link href="/assets/css/contact-form.css" rel="stylesheet" />
         <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
         
