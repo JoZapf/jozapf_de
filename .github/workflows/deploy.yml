@@ -180,14 +180,22 @@ jobs:
             echo "::notice::DOCROOT_ASSETS not set – skipping assets upload."
             exit 0
           fi
-          if [ ! -d "public/assets" ]; then
-            echo "::notice::No local public/assets directory – skipping assets upload."
+          # Try assets-deploy first (new location), fallback to public/assets
+          ASSETS_SOURCE=""
+          if [ -d "assets-deploy" ]; then
+            ASSETS_SOURCE="assets-deploy"
+            echo "::notice::Using assets-deploy directory"
+          elif [ -d "public/assets" ]; then
+            ASSETS_SOURCE="public/assets"
+            echo "::notice::Using public/assets directory (legacy)"
+          else
+            echo "::notice::No assets directory found – skipping assets upload."
             exit 0
           fi
 
-          echo "::notice::Uploading assets to ${SFTP_USER}@${SFTP_HOST}:${DOCROOT_ASSETS} (port ${SFTP_PORT})"
+          echo "::notice::Uploading assets from ${ASSETS_SOURCE} to ${SFTP_USER}@${SFTP_HOST}:${DOCROOT_ASSETS} (port ${SFTP_PORT})"
           sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<SFTP_CMDS
-          lcd public/assets
+          lcd ${ASSETS_SOURCE}
           cd ${DOCROOT_ASSETS}
           put -r *
           SFTP_CMDS
