@@ -91,30 +91,6 @@ As an **IT specialist apprentice** (Application Development), this project demon
 - **Code review**: AI-suggested patterns evaluated, tested, and often modified before implementation
 - **Documentation**: AI helped structure and expand technical writing, all content human-verified
 
-**What this is NOT:**
-- ❌ Copy-paste development without understanding
-- ❌ Bypassing proper learning fundamentals
-
-**What this IS:**
-- ✅ Modern software development practices
-- ✅ Honest representation of the development process
-- ✅ Demonstration of effective use of emerging technologies
-- ✅ Proof of ability to critically evaluate and integrate AI suggestions
-
-**Why document this openly?**
-- Maintains **professional integrity** and realistic skill representation
-- Shows understanding of when and how to leverage AI effectively
-- Helps other apprentices understand realistic learning paths
-- Demonstrates that using tools doesn't diminish the learning process - it's about **understanding** what you build
-
-**Skills demonstrated:**
-- Critical evaluation of AI-generated solutions
-- Prompt engineering and effective LLM collaboration  
-- Independent validation and security testing
-- Integration of AI tools into professional workflows
-- Knowing when to use AI and when to solve problems independently
-
----
 
 ## Why This Migration?
 
@@ -887,7 +863,7 @@ git add .
 git commit -m "feat: add new timeline component"
 
 # Optional: bump version and tag
-npm run version:minor  # Creates v2.1.0 tag + commit
+npm run version:minor  # Creates v2.1.2 tag + commit
 ```
 
 #### 2. Production Preview (Local)
