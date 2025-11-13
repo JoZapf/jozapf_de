@@ -8,7 +8,7 @@
 <!-- Infrastructure -->
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions)](https://github.com/features/actions)
-[![Deployment](https://img.shields.io/badge/Deploy-SSH-success?logo=githubactions&logoColor=white)](https://github.com/features/actions)
+[![Deployment](https://img.shields.io/badge/Deploy-SSH%2FSFTP-success?logo=githubactions&logoColor=white)](https://github.com/features/actions)
 <!-- Security -->
 ---
 [![Security](https://img.shields.io/badge/Security-Hardened-success?logo=github)](MIGRATION_SECURITY.md)
@@ -30,7 +30,7 @@
 ---
 
 > **Portfolio Website Migration Journey**  
-> From containerized Bootstrap/PHP development to modern Next.js static export with automated CI/CD deployment to shared hosting.
+> From containerized Bootstrap/PHP development to modern Next.js static export with automated CI/CD deployment via SSH to shared hosting.
 
 ---
 
@@ -41,10 +41,6 @@
 - [Technical Stack Comparison](#technical-stack-comparison)
 - [Architecture & Key Decisions](#architecture--key-decisions)
 - [Migration Challenges & Solutions](#migration-challenges--solutions)
-  - [Challenge 1: Paradigm Shift - Server-Side PHP → Client-Side React](#challenge-1-paradigm-shift---server-side-php--client-side-react)
-  - [Challenge 2: SSG Export for Shared Hosting](#challenge-2-ssg-export-for-shared-hosting)
-  - [Challenge 3: Secrets Management Across Environments](#challenge-3-secrets-management-across-environments)
-  - [Challenge 4: CI/CD Pipeline Without SSH Access](#challenge-4-cicd-pipeline-without-ssh-access)
 - [Deployment Workflow](#deployment-workflow)
 - [Lessons Learned](#lessons-learned)
 - [Getting Started](#getting-started)
@@ -54,7 +50,7 @@
 
 ## Executive Summary
 
-This document details the migration of **jozapf.de** from a containerized Bootstrap/PHP development environment to a modern **Next.js 16** static site generator (SSG) with TypeScript, automated versioning, and CI/CD deployment to Hetzner shared hosting.
+This document details the migration of **jozapf.de** from a containerized Bootstrap/PHP development environment to a modern **Next.js 16** static site generator (SSG) with TypeScript, automated versioning, and CI/CD deployment to Hetzner shared hosting via SSH/SFTP.
 
 ### Migration Highlights
 
@@ -62,9 +58,10 @@ This document details the migration of **jozapf.de** from a containerized Bootst
 |--------|-------------|
 | **Tech Stack** | Bootstrap/PHP → Next.js 16 + TypeScript + React 18 |
 | **Development** | Docker Compose multi-stage builds with hot-reload |
-| **Deployment** | GitHub Actions → FTPS to Hetzner (no SSH required) |
+| **Deployment** | GitHub Actions → SSH/SFTP to Hetzner (dual-domain) |
+| **Asset Strategy** | Separate CDN-ready subdomain (assets.jozapf.de) |
 | **Versioning** | Automated Git tag + timestamp injection into `summary.json` |
-| **Security** | GitHub Secrets for credentials, env-based configuration |
+| **Security** | GitHub Secrets for credentials, SSH key-based auth |
 | **Export Mode** | Pure static HTML/CSS/JS - runs on any webspace |
 | **Internationalization** | Bilingual DE/EN with dynamic routing and SEO |
 
@@ -74,9 +71,10 @@ As an **IT specialist apprentice** (Application Development), this project demon
 
 ✅ Modern web development workflows  
 ✅ Container orchestration and multi-stage Docker builds  
-✅ CI/CD automation and deployment patterns  
+✅ CI/CD automation with SSH-based deployment  
 ✅ TypeScript, React, and Next.js fundamentals  
 ✅ Secrets management and security-first practices  
+✅ Multi-domain asset distribution strategy  
 ✅ Git-based versioning and changelog maintenance  
 ✅ Documentation and knowledge transfer  
 ✅ Local **AI-assisted development** with Large Language Models (MCP)
@@ -86,9 +84,9 @@ As an **IT specialist apprentice** (Application Development), this project demon
 **Transparency Notice:** This project was developed with **AI assistance** using Claude-Code via the Model Context Protocol (MCP).
 
 **How AI was integrated into development:**
-- **Local LLM setup**: Configured Claude-Desktop App (Windows) for working locally , installed Claude-Code on WSL
+- **Local LLM setup**: Configured Claude-Desktop App (Windows) for working locally, installed Claude-Code on WSL
 - **Architecture decisions**: Created through collaborative AI pair-programming sessions
-- **Security implementations & Secrets managemnt**: Researched with AI assistance, then independently validated and tested
+- **Security implementations & Secrets management**: Researched with AI assistance, then independently validated and tested
 - **Learning acceleration**: Interactive problem-solving with LLMs to understand complex concepts faster
 - **Code review**: AI-suggested patterns evaluated, tested, and often modified before implementation
 - **Documentation**: AI helped structure and expand technical writing, all content human-verified
@@ -124,9 +122,10 @@ As an **IT specialist apprentice** (Application Development), this project demon
 
 1. **Modern Tech Stack**: Next.js offers better performance, developer experience, and ecosystem support
 2. **Static Export Compatibility**: Hetzner shared hosting doesn't support Node.js runtime - SSG solves this
-3. **Automated Deployments**: Reduce manual FTPS uploads, eliminate human error
-4. **Version Transparency**: Machine-readable `summary.json` for LLMs and automated tools
-5. **Scalability**: Easy to extend with API routes, MDX, or external CMS integration
+3. **Automated Deployments**: Reduce manual uploads, eliminate human error
+4. **Asset Distribution**: Separate CDN-ready domain for optimal caching and performance
+5. **Version Transparency**: Machine-readable `summary.json` for LLMs and automated tools
+6. **Scalability**: Easy to extend with API routes, MDX, or external CMS integration
 
 ### Technical Advantages
 
@@ -136,7 +135,8 @@ As an **IT specialist apprentice** (Application Development), this project demon
 | **Type Safety** | None | TypeScript throughout |
 | **Build Process** | Manual | Automated, optimized |
 | **SEO** | Manual meta tags | Built-in metadata API |
-| **Deployment** | Manual FTPS | Automated CI/CD |
+| **Deployment** | Manual FTPS | Automated SSH via CI/CD |
+| **Asset Strategy** | Single domain | Multi-domain (CDN-ready) |
 | **Versioning** | Manual updates | Auto-injected from Git |
 | **Internationalization** | Manual duplicate pages | Route-based DE/EN with SEO |
 
@@ -196,103 +196,135 @@ services:
 
 **Stack**: Next.js 16 + TypeScript 5.9 + React 18  
 **Development**: Docker with hot-reload, isolated node_modules in named volume  
-**Deployment**: GitHub Actions → Automated FTPS  
-**Secrets**: GitHub Actions Secrets (build-time env injection)
+**Deployment**: GitHub Actions → Automated SSH/SFTP to dual domains  
+**Secrets**: GitHub Actions Secrets (SSH keys, build-time env injection)
 
 ---
 
 ## Architecture & Key Decisions
 
-### 0. Asset & Service Distribution Strategy
+### 0. Asset Distribution Strategy (CDN-Ready Architecture)
 
-**Current Implementation:**
-- Main domain: `jozapf.de` (Next.js static export)
-- Assets subdomain: `assets.jozapf.de` (static media: images, fonts, icons)
-- Static files cached with long expiry times via `.htaccess` rules
-- Cookie-less domain for assets to reduce HTTP overhead
+**Implementation Status**: ✅ **ACTIVE IN PRODUCTION**
 
-**Planned Architecture Extensions:**
-
+**Current Multi-Domain Setup:**
 ```
-jozapf.de           → Main website (Next.js SSG)
-assets.jozapf.de    → Static media (images, fonts, SVGs) - CDN-ready
-cdn.jozapf.de       → Content Delivery Network endpoint (future exploration)
-api.jozapf.de       → API services (future - serverless/microservices)
+jozapf.de           → Main website (Next.js static export)
+assets.jozapf.de    → Static CDN (images, fonts, icons, SVGs)
+```
+
+**Directory Structure:**
+```
+/workspace/
+├── out/                    → Deployed to jozapf.de
+│   ├── index.html
+│   ├── _next/static/
+│   └── assets/
+│       ├── css/            ← Application CSS
+│       ├── js/             ← Application JS
+│       ├── html/           ← HTML fragments
+│       └── php/            ← Backend scripts
+│
+└── assets-deploy/          → Deployed to assets.jozapf.de
+    ├── favicon/            ← .ico, .png, .svg, .webmanifest
+    ├── fonts/              ← .woff2, .woff, .ttf, .otf, .eot
+    ├── png/                ← .png, .jpg, .jpeg (images)
+    └── svg/                ← .svg (icons, graphics)
+```
+
+**Deployment Flow (GitHub Actions):**
+```yaml
+# Simplified workflow
+steps:
+  - Build Next.js → /out/
+  - Upload /out/ → jozapf.de (via SSH/SFTP)
+  - Upload /assets-deploy/ → assets.jozapf.de (via SSH/SFTP)
 ```
 
 **Benefits of this architecture:**
 - ✅ **Domain sharding**: Parallel asset loading (HTTP/1.1 optimization)
-- ✅ **Cookie-less domain**: Reduced request overhead for static assets
-- ✅ **Cache control**: Independent cache policies per service
+- ✅ **Cookie-less domain**: Reduced request overhead for static assets  
+- ✅ **Cache control**: Independent cache policies per service (30+ days for assets)
 - ✅ **Security isolation**: API/assets separated from main application
-- ✅ **Scalability**: Easy migration to CDN providers (Cloudflare, etc.)
+- ✅ **Scalability**: Easy migration to CDN providers (Cloudflare, Bunny, etc.)
 - ✅ **CORS flexibility**: Fine-grained cross-origin resource control
+- ✅ **Build optimization**: No duplicate assets in Next.js output
 
-#### Main Site `.htaccess` (jozapf.de)
+#### Asset Subdomain Configuration (assets.jozapf.de)
 
-```apache
-# Selective redirect: Only media assets → assets.jozapf.de
-# JS/CSS/PHP/HTML stay on main domain
-RewriteCond %{HTTP_HOST} !^assets\.jozapf\.de$ [NC]
-RewriteRule ^assets/(png|jpe?g|svg|ico|favicon|fonts)/(.*)$ https://assets.jozapf.de/$1/$2 [R=302,L]
-
-# Security: Block sensitive files
-RewriteRule ^assets/php/(dashboard-login\.php|dashboard\.php|contact-php-handler\.php)$ - [L]
-RewriteRule ^assets/php/ - [F]
-
-# Security Headers
-Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-Header always set X-Content-Type-Options "nosniff"
-Header always set X-Frame-Options "SAMEORIGIN"
-```
-
-**Key implementation details:**
-- `[R=302,L]` for testing phase (switch to 301 after verification)
-- Only image/font paths redirected - preserves Next.js JS/CSS on main domain
-- Prevents redirect loops with `RewriteCond %{HTTP_HOST}` check
-
-#### Assets Subdomain `.htaccess` (assets.jozapf.de)
-
+**`.htaccess` - CORS + Aggressive Caching:**
 ```apache
 # CORS: Allow cross-origin requests from main domain
-<FilesMatch "\.(woff2?|ttf|otf|eot|svg|png|jpe?g|ico)$">
-  Header set Access-Control-Allow-Origin "https://jozapf.de"
-  Header set Access-Control-Allow-Methods "GET, OPTIONS"
-  Header set Access-Control-Allow-Headers "Accept, Origin, Content-Type"
-</FilesMatch>
+<IfModule mod_headers.c>
+  # Web Fonts
+  <FilesMatch "\.(woff2?|ttf|otf|eot)$">
+    Header set Access-Control-Allow-Origin "https://jozapf.de"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "Accept, Origin, Content-Type, User-Agent"
+  </FilesMatch>
+  
+  # SVGs (Icons/Fonts)
+  <FilesMatch "\.(svg)$">
+    Header set Access-Control-Allow-Origin "https://jozapf.de"
+  </FilesMatch>
+  
+  # Web Manifest & JSON
+  <FilesMatch "\.(webmanifest|json)$">
+    Header set Access-Control-Allow-Origin "https://jozapf.de"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+  </FilesMatch>
+  
+  # Favicons & Images
+  <FilesMatch "\.(png|jpg|jpeg|ico|webp)$">
+    Header set Access-Control-Allow-Origin "https://jozapf.de"
+    Header set Access-Control-Allow-Methods "GET"
+  </FilesMatch>
+</IfModule>
 
-# Aggressive caching: 30 days for all static media
-ExpiresByType image/png  "access plus 30 days"
-ExpiresByType image/jpeg "access plus 30 days"
-ExpiresByType image/svg+xml "access plus 30 days"
-ExpiresByType font/woff2 "access plus 30 days"
+# Aggressive caching for static assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  
+  # Manifest & JSON: 1 day
+  ExpiresByType application/manifest+json "access plus 1 day"
+  ExpiresByType application/json "access plus 1 day"
+  
+  # Images & Icons: 30 days
+  ExpiresByType image/png  "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType image/x-icon "access plus 30 days"
+  
+  # Fonts: 30 days
+  ExpiresByType font/woff2 "access plus 30 days"
+  ExpiresByType font/woff  "access plus 30 days"
+  ExpiresByType font/ttf   "access plus 30 days"
+  ExpiresByType font/otf   "access plus 30 days"
+</IfModule>
 ```
 
 **Why separate assets subdomain:**
-- **Performance**: Browser can make more parallel requests to different domains
-- **Security**: No cookies sent with asset requests (reduces bandwidth)
+- **Performance**: Browser can make more parallel requests to different domains (HTTP/1.1)
+- **Security**: No cookies sent with asset requests (reduces bandwidth ~200-500 bytes/request)
 - **Caching**: Can set aggressive cache headers without affecting main site
-- **Future-proof**: Easy to swap to a CDN provider later
+- **Future-proof**: Easy to swap to a CDN provider (Cloudflare, Bunny CDN, etc.)
+- **Build efficiency**: Next.js doesn't copy these assets to `/out/`, reducing build size
 
-#### Future CDN/API Strategy
+**URL Examples:**
+```html
+<!-- Avatar image in CSS -->
+background-image: url('https://assets.jozapf.de/png/JoZapf_500x500.png');
 
-**cdn.jozapf.de** (Planned):
-- Potential Cloudflare Workers integration
-- Edge caching for global distribution
-- Image optimization/WebP conversion at edge
-- Still learning: Difference between CDN and simple subdomain hosting
+<!-- Fonts in CSS -->
+@font-face {
+  font-family: 'Montserrat';
+  src: url('https://assets.jozapf.de/fonts/Montserrat-Regular.woff2') format('woff2');
+}
 
-**api.jozapf.de** (Planned):
-- Serverless functions (Vercel/Netlify/Cloudflare Workers)
-- Separate authentication domain
-- Microservices for contact form, analytics, etc.
-- Still researching: When to use vs. traditional PHP backend
-
-**Learning journey:**
-- Understanding domain separation benefits (practical experience in progress)
-- Exploring CDN concepts and edge computing (theoretical knowledge building)
-- Researching microservices vs. monolithic architecture (evaluating trade-offs)
-- Investigating serverless deployment options (not yet clear when to use)
+<!-- Icons in HTML fragments -->
+<img src="https://assets.jozapf.de/png/github-mark-white.png" alt="GitHub">
+```
 
 ### 1. Static Site Generation (SSG) Strategy
 
@@ -336,8 +368,9 @@ next-static:
   profiles: ["next"]
   volumes:
     - ./out:/usr/share/nginx/html:ro
-  read_only: true
+  ports: ["8080:80"]
   tmpfs: ["/var/cache/nginx", "/var/run"]
+  read_only: true
 ```
 
 **Key Learning**: Named volumes for `node_modules` prevent permission/sync issues on Windows/WSL
@@ -400,24 +433,6 @@ export const metadata: Metadata = {
 };
 ```
 
-**Key Challenge**: Initial approach using `headers()` or `cookies()` forced dynamic rendering, breaking static export:
-
-```typescript
-// ❌ This breaks static generation
-export default async function RootLayout({ children }: { children: ReactNode }) {
-  const headersList = await headers();  // Forces dynamic rendering!
-  const pathname = headersList.get('x-invoke-path') || '/';
-  const locale = pathname.startsWith('/en') ? 'en' : 'de';
-  return <html lang={locale}>...</html>;
-}
-```
-
-**Solution**: Use `suppressHydrationWarning` + client component for post-hydration updates:
-- Server renders initial `lang="de"` for all pages
-- Client component updates `document.documentElement.lang` after mount
-- `suppressHydrationWarning` prevents React warnings
-- All pages remain statically generated (compatible with `dynamic = "error"`)
-
 **Benefits**:
 - ✅ Full static generation preserved
 - ✅ No hydration mismatches
@@ -425,12 +440,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 - ✅ Clean URL structure for both languages
 - ✅ Accessible language switching UI
 - ✅ Compatible with Next.js 16's strict static requirements
-
-**Key Learnings**:
-- 🎓 Server components can't use `headers()` or `cookies()` without forcing dynamic rendering
-- 🎓 `suppressHydrationWarning` prevents console errors when `lang` updates client-side
-- 🎓 Client components can safely update DOM attributes after hydration
-- 🎓 Static export pages maintain `dynamic = "error"` compatibility
 
 ### 4. Single Source of Truth (SoT) for Versioning
 
@@ -466,8 +475,7 @@ async function main() {
 {
   "scripts": {
     "prebuild": "tsx scripts/generate-summary.ts",
-    "build": "next build",
-    "postbuild": "next export"
+    "build": "next build"
   }
 }
 ```
@@ -551,7 +559,7 @@ export default function Home() {
 
 ### Challenge 2: SSG Export for Shared Hosting
 
-**Problem**: Hetzner webspace provides FTPS access only - no Node.js runtime, no SSH, no PM2/systemd
+**Problem**: Hetzner webspace provides SSH/SFTP access - no Node.js runtime, no PM2/systemd
 
 **Research Phase**:
 1. ❌ Considered Vercel/Netlify → Cost concerns, vendor lock-in
@@ -580,7 +588,10 @@ out/
 ├── _next/
 │   └── static/...
 ├── assets/
-│   └── ...
+│   ├── css/
+│   ├── js/
+│   ├── html/
+│   └── php/
 └── summary.json
 ```
 
@@ -606,7 +617,7 @@ docker compose --profile next up next-static
 **Problem**: Credentials needed in three contexts:
 1. **Local development** (Docker Compose)
 2. **CI/CD pipeline** (GitHub Actions)
-3. **Build-time injection** (version info, API keys)
+3. **Build-time injection** (version info, SSH keys)
 
 **Anti-Pattern** (What NOT to do):
 ```yaml
@@ -669,25 +680,37 @@ jobs:
           BUILD_DATE: ${{ env.BUILD_DATE }}
         run: npm run build
 
-      - name: Deploy via FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          local-dir: ./out/
-          server-dir: ${{ secrets.FTP_DIR }}
+      - name: Upload site via SFTP
+        env:
+          SFTP_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          # Setup SSH key
+          mkdir -p ~/.ssh
+          echo "$SFTP_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          # Deploy via SFTP
+          sftp -i ~/.ssh/deploy_key -P ${{ secrets.SFTP_PORT }} \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
+          lcd out
+          cd ${{ vars.HETZNER_DOCROOT_SITE }}
+          put -r *
+          EOF
 ```
 
 **GitHub Secrets Setup**:
 ```
-Repository → Settings → Secrets and variables → Actions → New repository secret
+Repository → Settings → Secrets and variables → Actions
 
-FTP_SERVER      → ftp.jozapf.de
-FTP_USERNAME    → deploy-user
-FTP_PASSWORD    → [secure password]
-FTP_DIR         → /public_html/
+Secrets:
+  SSH_HOST           → ssh.your-domain.de
+  SSH_USER           → deploy-user  
+  SSH_PRIVATE_KEY    → [SSH private key content]
+  SFTP_PORT          → 222 (or your custom SSH port)
+
+Variables:
+  HETZNER_DOCROOT_SITE   → /path/to/jozapf.de/
+  HETZNER_DOCROOT_ASSETS → /path/to/assets.jozapf.de/
 ```
 
 #### Layer 3: Build-Time Environment Variables
@@ -706,115 +729,98 @@ const lastUpdated =
 **Key Learnings**:
 - 🎓 Never store secrets in `.env` files inside the repository
 - 🎓 Use `env_file` for Docker, GitHub Secrets for CI/CD
+- 🎓 SSH keys are more secure than passwords for automated deployments
 - 🎓 Document the required secrets clearly (see [Getting Started](#getting-started))
 - 🎓 Test builds locally WITHOUT secrets to ensure graceful degradation
 
 ---
 
-### Challenge 4: CI/CD Pipeline Without SSH Access
+### Challenge 4: Dual-Domain Asset Deployment
 
-**Problem**: Traditional deployment (SSH + rsync/SCP) not available on Hetzner shared hosting
+**Problem**: Static assets (images, fonts) duplicated in both domains, causing redirect errors in Google Search Console
 
-**Deployment Options Evaluated**:
-
-| Method | Available | Performance | Atomicity | Verdict |
-|--------|-----------|-------------|-----------|---------|
-| SSH + rsync | ❌ No | Excellent | Partial | Not possible |
-| FTP (plain) | ✅ Yes | Good | ❌ No | Insecure |
-| FTPS (TLS) | ✅ Yes | Good | ❌ No | ✅ Chosen |
-| SFTP | ❌ No | Excellent | ❌ No | Not available |
-
-**Implementation**: GitHub Actions + FTPS
-
+**Initial Approach** (Flawed):
 ```yaml
-# .github/workflows/deploy.yml
-name: Build and Deploy to Hetzner
+# ❌ Assets in /public/ get copied to /out/ by Next.js
+public/
+└── assets/
+    ├── png/         # Gets deployed to jozapf.de/assets/png/
+    ├── fonts/       # Gets deployed to jozapf.de/assets/fonts/
+    └── ...
+```
 
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+**Issue**: 
+- Next.js copies everything from `/public/` to `/out/`
+- CSS uses `url('../png/image.png')` → loads from jozapf.de
+- But images should come from assets.jozapf.de
+- Result: Google reports redirect errors
 
-jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
+**Solution**: Separate deployment directory
+
+```
+/workspace/
+├── assets-deploy/          ← NEW: Only deployed to assets.jozapf.de
+│   ├── favicon/
+│   ├── fonts/
+│   ├── png/
+│   └── svg/
+│
+└── public/
+    └── assets/             ← Application-specific only
+        ├── css/            ← Stays in /out/
+        ├── js/             ← Stays in /out/
+        ├── html/           ← Stays in /out/
+        └── php/            ← Stays in /out/
+```
+
+**GitHub Actions Workflow**:
+```yaml
+# Two separate upload steps
+- name: Upload site via SFTP
+  run: |
+    sftp ... <<EOF
+    lcd out
+    cd ${{ vars.HETZNER_DOCROOT_SITE }}
+    put -r *
+    EOF
+
+- name: Upload assets via SFTP  
+  run: |
+    # Smart fallback: assets-deploy (new) or public/assets (legacy)
+    ASSETS_SOURCE="assets-deploy"
+    [[ ! -d "$ASSETS_SOURCE" ]] && ASSETS_SOURCE="public/assets"
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Needed for git describe --tags
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Set build metadata
-        run: |
-          echo "GIT_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
-          echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
-
-      - name: Build static site
-        env:
-          GIT_TAG: ${{ env.GIT_TAG }}
-          BUILD_DATE: ${{ env.BUILD_DATE }}
-        run: |
-          npm run build
-          ls -lah out/
-
-      - name: Deploy to Hetzner via FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          local-dir: ./out/
-          server-dir: ${{ secrets.FTP_DIR }}
-          dangerous-clean-slate: false  # Preserve existing files not in out/
-          exclude: |
-            **/.git*
-            **/.DS_Store
-            **/node_modules/**
+    sftp ... <<EOF
+    lcd $ASSETS_SOURCE
+    cd ${{ vars.HETZNER_DOCROOT_ASSETS }}
+    put -r *
+    EOF
 ```
 
-**Deployment Flow Diagram**:
+**CSS/HTML Updates**:
+```css
+/* Before: Relative URL */
+background-image: url('../png/JoZapf_500x500.png');
+
+/* After: Absolute URL to assets subdomain */
+background-image: url('https://assets.jozapf.de/png/JoZapf_500x500.png');
 ```
-┌─────────────┐
-│ Local Dev   │
-│ (git push)  │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────────────────────────────────────────────┐
-│ GitHub Actions Runner (ubuntu-latest)                       │
-│                                                              │
-│  1. Checkout code (with tags)                               │
-│  2. Setup Node.js 20 (with npm cache)                       │
-│  3. npm ci                                                   │
-│  4. Inject GIT_TAG + BUILD_DATE                             │
-│  5. npm run build (generates /out with summary.json)        │
-│  6. FTPS Upload to Hetzner                                  │
-│     - Incremental transfer (only changed files)             │
-│     - Atomic on per-file basis                              │
-└──────┬──────────────────────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────┐
-│ Hetzner Webspace    │
-│ /public_html/       │
-│   ├── index.html    │
-│   ├── _next/        │
-│   ├── assets/       │
-│   └── summary.json  │
-└─────────────────────┘
+
+```html
+<!-- Before: Relative URL -->
+<img src="/assets/png/github-mark-white.png" alt="GitHub">
+
+<!-- After: Absolute URL -->
+<img src="https://assets.jozapf.de/png/github-mark-white.png" alt="GitHub">
 ```
+
+**Key Learnings**:
+- 🎓 Next.js `public/` folder is NOT for CDN assets - it gets copied to `/out/`
+- 🎓 Use absolute URLs (https://assets.domain.com) for cross-domain assets
+- 🎓 Separate deployment directories prevent duplicate asset uploads
+- 🎓 GitHub Actions can deploy to multiple targets in one workflow
+
+---
 
 ## Deployment Workflow
 
@@ -838,23 +844,34 @@ jobs:
 └──────────┬──────────┘
            │ Trigger on push
            ▼
-┌─────────────────────────────────────┐
-│ GitHub Actions CI/CD                │
-│ 1. Checkout (with tags)             │
-│ 2. Setup Node.js 20                 │
-│ 3. npm ci                           │
-│ 4. Inject GIT_TAG + BUILD_DATE      │
-│ 5. npm run build → /out             │
-│ 6. FTPS upload to Hetzner           │
-└──────────┬──────────────────────────┘
+┌─────────────────────────────────────────┐
+│ GitHub Actions CI/CD                    │
+│ 1. Checkout (with tags)                 │
+│ 2. Setup Node.js 20                     │
+│ 3. npm ci                               │
+│ 4. Inject GIT_TAG + BUILD_DATE          │
+│ 5. npm run build → /out                 │
+│ 6. SSH/SFTP: /out → jozapf.de           │
+│ 7. SSH/SFTP: /assets-deploy → assets.de │
+└──────────┬──────────────────────────────┘
            │ Deploy
            ▼
-┌─────────────────────┐
-│ Hetzner Webspace    │
-│ - Static HTML/CSS/JS│
-│ - summary.json      │
-│ - Live: jozapf.de   │
-└─────────────────────┘
+┌─────────────────────────────────┐
+│ Production (Hetzner)            │
+│ ├─ jozapf.de/                   │
+│ │  ├── index.html               │
+│ │  ├── _next/static/            │
+│ │  └── assets/                  │
+│ │      ├── css/                 │
+│ │      ├── js/                  │
+│ │      └── php/                 │
+│ │                                │
+│ └─ assets.jozapf.de/            │
+│    ├── favicon/                 │
+│    ├── fonts/                   │
+│    ├── png/                     │
+│    └── svg/                     │
+└─────────────────────────────────┘
 ```
 
 ### Step-by-Step Process
@@ -895,13 +912,17 @@ git push --tags
 # GitHub Actions automatically:
 # - Detects push to main
 # - Runs build workflow
-# - Deploys to Hetzner via FTPS
+# - Deploys to Hetzner via SSH/SFTP (both domains)
 ```
 
 #### 4. Verify Deployment
 ```bash
 # Check summary.json version
 curl https://jozapf.de/summary.json | jq .
+
+# Check assets subdomain
+curl -I https://assets.jozapf.de/png/JoZapf_500x500.png
+# Should return: 200 OK + Access-Control-Allow-Origin header
 
 # Check GitHub Actions status
 gh run list --workflow=deploy.yml
@@ -927,6 +948,33 @@ npm run version:major  # → v3.0.0 (breaking change)
 
 ---
 
+## Lessons Learned
+
+### Technical Insights
+
+1. **Static Export is Not a Limitation** - With proper architecture, SSG provides 90% of SSR benefits without the complexity
+2. **Docker for Consistency** - Named volumes solve Windows/WSL node_modules issues, making cross-platform dev seamless
+3. **Secrets Management is Critical** - Never underestimate the importance of proper credential handling from day one
+4. **Dual-Domain Strategy Works** - Separating static assets to a subdomain improves performance and simplifies CDN migration
+5. **SSH > FTPS** - Key-based authentication is more secure and reliable than password-based FTPS
+
+### Development Process Learnings
+
+1. **AI as a Pair Programmer** - LLMs excel at explaining concepts and suggesting patterns, but critical evaluation is essential
+2. **Incremental Migration** - Fragment-based approach allowed gradual transition without breaking existing functionality
+3. **Documentation is Development** - Writing this README clarified architectural decisions and exposed edge cases
+4. **Test Before Deploy** - Local production previews (Docker + Nginx) catch issues FTPS uploads would miss
+
+### Apprenticeship Context
+
+As an IT apprentice, this project taught:
+- Modern web development is about **understanding trade-offs**, not memorizing frameworks
+- **Security and automation** should be built in from the start, not added later
+- **Documentation** is a skill that directly impacts code quality and team collaboration
+- **AI tools** are powerful when combined with critical thinking and independent validation
+
+---
+
 ## Getting Started
 
 ### Prerequisites
@@ -934,7 +982,7 @@ npm run version:major  # → v3.0.0 (breaking change)
 - Node.js 20+ (for local development)
 - Docker + Docker Compose (optional, but recommended)
 - Git with SSH keys configured
-- Hetzner webspace (or similar shared hosting with FTPS)
+- Hetzner webspace (or similar shared hosting with SSH/SFTP)
 
 ### Local Development Setup
 
@@ -975,12 +1023,39 @@ npm run version:major  # → v3.0.0 (breaking change)
 
 Add these in **GitHub → Settings → Secrets and variables → Actions**:
 
+**Secrets:**
+
 | Secret Name | Description | Example |
 |-------------|-------------|---------|
-| `FTP_SERVER` | Hetzner FTP hostname | `ftp.your-domain.de` |
-| `FTP_USERNAME` | FTP username | `u12345678` |
-| `FTP_PASSWORD` | FTP password | `***` |
-| `FTP_DIR` | Target directory on server | `/public_html/` or `/` |
+| `SSH_HOST` | Hetzner SSH hostname | `ssh.your-domain.de` |
+| `SSH_USER` | SSH username | `u12345678` |
+| `SSH_PRIVATE_KEY` | SSH private key (full content) | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
+| `SFTP_PORT` | SSH port (usually 22 or 222) | `222` |
+
+**Variables (Repository Variables):**
+
+| Variable Name | Description | Example |
+|---------------|-------------|---------|
+| `HETZNER_DOCROOT_SITE` | Path to main site docroot | `/usr/home/u12345678/public_html/` |
+| `HETZNER_DOCROOT_ASSETS` | Path to assets docroot | `/usr/home/u12345678/assets/` |
+
+### SSH Key Generation (for deployment)
+
+```bash
+# Generate SSH key pair (on your local machine)
+ssh-keygen -t ed25519 -C "github-actions@jozapf.de" -f ~/.ssh/jozapf_deploy
+
+# Copy public key to server (via Hetzner console or existing SSH session)
+cat ~/.ssh/jozapf_deploy.pub
+# Paste into server's ~/.ssh/authorized_keys
+
+# Test connection
+ssh -i ~/.ssh/jozapf_deploy -p 222 u12345678@ssh.your-domain.de
+
+# Add private key to GitHub Secrets
+cat ~/.ssh/jozapf_deploy
+# Copy entire content (including BEGIN/END markers) to SSH_PRIVATE_KEY secret
+```
 
 ### First Deployment
 
@@ -994,11 +1069,16 @@ Add these in **GitHub → Settings → Secrets and variables → Actions**:
 2. **GitHub Actions will automatically**:
    - Build the static site
    - Inject version and timestamp
-   - Deploy to Hetzner via FTPS
+   - Deploy to both jozapf.de and assets.jozapf.de via SSH/SFTP
 
 3. **Verify deployment**
    ```bash
-   curl https://your-domain.de/summary.json
+   # Check version
+   curl https://jozapf.de/summary.json | jq .version
+
+   # Check assets subdomain CORS
+   curl -I https://assets.jozapf.de/fonts/Montserrat-Regular.woff2
+   # Should show: Access-Control-Allow-Origin: https://jozapf.de
    ```
 
 ---
@@ -1010,7 +1090,9 @@ Add these in **GitHub → Settings → Secrets and variables → Actions**:
 - **Initial Setup (2024)**: Bootstrap 5 + PHP + Docker development environment
 - **Security Hardening (Oct 2024)**: CSRF protection, HMAC auth, automated log anonymization
 - **Migration Phase (Nov 2024)**: Transition to Next.js 16 + TypeScript
-- **Current Status**: Production-ready, automated deployments
+- **Asset Architecture (Nov 13, 2024)**: Dual-domain deployment (jozapf.de + assets.jozapf.de)
+- **SSH Deployment (Nov 12, 2024)**: Migrated from FTPS to SSH/SFTP for CI/CD
+- **Current Status**: Production-ready, automated dual-domain deployments
 
 ### Educational Context
 
@@ -1018,13 +1100,15 @@ This project serves as a **practical learning platform** during my apprenticeshi
 
 - Modern web development workflows
 - Container orchestration and DevOps practices
-- Security-first development (secrets management, GDPR compliance)
-- CI/CD automation and deployment strategies
+- Multi-domain asset distribution strategies
+- Security-first development (SSH keys, secrets management, GDPR compliance)
+- CI/CD automation with SSH-based deployment
 - Technical documentation and knowledge transfer
 
 ### Related Projects
 
 - **Contact Form Abuse Prevention**: PHP-based contact form with GDPR compliance, CSRF protection, and automated log anonymization
+- **mTLS Nextcloud Login Hardening**: Zero-Trust authentication with client certificates
 
 ---
 
@@ -1042,4 +1126,4 @@ Berlin, Germany
 
 **⭐ If you find this migration journey helpful, please consider starring this repository!**
 
-*Last Updated: 2024-11-10 | Version: 2.0.3*
+*Last Updated: 2024-11-13 | Version: 2.1.0*
