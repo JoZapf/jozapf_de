@@ -3,45 +3,22 @@
  * Main stylesheet
  *
  * Sorted by DOM order (HTML structure):
- * 1. CSS Variables
- * 2. Base & Typography (html, body, headings)
- * 3. Header & Navigation
- * 4. Hero Section (avatar → hero-name → hero-subtitle → hero-quote)
- * 5. Intro Section
- * 6. Icons & Images
- * 7. Badges & Buttons
- * 8. Modal
- * 9. Footer
- * 10. Utility Classes
+ * 1. Base & Typography (html, body, headings)
+ * 2. Header & Navigation
+ * 3. Hero Section (avatar → hero-name → hero-subtitle → hero-quote)
+ * 4. Intro Section
+ * 5. Icons & Images
+ * 6. Badges & Buttons
+ * 7. Modal
+ * 8. Footer
+ * 9. Utility Classes
  *
- * Responsive breakpoints moved to breakpoints.css
+ * CSS Variables: Loaded from variables.css
+ * Responsive breakpoints: Loaded from breakpoints.css
  */
 
 /* ========================================
-   1. CSS VARIABLES
-   ======================================== */
-:root {
-	/* Colors */
-	--bg-jz: #212529;
-	--bg-header: #13171a;
-	--line: #6c757d;
-	--muted: #adb5bd;
-	--text-light: #e9ecef;
-	--text-medium: #cfd4da;
-
-	/* Icon Sizes */
-	--icon-width: 75px;
-	--icon-height: 75px;
-	--icon-width-small: 35px;
-	--icon-height-small: 35px;
-
-	/* Spacing */
-	--section-padding-top: 80px;
-	--section-padding-bottom: 50px;
-}
-
-/* ========================================
-   2. BASE & TYPOGRAPHY
+   1. BASE & TYPOGRAPHY
    ======================================== */
 html,
 body {

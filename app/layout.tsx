@@ -201,6 +201,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="preload" href="/assets/js/bootstrap.bundle.min.js" as="script" />
 
         {/* Lokale Styles */}
+        <link href="/assets/css/variables.css" rel="stylesheet" />
         <link href="/assets/css/bootstrap.css" rel="stylesheet" />
         <link href="/assets/css/fonts.css" rel="stylesheet" />
         <link href="/assets/css/breakpoints.css" rel="stylesheet" />

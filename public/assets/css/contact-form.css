@@ -3,47 +3,17 @@
  * Lazy-loaded contact form with Bootstrap integration
  *
  * Sorted by DOM order (HTML structure):
- * 1. CSS Variables
- * 2. Card Container (.shadow-sm, .contact-section)
- * 3. Alert Overrides (.alert.alert-success, .alert.alert-danger)
- * 4. Custom Card (.cf-card)
- * 5. Captcha Elements (.captcha-container, .captcha-question)
- * 6. Legacy Classes (.cf-alert, .cf-success, .cf-error)
+ * 1. Card Container (.shadow-sm, .contact-section)
+ * 2. Alert Overrides (.alert.alert-success, .alert.alert-danger)
+ * 3. Custom Card (.cf-card)
+ * 4. Captcha Elements (.captcha-container, .captcha-question)
+ * 5. Legacy Classes (.cf-alert, .cf-success, .cf-error)
+ *
+ * CSS Variables: Loaded from variables.css
  */
 
 /* ========================================
-   1. CSS VARIABLES
-   ======================================== */
-:root {
-  /* Success Colors (Green) */
-  --cf-success-bg: #d4edda;
-  --cf-success-border: #c3e6cb;
-  --cf-success-text: #155724;
-  --cf-success-bg-dark: #103d25;
-  --cf-success-border-dark: #1d6f45;
-  --cf-success-text-dark: #b9e5cf;
-
-  /* Error Colors (Red) */
-  --cf-error-bg: #f8d7da;
-  --cf-error-border: #f5c6cb;
-  --cf-error-text: #721c24;
-  --cf-error-bg-dark: #3d1919;
-  --cf-error-border-dark: #7a2c2c;
-  --cf-error-text-dark: #f2c7c7;
-
-  /* Card Colors (Dark Theme) */
-  --cf-card-bg: #13171a;
-  --cf-card-border: rgba(255,255,255,.15);
-  --cf-card-shadow: 0 0 20px rgba(0,0,0,.2);
-
-  /* Input Colors */
-  --cf-input-bg: #1b1f22;
-  --cf-input-border: rgba(255,255,255,.15);
-  --cf-input-text: #cfd4da;
-}
-
-/* ========================================
-   2. CARD CONTAINER - .shadow-sm, .contact-section
+   1. CARD CONTAINER - .shadow-sm, .contact-section
    ======================================== */
 .shadow-sm {
   box-shadow: var(--bs-box-shadow-sm) !important;
