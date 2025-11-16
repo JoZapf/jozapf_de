@@ -372,18 +372,10 @@ footer {
 	margin-bottom: 0.5rem !important;
 }
 
-/* Timeline Visibility */
-.horizontal_timeline {
-	display: none;
-}
-
-.vertical_timeline {
-	display: block;
-}
-
 /* ========================================
    RESPONSIVE BREAKPOINTS
    ======================================== */
+/* Note: Timeline visibility is controlled in breakpoints.css via media queries */
 
 /* All responsive breakpoints moved to /public/assets/css/breakpoints.css
    - Desktop: 1400px (Timeline horizontal/vertical toggle)

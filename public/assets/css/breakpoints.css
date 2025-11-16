@@ -17,6 +17,18 @@
  */
 
 /* ========================================
+   DEFAULT TIMELINE VISIBILITY
+   (Overridden by media queries below)
+   ======================================== */
+.horizontal_timeline {
+  display: none;
+}
+
+.vertical_timeline {
+  display: block;
+}
+
+/* ========================================
    MOBILE: 576px (Bootstrap sm)
    From: lang-toggle.css
    ======================================== */
