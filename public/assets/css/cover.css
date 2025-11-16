@@ -377,6 +377,10 @@ footer {
 	display: none;
 }
 
+.vertical_timeline {
+	display: block;
+}
+
 /* ========================================
    RESPONSIVE BREAKPOINTS
    ======================================== */

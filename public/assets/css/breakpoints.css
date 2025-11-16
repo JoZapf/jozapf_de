@@ -423,6 +423,10 @@
    ======================================== */
 @media (max-width: 1399.98px) {
   /* cover.css - Timeline Display Toggle */
+  .horizontal_timeline {
+    display: none;
+  }
+
   .vertical_timeline {
     display: block;
   }
