@@ -1,0 +1,174 @@
+/**
+ * github_repos.css - GitHub Repository Cards & Swiper Integration
+ * Lazy-loaded component for GitHub projects section
+ *
+ * Structure:
+ * 1. Repository Cards (.repo-card)
+ * 2. Repository Meta Information (.repo-meta)
+ * 3. GitHub Section Heading (.github-repos)
+ * 4. Swiper.js Overrides
+ *
+ * CSS Variables: Loaded from variables.css
+ */
+
+/* ========================================
+   1. REPOSITORY CARDS
+   ======================================== */
+
+.repo-card {
+	background-color: rgba(255, 255, 255, 0.01) !important;
+	border: 1px solid var(--bs-border-color);
+	border-radius: 10px;
+	padding: 1.5rem;
+	min-height: 240px;
+	transition: transform 0.2s ease;
+	display: flex;
+	flex-direction: column;
+}
+
+.swiper-slide:hover .repo-card {
+	transform: translateY(-5px);
+	box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Repository Name Styling */
+/* Specificity: .repo-card .repo-name a = 0,0,2,1 (much higher than Bootstrap's a = 0,0,0,1) */
+.repo-card .repo-name a {
+	color: var(--muted);
+	transition: color 0.2s ease;
+}
+
+.repo-card .repo-name a:visited {
+	color: var(--muted);
+}
+
+.repo-card .repo-name a:hover,
+.repo-card .repo-name a:visited:hover {
+	color: #198754;
+}
+
+.repo-card .repo-description {
+	flex-grow: 1;
+	margin-bottom: 1rem;
+	line-height: 1.5;
+	color: #cfd4da;
+	padding: 0 25px;
+}
+
+/* ========================================
+   2. REPOSITORY META INFORMATION
+   ======================================== */
+
+.repo-meta {
+	margin-top: auto;
+	padding-top: 0.75rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	font-size: 0.85rem;
+	color: #adb5bd;
+}
+
+.repo-meta-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.repo-meta-row:last-child {
+	margin-bottom: 0;
+}
+
+.meta-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	white-space: nowrap;
+}
+
+.meta-item.archived {
+	color: #ffc107;
+	font-weight: 500;
+}
+
+.meta-separator {
+	color: rgba(255, 255, 255, 0.3);
+	user-select: none;
+}
+
+.language-dot {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+/* ========================================
+   3. GITHUB SECTION HEADING
+   ======================================== */
+
+.github-repos {
+	overflow-x: hidden;
+}
+
+.github-repos h2 {
+	width: 100vw;
+	position: relative;
+	left: 50%;
+	right: 50%;
+	margin-left: -50vw;
+	margin-right: -50vw;
+	padding-left: 0;
+	padding-right: 0;
+	text-align: center;
+	transition: transform 0.3s ease;
+}
+
+.github-profile-link {
+	text-decoration: none;
+	display: inline-block;
+	width: 100%;
+}
+
+.github-profile-link:hover h2 {
+	transform: translateY(-5px);
+}
+
+.github-heading-wrapper {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.github-heading-wrapper span {
+	width: 100px;
+	flex-shrink: 0;
+}
+
+.github-heading-wrapper span:first-child {
+	text-align: right;
+}
+
+.github-heading-wrapper span:last-child {
+	text-align: left;
+}
+
+.github-heading-wrapper img {
+	vertical-align: middle;
+	flex-shrink: 0;
+}
+
+/* ========================================
+   4. SWIPER.JS OVERRIDES
+   ======================================== */
+
+.swiper-button-next,
+.swiper-button-prev {
+	color: var(--muted) !important;
+}
+
+.swiper-wrapper {
+	padding: 5px 0 !important;
+}

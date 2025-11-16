@@ -197,15 +197,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="dns-prefetch" href="https://github.com" />
 
         {/* Preload kritischer Ressourcen */}
-        <link rel="preload" href="/assets/css/bootstrap.css" as="style" />
+        <link rel="preload" href="/assets/css/bootstrap.min.css" as="style" />
         <link rel="preload" href="/assets/js/bootstrap.bundle.min.js" as="script" />
 
         {/* Lokale Styles */}
-        <link href="/assets/css/bootstrap.css" rel="stylesheet" />
+        <link href="/assets/css/variables.css" rel="stylesheet" />
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
         <link href="/assets/css/fonts.css" rel="stylesheet" />
+        <link href="/assets/css/breakpoints.css" rel="stylesheet" />
         <link href="/assets/css/cover.css" rel="stylesheet" />
         <link href="/assets/css/timeline.css" rel="stylesheet" />
         <link href="/assets/css/vertical_timeline.css" rel="stylesheet" />
+        <link href="/assets/css/github_repos.css" rel="stylesheet" />
         <link href="/assets/css/contact-form.css" rel="stylesheet" />
         <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
         

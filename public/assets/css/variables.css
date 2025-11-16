@@ -1,0 +1,74 @@
+/**
+ * variables.css - CSS Custom Properties (Design Tokens)
+ * Central definition of all CSS variables used across the application
+ *
+ * Load order: FIRST (before all other stylesheets)
+ * Loaded in: app/layout.tsx
+ */
+
+:root {
+	/* ========================================
+	   BASE COLORS
+	   ======================================== */
+
+	/* Backgrounds */
+	--bg-jz: #212529;
+	--bg-header: #13171a;
+
+	/* Borders & Lines */
+	--line: #6c757d;
+
+	/* Text Colors */
+	--text-light: #e9ecef;
+	--text-medium: #cfd4da;
+	--muted: #adb5bd;
+
+
+	/* ========================================
+	   CONTACT FORM COLORS
+	   ======================================== */
+
+	/* Success States (Green) */
+	--cf-success-bg: #d4edda;
+	--cf-success-border: #c3e6cb;
+	--cf-success-text: #155724;
+	--cf-success-bg-dark: #103d25;
+	--cf-success-border-dark: #1d6f45;
+	--cf-success-text-dark: #b9e5cf;
+
+	/* Error States (Red) */
+	--cf-error-bg: #f8d7da;
+	--cf-error-border: #f5c6cb;
+	--cf-error-text: #721c24;
+	--cf-error-bg-dark: #3d1919;
+	--cf-error-border-dark: #7a2c2c;
+	--cf-error-text-dark: #f2c7c7;
+
+	/* Card Styles */
+	--cf-card-bg: #13171a;
+	--cf-card-border: rgba(255,255,255,.15);
+	--cf-card-shadow: 0 0 20px rgba(0,0,0,.2);
+
+	/* Input Styles */
+	--cf-input-bg: #1b1f22;
+	--cf-input-border: rgba(255,255,255,.15);
+	--cf-input-text: #cfd4da;
+
+
+	/* ========================================
+	   ICON SIZES
+	   ======================================== */
+
+	--icon-width: 75px;
+	--icon-height: 75px;
+	--icon-width-small: 35px;
+	--icon-height-small: 35px;
+
+
+	/* ========================================
+	   SPACING
+	   ======================================== */
+
+	--section-padding-top: 80px;
+	--section-padding-bottom: 50px;
+}
