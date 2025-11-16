@@ -1,5 +1,6 @@
 // app/en/layout.tsx
 import type { Metadata } from "next";
+import "../globals.css";
 
 // Metadata for English version
 export const metadata: Metadata = {
