@@ -40,12 +40,11 @@ public/assets/php/*.eml
 
 docs/**
 docs/ 
-docs/CRON-SETUP-GUIDE.md
-docs/DEPLOYMENT.md
-docs/HMAC-AUTHENTICATION.md
-docs/Login-Security-Fix-through-argon2id-hash-and-csrf.md
-docs/README-20251012-163000.md
-docs/README-20251012-170500-en.md
+
+# Ignore all deploy assets, keep only empty folder structure via .gitkeep
+assets-deploy/**
+!assets-deploy/**/.gitkeep
+
 cron/
 public/assets/php/data
 
