@@ -38,7 +38,14 @@ public/assets/php/logs/
 public/assets/php/assets.old/
 public/assets/php/*.eml
 
-docs/
+docs/**
+docs/ 
+docs/CRON-SETUP-GUIDE.md
+docs/DEPLOYMENT.md
+docs/HMAC-AUTHENTICATION.md
+docs/Login-Security-Fix-through-argon2id-hash-and-csrf.md
+docs/README-20251012-163000.md
+docs/README-20251012-170500-en.md
 cron/
 public/assets/php/data
 
