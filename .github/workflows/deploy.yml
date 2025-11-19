@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "If true, skip SFTP uploads (build only)."
+        description: "If true, skip SSH uploads (build only)."
         required: true
         type: choice
         options: [ "true", "false" ]
@@ -23,11 +23,11 @@ jobs:
 
     env:
       # ---- Remote connection (Secrets) ----
-      SFTP_HOST: ${{ secrets.SSH_HOST }}
-      # If SFTP_PORT is not set as a secret, the scripts default to 222 (Hetzner GUI).
-      SFTP_PORT: ${{ secrets.SFTP_PORT }}
-      SFTP_USER: ${{ secrets.SSH_USER }}
-      SFTP_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      # If SSH_PORT is not set as a secret, the scripts default to 222 (Hetzner GUI).
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       # ---- Remote targets (Repository Variables) ----
       DOCROOT_SITE: ${{ vars.HETZNER_DOCROOT_SITE }}
@@ -126,15 +126,15 @@ jobs:
         run: |
           set -e
           mkdir -p "${HOME}/.ssh"
-          echo "${SFTP_PRIVATE_KEY}" > "${HOME}/.ssh/deploy_key"
+          echo "${SSH_PRIVATE_KEY}" > "${HOME}/.ssh/deploy_key"
           chmod 600 "${HOME}/.ssh/deploy_key"
 
       - name: Add host key to known_hosts
         shell: bash
         run: |
           set -e
-          : "${SFTP_PORT:=222}"
-          ssh-keyscan -p "${SFTP_PORT}" "${SFTP_HOST}" >> "${HOME}/.ssh/known_hosts"
+          : "${SSH_PORT:=222}"
+          ssh-keyscan -p "${SSH_PORT}" "${SSH_HOST}" >> "${HOME}/.ssh/known_hosts"
 
       - name: Dry-run notice (no upload)
         if: env.DRY_RUN == 'true'
@@ -142,15 +142,15 @@ jobs:
         run: |
           echo "::notice::Dry-run enabled – build completed, no files uploaded."
 
-      - name: Upload site via SFTP
+      - name: Upload site via SSH
         if: env.DRY_RUN != 'true'
         shell: bash
         run: |
           set -e
-          : "${SFTP_PORT:=222}"
+          : "${SSH_PORT:=222}"
 
-          if [ -z "${SFTP_HOST:-}" ] || [ -z "${SFTP_USER:-}" ] || [ -z "${SFTP_PRIVATE_KEY:-}" ]; then
-            echo "::error::Missing SFTP credentials (SFTP_HOST/SFTP_USER/SFTP_PRIVATE_KEY)."
+          if [ -z "${SSH_HOST:-}" ] || [ -z "${SSH_USER:-}" ] || [ -z "${SSH_PRIVATE_KEY:-}" ]; then
+            echo "::error::Missing SSH credentials (SSH_HOST/SSH_USER/SSH_PRIVATE_KEY)."
             exit 1
           fi
           if [ -z "${DOCROOT_SITE:-}" ]; then
@@ -162,19 +162,19 @@ jobs:
             exit 1
           fi
 
-          echo "::notice::Uploading site to ${SFTP_USER}@${SFTP_HOST}:${DOCROOT_SITE} (port ${SFTP_PORT})"
-          sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<SFTP_CMDS
+          echo "::notice::Uploading site to ${SSH_USER}@${SSH_HOST}:${DOCROOT_SITE} (port ${SSH_PORT})"
+          sftp -i "${HOME}/.ssh/deploy_key" -P "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" <<SSH_CMDS
           lcd ${SITE_DIR}
           cd ${DOCROOT_SITE}
           put -r *
-          SFTP_CMDS
+          SSH_CMDS
 
-      - name: Upload assets via SFTP
+      - name: Upload assets via SSH
         if: env.DRY_RUN != 'true'
         shell: bash
         run: |
           set -e
-          : "${SFTP_PORT:=222}"
+          : "${SSH_PORT:=222}"
 
           if [ -z "${DOCROOT_ASSETS:-}" ]; then
             echo "::notice::DOCROOT_ASSETS not set – skipping assets upload."
@@ -193,9 +193,9 @@ jobs:
             exit 0
           fi
 
-          echo "::notice::Uploading assets from ${ASSETS_SOURCE} to ${SFTP_USER}@${SFTP_HOST}:${DOCROOT_ASSETS} (port ${SFTP_PORT})"
-          sftp -i "${HOME}/.ssh/deploy_key" -P "${SFTP_PORT}" "${SFTP_USER}@${SFTP_HOST}" <<SFTP_CMDS
+          echo "::notice::Uploading assets from ${ASSETS_SOURCE} to ${SSH_USER}@${SSH_HOST}:${DOCROOT_ASSETS} (port ${SSH_PORT})"
+          sftp -i "${HOME}/.ssh/deploy_key" -P "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" <<SSH_CMDS
           lcd ${ASSETS_SOURCE}
           cd ${DOCROOT_ASSETS}
           put -r *
-          SFTP_CMDS
+          SSH_CMDS
