@@ -54,7 +54,7 @@
   .hero-quote::before,
   .hero-quote::after {
     width: min(840px, 85vw);
-    padding: 0 15vw;
+    padding: 0 5vw;
   }
 
   .intro {
@@ -182,6 +182,7 @@
 
   .hero-quote::before, .hero-quote::after  {
       width: min(650px, 95vw)!important;
+      padding: 0 2.5vw;
   }
 
   .intro {
