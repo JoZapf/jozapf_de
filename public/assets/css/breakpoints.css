@@ -231,6 +231,38 @@
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
+
+  .p-4 {
+    padding: 0.3rem !important;
+  } 
+
+  .timeline_content {
+        font-size: 0.8rem;
+    }
+  .small, small {
+    font-size: .75em;
+  }
+  .icon-right {
+    margin-right: 2px!important;
+  }
+  .icon-left {
+    margin-left: 2px!important;
+  }
+  .mb-4 {
+        padding-top: 0.5rem;
+    }
+    .badge {
+    --bs-badge-font-size: 0.75em!important;
+    }
+      .left-4 {
+        padding: 0 25px 0px 0!important;
+    }
+      .right-4 {
+        padding: 0 0 0px 25px!important;
+    }
+  .p-4 {
+    padding: 0.5rem!important;
+  }
 }
 
 /* ========================================
@@ -683,4 +715,5 @@
     margin-bottom: 0.25rem;
     padding: 0;
   }
+
 }
