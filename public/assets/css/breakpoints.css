@@ -54,7 +54,7 @@
   .hero-quote::before,
   .hero-quote::after {
     width: min(840px, 85vw);
-    padding: 0 5vw;
+    padding: 0 15vw;
   }
 
   .intro {
@@ -98,7 +98,7 @@
   /* vertical_timeline.css - Mobile Layout */
   .container-sm,
   .container {
-    max-width: 100%;
+    max-width: 650px;
   }
 
   /* Single column layout */
@@ -182,7 +182,6 @@
 
   .hero-quote::before, .hero-quote::after  {
       width: min(650px, 95vw)!important;
-      padding: 0 2.5vw;
   }
 
   .intro {
@@ -201,6 +200,37 @@
       min-height: 0px!important;
   }
 
+}
+
+/* ========================================
+   MOBILE: Under 450px (Very small devices)
+   Fix horizontal overflow by reducing padding
+   ======================================== */
+@media (max-width: 450px) {
+  /* Force full viewport width */
+  html, body {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Container must fit viewport */
+  .container-sm,
+  .container {
+    max-width: 100vw !important;
+    width: 100% !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  
+  /* Hero-quote must fit with padding */
+  .hero-quote::before,
+  .hero-quote::after {
+    width: calc(100vw - 24px) !important;  /* Full width minus container padding */
+    padding: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
 }
 
 /* ========================================
