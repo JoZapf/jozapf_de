@@ -10,10 +10,10 @@ import { platform } from 'node:os';
 function safeSpawn(command, args = [], options = {}) {
   const isWindows = platform() === 'win32';
   
-  // On Windows, use shell for .cmd/.bat scripts, but keep array args safe
+  // On Windows, only use shell for npm (needed for .cmd), NOT for git
   const spawnOptions = {
     ...options,
-    shell: isWindows && (command === 'npm' || command === 'git')
+    shell: isWindows && command === 'npm'
   };
   
   return spawnSync(command, args, spawnOptions);

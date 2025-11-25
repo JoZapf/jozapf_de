@@ -101,6 +101,10 @@
     max-width: 650px;
   }
 
+  .left-4::after, .right-4::after {
+    /* left: 0px; */
+  }
+
   /* Single column layout */
   .timeline-4 {
     width: 100%;
@@ -110,10 +114,14 @@
 
   /* All arrows point right */
   .timeline-4::before {
-    left: 35px;
+    /* left: 0px; */
     border: medium solid white;
     border-width: 10px 10px 10px 0;
     border-color: transparent var(--line) transparent transparent;
+  }
+
+  .timeline_content {
+    font-size: 0.9rem;
   }
 
   /* Move vertical line to left */
@@ -124,12 +132,17 @@
   /* Align all dots to left line */
   .left-4::after,
   .right-4::after {
-    left: 8px;
+    /* left: 8px; */
   }
 
   /* Reset left arrow */
   .left-4::before {
-    right: auto;
+    /* right: auto; */ 
+    right: 15px!important;
+  }
+
+  .right-4::before {
+    left: 15px!important;
   }
 
   /* Reset right positioning */
@@ -139,11 +152,11 @@
 
   /* Consistent padding for all items */
   .left-4 {
-    padding: 0 0 10px 44px;
+    padding: 0 25px 5px 0!important;
   }
 
   .right-4 {
-    padding: 0 0 10px 44px;
+    padding: 0 0 10px 25px!important;
   }
 
   /* Smaller icons for mobile */
@@ -165,6 +178,38 @@
     margin-right: 20px;
     margin-bottom: -5px;
   }
+
+  .timeline_content  {
+      font-size: 0.9rem;
+  }
+
+  .badge  {
+      --bs-badge-font-size: 0.7em;
+  }
+  .intro li  {
+      font-size: 0.95rem;
+  }
+
+  .hero-quote::before, .hero-quote::after  {
+      width: min(650px, 95vw)!important;
+  }
+
+  .intro {
+      padding-right: 0px !important; 
+      padding-left: 0px !important; 
+  }
+  .swiper-button-next, .swiper-rtl .swiper-button-prev {
+      right: var(--swiper-navigation-sides-offset, 0px)!important;
+  }
+
+  .swiper-button-prev, .swiper-rtl .swiper-button-next {
+    left: var(--swiper-navigation-sides-offset, 0px)!important;
+  }
+
+  .vertical_timeline .timeline-4 .card {
+      min-height: 0px!important;
+  }
+
 }
 
 /* ========================================
@@ -443,6 +488,10 @@
     display: block;
   }
 
+  .vertical_timeline .timeline-4 .card {
+      min-height: 0px!important;
+  }
+  
   .repo-card {
     border: 1px solid var(--bs-border-color);
     border-radius: 12px;
