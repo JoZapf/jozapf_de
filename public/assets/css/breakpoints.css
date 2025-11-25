@@ -552,7 +552,7 @@
     padding: 1.5rem;
     transition: transform .2s;
     background: RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
-    margin: 2.5vw;
+    /* margin: 2.5vw; */
   }
 
   .hero {
@@ -715,5 +715,17 @@
     margin-bottom: 0.25rem;
     padding: 0;
   }
+
+.p-4 {
+    padding: 0.5rem !important;
+}
+
+.swiper {
+    margin: 0 2.5vw!important;
+}
+
+.repo-card {
+    margin: 0!important;
+}
 
 }
