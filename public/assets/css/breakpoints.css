@@ -98,11 +98,7 @@
   /* vertical_timeline.css - Mobile Layout */
   .container-sm,
   .container {
-    max-width: 650px;
-  }
-
-  .left-4::after, .right-4::after {
-    /* left: 0px; */
+    max-width: 100%;
   }
 
   /* Single column layout */
@@ -127,12 +123,6 @@
   /* Move vertical line to left */
   .main-timeline-4::after {
     left: 15px;
-  }
-
-  /* Align all dots to left line */
-  .left-4::after,
-  .right-4::after {
-    /* left: 8px; */
   }
 
   /* Reset left arrow */
@@ -491,7 +481,7 @@
   .vertical_timeline .timeline-4 .card {
       min-height: 0px!important;
   }
-  
+
   .repo-card {
     border: 1px solid var(--bs-border-color);
     border-radius: 12px;
