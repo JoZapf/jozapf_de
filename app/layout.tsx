@@ -75,20 +75,20 @@ export const metadata: Metadata = {
       "Professional digital solutions: Application Development, Web Development, DevOps, Docker, CI/CD and secure cloud infrastructure from Berlin.",
     images: [
       {
-        url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
-        width: 500,
-        height: 500,
+        url: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
+        width: 2100,
+        height: 630,
         alt: "Jo Zapf - Concept, DevOps, Digital Solutions",
       },
     ],
     locale: "en_DE",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Jo Zapf - Web Development & Digital Solutions",
     description:
       "Application Development, Web Development, DevOps and Cross-Media Solutions from Berlin.",
-    images: ["https://assets.jozapf.de/png/JoZapf_500x500.png"],
+    images: ["https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp"],
   },
 };
 
