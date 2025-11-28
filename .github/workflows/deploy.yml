@@ -163,7 +163,7 @@ jobs:
           fi
 
           echo "::notice::Uploading site to ${SSH_USER}@${SSH_HOST}:${DOCROOT_SITE} (port ${SSH_PORT})"
-          rsync -avz -e "ssh -i ${HOME}/.ssh/deploy_key -p ${SSH_PORT} -o StrictHostKeyChecking=no" "${SITE_DIR}/" "${SSH_USER}@${SSH_HOST}:${DOCROOT_SITE}/"
+          tar czf - -C "${SITE_DIR}" . | ssh -i "${HOME}/.ssh/deploy_key" -p "${SSH_PORT}" -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" "cd ${DOCROOT_SITE} && tar xzf -"
 
       - name: Upload assets via SSH
         if: env.DRY_RUN != 'true'
@@ -190,4 +190,4 @@ jobs:
           fi
 
           echo "::notice::Uploading assets from ${ASSETS_SOURCE} to ${SSH_USER}@${SSH_HOST}:${DOCROOT_ASSETS} (port ${SSH_PORT})"
-          rsync -avz -e "ssh -i ${HOME}/.ssh/deploy_key -p ${SSH_PORT} -o StrictHostKeyChecking=no" "${ASSETS_SOURCE}/" "${SSH_USER}@${SSH_HOST}:${DOCROOT_ASSETS}/"
+          tar czf - -C "${ASSETS_SOURCE}" . | ssh -i "${HOME}/.ssh/deploy_key" -p "${SSH_PORT}" -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" "cd ${DOCROOT_ASSETS} && tar xzf -"
