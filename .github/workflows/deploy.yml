@@ -166,7 +166,7 @@ jobs:
           sftp -i "${HOME}/.ssh/deploy_key" -P "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" <<SSH_CMDS
           lcd ${SITE_DIR}
           cd ${DOCROOT_SITE}
-          put -r *
+          put -r .
           SSH_CMDS
 
       - name: Upload assets via SSH
@@ -197,5 +197,5 @@ jobs:
           sftp -i "${HOME}/.ssh/deploy_key" -P "${SSH_PORT}" "${SSH_USER}@${SSH_HOST}" <<SSH_CMDS
           lcd ${ASSETS_SOURCE}
           cd ${DOCROOT_ASSETS}
-          put -r *
+          put -r .
           SSH_CMDS
