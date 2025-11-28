@@ -41,9 +41,13 @@ public/assets/php/*.eml
 docs/**
 docs/ 
 
-# Ignore all deploy assets, keep only empty folder structure via .gitkeep
-assets-deploy/**
-!assets-deploy/**/.gitkeep
+# Track assets-deploy for deployment (except fonts and personal photos)
+!assets-deploy/**
+
+# Exclude personal photos from assets-deploy
+assets-deploy/png/JoZapf.png
+assets-deploy/png/Jo_Zapf.png
+assets-deploy/png/JoZapf_500x500.png
 
 cron/
 public/assets/php/data

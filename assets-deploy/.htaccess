@@ -1,0 +1,119 @@
+# =========================
+# .htaccess – assets.jozapf.de (OPTIMIERT)
+# KRITISCH: CORS "*" für Google/Social Media Crawler
+# Erstellt: 2025-11-25
+# =========================
+
+# 1) CORS Headers - ALLE Origins erlaubt (KRITISCH!)
+<IfModule mod_headers.c>
+  # Allow all origins to access assets
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Methods "GET, OPTIONS"
+  Header set Access-Control-Allow-Headers "Content-Type, X-Requested-With"
+  Header set Access-Control-Allow-Credentials "false"
+  
+  # Timing Allow Origin (für Performance Monitoring)
+  Header set Timing-Allow-Origin "*"
+  
+  # Prevent hotlinking from suspicious sources (optional)
+  # Header set X-Permitted-Cross-Domain-Policies "none"
+</IfModule>
+
+# 2) Security Headers
+<IfModule mod_headers.c>
+  # Content Type Options
+  Header always set X-Content-Type-Options "nosniff"
+  
+  # Referrer Policy (allow for analytics)
+  Header always set Referrer-Policy "no-referrer-when-downgrade"
+  
+  # No frame embedding
+  Header always set X-Frame-Options "DENY"
+</IfModule>
+
+# 3) Cache Control Headers (aggressiv für Performance)
+<IfModule mod_headers.c>
+  # Bilder - 1 Jahr, immutable
+  <FilesMatch "\.(png|jpg|jpeg|gif|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  
+  # CSS und JS - 1 Monat
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  
+  # Fonts - 1 Jahr, immutable
+  <FilesMatch "\.(woff|woff2|eot|ttf|otf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# 4) Expires Headers (Fallback für ältere Apache-Versionen)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  
+  # Bilder - 1 Jahr
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  
+  # CSS und JS - 1 Monat
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  
+  # Fonts - 1 Jahr
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+  
+  # Manifest & JSON - 1 Tag
+  ExpiresByType application/manifest+json "access plus 1 day"
+  ExpiresByType application/json "access plus 1 day"
+</IfModule>
+
+# 5) Kompression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# 6) HTTPS erzwingen
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+</IfModule>
+
+# 7) Sicherheit
+Options -Indexes
+
+# 8) Nur bekannte Dateitypen erlauben
+<FilesMatch "\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|woff|woff2|eot|ttf|otf|pdf|webmanifest|json)$">
+  Order Allow,Deny
+  Allow from all
+</FilesMatch>
+
+# 9) MIME-Types definieren
+AddType application/manifest+json       webmanifest
+AddType application/json                json
+AddType image/svg+xml                   svg svgz
+AddEncoding gzip                        svgz
+AddType image/x-icon                    ico
+AddType image/png                       png
+AddType image/jpeg                      jpg jpeg
+AddType image/webp                      webp
+AddType font/woff2                      woff2
+AddType font/woff                       woff
+AddType font/ttf                        ttf
+AddType font/otf                        otf
+AddType application/vnd.ms-fontobject   eot
+
+# 10) Server Signature aus
+ServerSignature Off
