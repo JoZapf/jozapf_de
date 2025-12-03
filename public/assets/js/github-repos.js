@@ -5,9 +5,33 @@
 
 const GITHUB_USERNAME = 'JoZapf';
 const GITHUB_API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
-const MAX_REPOS = 6;
+const MAX_REPOS = 12;
 const CACHE_KEY = 'github_repos_cache';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+
+// Known bot/crawler user agents
+const BOT_PATTERNS = [
+  'googlebot',
+  'bingbot',
+  'slurp',
+  'duckduckbot',
+  'baiduspider',
+  'yandexbot',
+  'facebookexternalhit',
+  'twitterbot',
+  'linkedinbot',
+  'whatsapp',
+  'telegrambot',
+  'applebot',
+  'semrushbot',
+  'ahrefsbot',
+  'mj12bot',
+  'dotbot',
+  'petalbot',
+  'chrome-lighthouse',
+  'pagespeed',
+  'gtmetrix',
+];
 
 // GitHub language colors
 const LANGUAGE_COLORS = {
@@ -27,6 +51,15 @@ const LANGUAGE_COLORS = {
   'C++': '#f34b7d',
   'C#': '#178600',
 };
+
+/**
+ * Detect if current user agent is a known bot/crawler
+ * Used to skip API fetch for SEO tools like Google Rich Results Test
+ */
+function isBot() {
+  const ua = navigator.userAgent.toLowerCase();
+  return BOT_PATTERNS.some(pattern => ua.includes(pattern));
+}
 
 /**
  * Format relative time (e.g., "2 days ago")
@@ -312,6 +345,17 @@ function showError(error) {
  * Main initialization
  */
 async function initGitHubRepos() {
+  // Skip API fetch for bots to avoid XHR errors in SEO tools (e.g., Google Rich Results Test)
+  if (isBot()) {
+    console.log('[GitHub Repos] Bot detected, skipping API fetch to avoid XHR errors');
+    const loading = document.getElementById('repos-loading');
+    const section = document.querySelector('.github-repos');
+    if (loading) loading.style.display = 'none';
+    // Hide entire section for bots - repos are not SEO-critical
+    if (section) section.style.display = 'none';
+    return;
+  }
+
   try {
     console.log('[GitHub Repos] Initializing...');
     const repos = await fetchRepos();
