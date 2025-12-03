@@ -62,6 +62,29 @@ function Start-JZStacks {
   $null = docker --version 2>$null; if($LASTEXITCODE -ne 0){ throw "Docker nicht verfügbar." }
   $null = docker compose version 2>$null; if($LASTEXITCODE -ne 0){ throw "Docker Compose V2 nicht verfügbar." }
 
+  # Hilfsfunktion: Port-Verfügbarkeit prüfen
+  function Test-PortAvailable([int]$Port, [switch]$IgnoreDocker) {
+    # Prüft ob Port frei ist (nicht von anderem Prozess oder Hyper-V blockiert)
+    $excluded = netsh interface ipv4 show excludedportrange protocol=tcp 2>$null
+    if ($excluded -match "\s$Port\s") {
+      Write-Warning "Port $Port liegt im Hyper-V/NAT reservierten Bereich!"
+      Write-Warning "Loesung: PREVIEW_PORT in .env aendern (z.B. 3080) oder Hyper-V Portbereich anpassen."
+      return $false
+    }
+    $conn = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue
+    if ($conn) {
+      $proc = Get-Process -Id $conn.OwningProcess -ErrorAction SilentlyContinue
+      # Docker-Prozesse ignorieren wenn -IgnoreDocker gesetzt (Container wird eh neu gestartet)
+      if ($IgnoreDocker -and $proc.ProcessName -match 'docker|com\.docker') {
+        Write-Host "... Port $Port durch Docker belegt (Container wird neu gestartet)" -ForegroundColor DarkGray
+        return $true
+      }
+      Write-Warning "Port $Port bereits belegt durch: $($proc.ProcessName) (PID $($conn.OwningProcess))"
+      return $false
+    }
+    return $true
+  }
+
   # Hilfsfunktion: Port aus Compose ermitteln (gibt nur die Portnummer zurück)
   function Get-ComposePort([string]$File,[string]$Service,[int]$PrivatePort){
     $pi = docker compose -f $File port $Service $PrivatePort 2>$null
@@ -69,9 +92,21 @@ function Start-JZStacks {
     return ($pi -split ':')[-1].Trim()
   }
 
-  # ---- PREVIEW (8080) -------------------------------------------------------
+  # ---- PREVIEW ---------------------------------------------------------------
   if($Preview){
     Write-Host "[>>] Preview-Stack (nginx static) vorbereiten..." -ForegroundColor Cyan
+    
+    # Port aus .env lesen und pruefen
+    $envFile = Join-Path $Root ".env"
+    $previewPort = 8080  # Default
+    if (Test-Path $envFile) {
+      $envContent = Get-Content $envFile -Raw
+      if ($envContent -match 'PREVIEW_PORT=(\d+)') { $previewPort = [int]$Matches[1] }
+    }
+    if (-not (Test-PortAvailable $previewPort -IgnoreDocker)) {
+      throw "Port $previewPort nicht verfuegbar. Bitte PREVIEW_PORT in .env aendern."
+    }
+    
     $outIndex = Join-Path $Root "out\index.html"
     if($ForceBuild -or -not (Test-Path $outIndex)){
       Write-Host "... kein out/index.html gefunden -> baue Export (npm ci + npm run build)" -ForegroundColor Yellow
@@ -107,11 +142,11 @@ function Start-JZStacks {
       Write-Host "[OK] Main erreichbar: http://localhost:${mainPort}/" -ForegroundColor Green
       Start-Sleep -Seconds 3
       try {
-        $res = Invoke-WebRequest "http://localhost:${mainPort}/assets/php/health.php" -UseBasicParsing -TimeoutSec 5
-        if($res.StatusCode -eq 200 -and $res.Content -match "OK"){
+        $res = Invoke-WebRequest "http://localhost:${mainPort}/assets/php/health-check.php" -UseBasicParsing -TimeoutSec 5
+        if($res.StatusCode -eq 200 -and $res.Content -match '"ok"\s*:\s*true'){
           Write-Host "[OK] PHP-Health OK" -ForegroundColor Green
         } else {
-          Write-Warning "PHP-Health unerwartete Antwort."
+          Write-Warning "PHP-Health unerwartete Antwort: $($res.Content)"
         }
       } catch { Write-Warning "HTTP-Check Main fehlgeschlagen: $($_.Exception.Message)" }
     }
@@ -121,10 +156,8 @@ function Start-JZStacks {
   if($Dev){
     Write-Host "[>>] Dev-Stack (Next HMR) starten..." -ForegroundColor Cyan
 
-    # Node-Module-Check in Container mit Here-String (kein PowerShell-Escaping)
-    $shellCmd = @'
-if [ ! -d node_modules ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then npm ci || npm i; fi
-'@
+    # Node-Module-Check: Einfacher Einzeiler, robust fuer PowerShell -> sh Uebergabe
+    $shellCmd = 'test -d node_modules && test -n "$(ls -A node_modules 2>/dev/null)" || npm ci || npm i'
     
     docker compose -f compose.yml -f compose.next.yml run --rm next-dev sh -c $shellCmd
     if($LASTEXITCODE -ne 0){ 

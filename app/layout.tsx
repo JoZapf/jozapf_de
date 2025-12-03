@@ -214,6 +214,20 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         
         {/* Swiper.js CSS - CDN */}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+        {/* Strukturierte Daten (JSON-LD) - Native script tags für Crawler-Kompatibilität */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+        />
       </head>
 
       <body className="d-flex flex-column min-vh-100 text-bg-dark">
@@ -357,22 +371,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }`}
         </Script>
 
-        {/* Strukturierte Daten */}
-        <Script
-          id="schema-website"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
-        <Script
-          id="schema-person"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
-        />
-        <Script
-          id="schema-professional-service"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
-        />
       </body>
     </html>
   );
