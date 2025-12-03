@@ -199,8 +199,8 @@ const serviceSchema = {
   },
   image: {
     "@type": "ImageObject",
-    url: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
-    contentUrl: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
+    url: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
+    contentUrl: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
     width: 2100,
     height: 630,
     caption: "Jo Zapf – Digitale Lösungen aus Berlin",
@@ -252,7 +252,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
         
         {/* Swiper.js CSS - CDN */}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <link href="/assets/css/swiper-bundle.min.css" rel="stylesheet" />
 
         {/* Strukturierte Daten (JSON-LD) - Native script tags für Crawler-Kompatibilität */}
         <script
@@ -276,7 +276,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         {/* JS */}
         {/* Swiper.js - CDN (muss VOR github-repos.js geladen werden) */}
-        <Script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" strategy="afterInteractive" />
+        <Script src="/assets/js/swiper-bundle.min.js" strategy="afterInteractive" />
         
         {/* GitHub Repositories Display */}
         <Script src="/assets/js/github-repos.js" strategy="afterInteractive" />
