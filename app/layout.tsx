@@ -82,8 +82,8 @@ export const metadata: Metadata = {
     locale: "de_DE",
     images: [
       {
-        url: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
-        secureUrl: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
+        url: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
+        secureUrl: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
         width: 2100,
         height: 630,
         alt: "Jo Zapf – Webentwicklung und Anwendungsentwicklung aus Berlin",
@@ -96,7 +96,7 @@ export const metadata: Metadata = {
     title: "Jo Zapf – Webentwicklung & Digitale Lösungen",
     description:
       "Webentwicklung, Anwendungsentwicklung und Cross-Media-Lösungen aus Berlin.",
-    images: ["https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp"],
+    images: ["https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg"],
   },
 };
 
