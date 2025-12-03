@@ -129,8 +129,8 @@ const personSchema = {
   image: {
     "@type": "ImageObject",
     "@id": "https://jozapf.de/#personimage",
-    url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
-    contentUrl: "https://assets.jozapf.de/png/JoZapf_500x500.png",
+    url: "https://assets.jozapf.de/jpg/JoZapf_500x500.jpg",
+    contentUrl: "https://assets.jozapf.de/jpg/JoZapf_500x500.jpg",
     width: 500,
     height: 500,
     caption: "Jo Zapf – Webentwickler und Fachinformatiker aus Berlin",
@@ -193,7 +193,7 @@ const serviceSchema = {
   url: "https://jozapf.de",
   logo: {
     "@type": "ImageObject",
-    url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
+    url: "https://assets.jozapf.de/jpg/JoZapf_500x500.jpg",
     width: 500,
     height: 500,
   },
