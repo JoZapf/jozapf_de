@@ -35,12 +35,12 @@ export const metadata: Metadata = {
     alternateLocale: ["de_DE"],
     images: [
       {
-        url: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
-        secureUrl: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
-        width: 2100,
+        url: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
+        secureUrl: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
+        width: 1200,
         height: 630,
         alt: "Jo Zapf – Web Development and Application Development from Berlin",
-        type: "image/webp",
+        type: "image/jpeg",
       },
     ],
   },
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     title: "Jo Zapf – Web Development & Digital Solutions",
     description:
       "Web development, application development and cross-media solutions from Berlin.",
-    images: ["https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp"],
+    images: ["https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg"],
   },
 };
 

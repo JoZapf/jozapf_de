@@ -84,10 +84,10 @@ export const metadata: Metadata = {
       {
         url: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
         secureUrl: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
-        width: 2100,
+        width: 1200,
         height: 630,
         alt: "Jo Zapf – Webentwicklung und Anwendungsentwicklung aus Berlin",
-        type: "image/webp",
+        type: "image/jpeg",
       },
     ],
   },
