@@ -2,11 +2,19 @@
 import type { Metadata } from "next";
 import "../globals.css";
 
-// Metadata for English version
+/**
+ * English version metadata
+ * Optimiert: 2025-12-03
+ * - og:locale: en_US
+ * - Vollständige englische Metadaten
+ * - Konsistent mit deutscher Version
+ */
 export const metadata: Metadata = {
-  title: "Jo Zapf - Web Development, Application Development & Cross-Media Solutions | Berlin",
+  title: "Jo Zapf – Web Development & Application Development | Berlin",
   description:
-    "Jo Zapf offers professional web development, application development and cross-media solutions. Specializing in Python, Java, JavaScript, Docker, CI/CD and secure cloud infrastructure.",
+    "Web development and application development from Berlin. " +
+    "Over 25 years of experience in cross-media design, photography and IT. " +
+    "Specialized in Python, Java, Docker, CI/CD and secure cloud infrastructure.",
   alternates: {
     canonical: "/en/",
     languages: {
@@ -16,9 +24,32 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    locale: "en_US",
-    alternateLocale: "de_DE",
+    type: "website",
+    siteName: "Jo Zapf",
     url: "https://jozapf.de/en/",
+    title: "Jo Zapf – Web Development & Application Development",
+    description:
+      "Digital solutions from Berlin: Web development, application development, " +
+      "cross-media design and secure cloud infrastructure.",
+    locale: "en_US",
+    alternateLocale: ["de_DE"],
+    images: [
+      {
+        url: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
+        secureUrl: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
+        width: 2100,
+        height: 630,
+        alt: "Jo Zapf – Web Development and Application Development from Berlin",
+        type: "image/webp",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jo Zapf – Web Development & Digital Solutions",
+    description:
+      "Web development, application development and cross-media solutions from Berlin.",
+    images: ["https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp"],
   },
 };
 

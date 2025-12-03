@@ -9,29 +9,35 @@ import "./globals.css";
 /**
  * Head/SEO:
  * - Canonical/hreflang
- * - robots, keywords (OHNE themeColor hier)
+ * - robots, keywords
  * - OpenGraph/Twitter
  * - Favicons/Manifest
- * - JSON-LD: WebSite + Person + ProfessionalService
+ * - JSON-LD: WebSite + Person + ProfessionalService (verknüpft via @id)
+ * 
+ * Optimiert: 2025-12-03
+ * - Sprache: Komplett Deutsch auf Root (/)
+ * - og:locale: de_DE
+ * - JSON-LD: Vollständige ImageObjects, Schema-Verknüpfungen
+ * - Strategie: Kombination A+C (Werdegang als Stärke)
  */
 export const metadata: Metadata = {
   metadataBase: new URL("https://jozapf.de"),
-  title:
-    "Jo Zapf - Web Development, Application Development & Cross-Media Solutions | Berlin",
+  title: "Jo Zapf – Webentwicklung & Anwendungsentwicklung | Berlin",
   description:
-    "Jo Zapf offers professional web development, application development and cross-media solutions. He actually is specializing in Python, Java, JavaScript, Docker, CI/CD and secure cloud and deployment workflows & infrastructure.",
+    "Webentwicklung und Anwendungsentwicklung aus Berlin. " +
+    "Über 25 Jahre Erfahrung in Cross-Media-Design, Fotografie und IT. " +
+    "Spezialisiert auf Python, Java, Docker, CI/CD und sichere Cloud-Infrastruktur.",
   keywords: [
-    "Web Development",
-    "Application Development",
-    "Cross Media",
-    "Containerized Services",
-    "CI/CD",
+    "Webentwicklung",
+    "Anwendungsentwicklung",
+    "Fachinformatiker",
+    "Cross-Media",
+    "Fotografie",
     "Python",
     "Java",
-    "JavaScript",
-    "Linux",
+    "Docker",
     "DevOps",
-    "Zero-Trust-Architecture",
+    "CI/CD",
     "Berlin",
   ],
   alternates: {
@@ -69,25 +75,27 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Jo Zapf",
     url: "https://jozapf.de/",
-    title:
-      "Jo Zapf - Web Development, Application Development & Cross-Media Solutions",
+    title: "Jo Zapf – Webentwicklung & Anwendungsentwicklung",
     description:
-      "Professional digital solutions: Application Development, Web Development, DevOps, Docker, CI/CD and secure cloud infrastructure from Berlin.",
+      "Digitale Lösungen aus Berlin: Webentwicklung, Anwendungsentwicklung, " +
+      "Cross-Media-Design und sichere Cloud-Infrastruktur.",
+    locale: "de_DE",
     images: [
       {
         url: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
+        secureUrl: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
         width: 2100,
         height: 630,
-        alt: "Jo Zapf - Concept, DevOps, Digital Solutions",
+        alt: "Jo Zapf – Webentwicklung und Anwendungsentwicklung aus Berlin",
+        type: "image/webp",
       },
     ],
-    locale: "en_DE",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jo Zapf - Web Development & Digital Solutions",
+    title: "Jo Zapf – Webentwicklung & Digitale Lösungen",
     description:
-      "Application Development, Web Development, DevOps and Cross-Media Solutions from Berlin.",
+      "Webentwicklung, Anwendungsentwicklung und Cross-Media-Lösungen aus Berlin.",
     images: ["https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp"],
   },
 };
@@ -99,22 +107,19 @@ export const viewport: Viewport = {
   themeColor: "#212529",
 };
 
-// JSON-LD: WebSite (mit SearchAction)
+// JSON-LD: WebSite (verknüpft mit Person via author)
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": "https://jozapf.de/#website",
   url: "https://jozapf.de",
-  name: "Jo Zapf - Digital Solutions",
+  name: "Jo Zapf – Digitale Lösungen",
+  description: "Portfolio und Dienstleistungen für Webentwicklung, Anwendungsentwicklung und Cross-Media-Design",
   inLanguage: "de",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: "https://jozapf.de/?q={search_term_string}",
-    "query-input": "required name=search_term_string",
-  },
+  author: { "@id": "https://jozapf.de/#person" },
 } as const;
 
-// JSON-LD: Person
+// JSON-LD: Person (Strategie A: Werdegang als Stärke)
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -125,48 +130,66 @@ const personSchema = {
     "@type": "ImageObject",
     "@id": "https://jozapf.de/#personimage",
     url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
+    contentUrl: "https://assets.jozapf.de/png/JoZapf_500x500.png",
     width: 500,
     height: 500,
-    caption: "Jo Zapf - Web Developer & IT Specialist",
+    caption: "Jo Zapf – Webentwickler und Fachinformatiker aus Berlin",
+    inLanguage: "de",
   },
-  logo: {
-    "@type": "ImageObject",
-    url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
-    width: 500,
-    height: 500,
-  },
-  jobTitle:
-    "IT specialist for application development in training & Web Developer, Cross-Media Artist & Multimedia-Designer",
+  jobTitle: "Fachinformatiker für Anwendungsentwicklung",
   description:
-    "Application Development, Web Development, DevOps, Cross-Media Solutions, Zero-Trust-Architecture, Secured Networks",
-  address: { "@type": "PostalAddress", addressLocality: "Berlin", addressCountry: "DE" },
-  sameAs: ["https://www.linkedin.com/in/jo-zapf/", "https://github.com/JoZapf"],
+    "Webentwickler und angehender Fachinformatiker mit über 25 Jahren Erfahrung " +
+    "in Cross-Media-Design, Fotografie und IT-Administration. " +
+    "Spezialisiert auf Full-Stack-Entwicklung, DevOps und sichere Cloud-Infrastruktur.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Berlin",
+    addressRegion: "Berlin",
+    addressCountry: "DE",
+  },
+  sameAs: [
+    "https://www.linkedin.com/in/jo-zapf/",
+    "https://github.com/JoZapf",
+  ],
   knowsAbout: [
-    "Web Development",
-    "Application Development",
-    "Network",
-    "Cyber Security",
+    // Entwicklung
+    "Webentwicklung",
+    "Anwendungsentwicklung",
     "Python",
     "Java",
     "JavaScript",
+    "Next.js",
+    "Node.js",
+    // DevOps & Infrastruktur
     "Docker",
-    "Github",
     "CI/CD",
+    "GitHub Actions",
     "DevOps",
-    "Zero-Trust-Architecture",
-    "Deployment Workflows",
-    "Linux Administration",
-    "Cloud Infrastructure",
+    "Linux-Administration",
+    "Cloud-Infrastruktur",
+    "Zero-Trust-Architektur",
+    // Kreativ
+    "Cross-Media-Design",
+    "Fotografie",
+    "Videoproduktion",
+    "Grafikdesign",
+    "Motion Graphics",
+    // IT & Netzwerk
+    "Netzwerkadministration",
+    "IT-Sicherheit",
   ],
+  worksFor: { "@id": "https://jozapf.de/#service" },
 } as const;
 
-// JSON-LD: ProfessionalService
+// JSON-LD: ProfessionalService (Strategie C: Dienstleistungen vollständig)
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  name: "Jo Zapf - Digital Solutions",
+  "@id": "https://jozapf.de/#service",
+  name: "Jo Zapf – Digitale Lösungen",
   description:
-    "Professional Web Development, Application Development and Cross-Media Solutions",
+    "Professionelle Webentwicklung, Anwendungsentwicklung und Cross-Media-Lösungen " +
+    "aus Berlin. Von der Konzeption bis zur sicheren Produktion.",
   url: "https://jozapf.de",
   logo: {
     "@type": "ImageObject",
@@ -176,16 +199,32 @@ const serviceSchema = {
   },
   image: {
     "@type": "ImageObject",
-    url: "https://assets.jozapf.de/png/JoZapf_500x500.png",
-    width: 500,
-    height: 500,
+    url: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
+    contentUrl: "https://assets.jozapf.de/webp/OG_Image_2100x630_jozapf_de.webp",
+    width: 2100,
+    height: 630,
+    caption: "Jo Zapf – Digitale Lösungen aus Berlin",
+    inLanguage: "de",
   },
+  founder: { "@id": "https://jozapf.de/#person" },
   address: {
     "@type": "PostalAddress",
     addressLocality: "Berlin",
+    addressRegion: "Berlin",
     addressCountry: "DE",
   },
-  priceRange: "€€",
+  areaServed: {
+    "@type": "Country",
+    name: "Deutschland",
+  },
+  serviceType: [
+    "Webentwicklung",
+    "Anwendungsentwicklung",
+    "Cross-Media-Design",
+    "Fotografie",
+    "Videoproduktion",
+    "IT-Beratung",
+  ],
 } as const;
 
 export default function RootLayout({ children }: { children: ReactNode }) {

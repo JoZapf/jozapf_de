@@ -1,31 +1,10 @@
 // app/en/page.tsx
 import fs from "node:fs";
 import path from "node:path";
-import type { Metadata } from "next";
 
 export const dynamic = "force-static";
 
-// SEO Metadata für englische Version
-export const metadata: Metadata = {
-  title: "Jo Zapf - Web Development, Application Development & Cross-Media Solutions | Berlin",
-  description:
-    "Jo Zapf offers professional web development, application development and cross-media solutions. Specializing in Python, Java, JavaScript, Docker, CI/CD and secure cloud infrastructure.",
-  alternates: {
-    canonical: "/en/",
-    languages: {
-      'de': 'https://jozapf.de/',
-      'en': 'https://jozapf.de/en/',
-      'x-default': 'https://jozapf.de/'
-    }
-  },
-  openGraph: {
-    title: "Jo Zapf - Web Development, Application Development & Cross-Media Solutions",
-    description: "Professional digital solutions: Application Development, Web Development, DevOps, Docker, CI/CD from Berlin.",
-    url: "https://jozapf.de/en/",
-    locale: "en_US",
-    alternateLocale: "de_DE",
-  },
-};
+// Metadata ist in app/en/layout.tsx definiert (keine Redundanz)
 
 function readFragment(name: string) {
   const filePath = path.join(process.cwd(), "app", "en", name);
