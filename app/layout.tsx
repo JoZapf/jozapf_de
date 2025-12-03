@@ -201,7 +201,7 @@ const serviceSchema = {
     "@type": "ImageObject",
     url: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
     contentUrl: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
-    width: 2100,
+    width: 1200,
     height: 630,
     caption: "Jo Zapf – Digitale Lösungen aus Berlin",
     inLanguage: "de",
@@ -251,7 +251,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href="/assets/css/contact-form.css" rel="stylesheet" />
         <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
         
-        {/* Swiper.js CSS - CDN */}
+        {/* Swiper.js CSS - Lokal */}
         <link href="/assets/css/swiper-bundle.min.css" rel="stylesheet" />
 
         {/* Strukturierte Daten (JSON-LD) - Native script tags für Crawler-Kompatibilität */}
@@ -275,7 +275,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
 
         {/* JS */}
-        {/* Swiper.js - CDN (muss VOR github-repos.js geladen werden) */}
+        {/* Swiper.js - Lokal (muss VOR github-repos.js geladen werden) */}
         <Script src="/assets/js/swiper-bundle.min.js" strategy="afterInteractive" />
         
         {/* GitHub Repositories Display */}
