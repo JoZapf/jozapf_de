@@ -1,6 +1,11 @@
 /**
  * GitHub Repositories Fetcher
  * Fetches and displays public repositories from GitHub API
+ * 
+ * Optimierung 2025-12-04:
+ * - Swiper wird lazy geladen (nur wenn Section sichtbar)
+ * - Intersection Observer für Performance
+ * - ~150 KB JS gespart beim initialen Seitenaufbau
  */
 
 const GITHUB_USERNAME = 'JoZapf';
@@ -8,6 +13,10 @@ const GITHUB_API_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
 const MAX_REPOS = 12;
 const CACHE_KEY = 'github_repos_cache';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+
+// Swiper assets (lazy loaded)
+const SWIPER_CSS_URL = '/assets/css/swiper-bundle.min.css';
+const SWIPER_JS_URL = '/assets/js/swiper-bundle.min.js';
 
 // Known bot/crawler user agents
 const BOT_PATTERNS = [
@@ -52,13 +61,81 @@ const LANGUAGE_COLORS = {
   'C#': '#178600',
 };
 
+// Track if Swiper is loaded
+let swiperLoaded = false;
+let swiperLoading = false;
+
 /**
  * Detect if current user agent is a known bot/crawler
- * Used to skip API fetch for SEO tools like Google Rich Results Test
  */
 function isBot() {
   const ua = navigator.userAgent.toLowerCase();
   return BOT_PATTERNS.some(pattern => ua.includes(pattern));
+}
+
+/**
+ * Load CSS dynamically
+ */
+function loadCSS(url) {
+  return new Promise((resolve, reject) => {
+    // Check if already loaded
+    if (document.querySelector(`link[href="${url}"]`)) {
+      resolve();
+      return;
+    }
+    
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = url;
+    link.onload = resolve;
+    link.onerror = reject;
+    document.head.appendChild(link);
+  });
+}
+
+/**
+ * Load JavaScript dynamically
+ */
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    // Check if already loaded
+    if (document.querySelector(`script[src="${url}"]`)) {
+      resolve();
+      return;
+    }
+    
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.appendChild(script);
+  });
+}
+
+/**
+ * Load Swiper CSS and JS
+ */
+async function loadSwiper() {
+  if (swiperLoaded || swiperLoading) return;
+  
+  swiperLoading = true;
+  console.log('[GitHub Repos] Loading Swiper...');
+  
+  try {
+    // Load CSS and JS in parallel
+    await Promise.all([
+      loadCSS(SWIPER_CSS_URL),
+      loadScript(SWIPER_JS_URL)
+    ]);
+    
+    swiperLoaded = true;
+    console.log('[GitHub Repos] Swiper loaded successfully');
+  } catch (error) {
+    console.error('[GitHub Repos] Failed to load Swiper:', error);
+    throw error;
+  } finally {
+    swiperLoading = false;
+  }
 }
 
 /**
@@ -269,7 +346,6 @@ function initSwiper() {
     return null;
   }
 
-  // Always initialize Swiper
   // Desktop: 2 cards visible, Mobile: 1 card visible
   return new Swiper('.repos-swiper', {
     slidesPerView: 1,
@@ -292,11 +368,11 @@ function initSwiper() {
         spaceBetween: 20,
       },
       1024: {
-        slidesPerView: 2,  // Desktop: 2 cards side-by-side
+        slidesPerView: 2,
         spaceBetween: 30,
       },
       1400: {
-        slidesPerView: 2,  // Large Desktop: still 2 cards
+        slidesPerView: 2,
         spaceBetween: 40,
       },
     },
@@ -342,33 +418,79 @@ function showError(error) {
 }
 
 /**
- * Main initialization
+ * Main initialization - loads Swiper first, then fetches repos
  */
 async function initGitHubRepos() {
-  // Skip API fetch for bots to avoid XHR errors in SEO tools (e.g., Google Rich Results Test)
+  // Skip for bots to avoid XHR errors in SEO tools
   if (isBot()) {
-    console.log('[GitHub Repos] Bot detected, skipping API fetch to avoid XHR errors');
+    console.log('[GitHub Repos] Bot detected, skipping initialization');
     const loading = document.getElementById('repos-loading');
     const section = document.querySelector('.github-repos');
     if (loading) loading.style.display = 'none';
-    // Hide entire section for bots - repos are not SEO-critical
     if (section) section.style.display = 'none';
     return;
   }
 
   try {
     console.log('[GitHub Repos] Initializing...');
+    
+    // Load Swiper first
+    await loadSwiper();
+    
+    // Then fetch and render repos
     const repos = await fetchRepos();
     renderRepos(repos);
+    
     console.log('[GitHub Repos] Successfully loaded', repos.length, 'repositories');
   } catch (error) {
     showError(error);
   }
 }
 
-// Initialize when DOM is ready
+/**
+ * Setup Intersection Observer for lazy loading
+ * Only initializes when GitHub section is visible in viewport
+ */
+function setupLazyLoading() {
+  const section = document.querySelector('.github-repos');
+  
+  if (!section) {
+    console.log('[GitHub Repos] Section not found, skipping lazy loading');
+    return;
+  }
+
+  // Skip for bots
+  if (isBot()) {
+    const loading = document.getElementById('repos-loading');
+    if (loading) loading.style.display = 'none';
+    section.style.display = 'none';
+    return;
+  }
+
+  // Create observer with generous margin (load before section is fully visible)
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          console.log('[GitHub Repos] Section visible, starting initialization...');
+          observer.disconnect(); // Only trigger once
+          initGitHubRepos();
+        }
+      });
+    },
+    {
+      rootMargin: '200px', // Start loading 200px before section enters viewport
+      threshold: 0
+    }
+  );
+
+  observer.observe(section);
+  console.log('[GitHub Repos] Lazy loading observer set up');
+}
+
+// Initialize lazy loading when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initGitHubRepos);
+  document.addEventListener('DOMContentLoaded', setupLazyLoading);
 } else {
-  initGitHubRepos();
+  setupLazyLoading();
 }

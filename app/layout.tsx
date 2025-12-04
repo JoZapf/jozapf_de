@@ -251,8 +251,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href="/assets/css/contact-form.css" rel="stylesheet" />
         <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
         
-        {/* Swiper.js CSS - Lokal */}
-        <link href="/assets/css/swiper-bundle.min.css" rel="stylesheet" />
+        {/* Swiper.js CSS - Lazy loaded by github-repos.js */}
 
         {/* Strukturierte Daten (JSON-LD) - Native script tags für Crawler-Kompatibilität */}
         <script
@@ -275,10 +274,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
 
         {/* JS */}
-        {/* Swiper.js - Lokal (muss VOR github-repos.js geladen werden) */}
-        <Script src="/assets/js/swiper-bundle.min.js" strategy="afterInteractive" />
-        
-        {/* GitHub Repositories Display */}
+        {/* GitHub Repositories Display (loads Swiper lazily via Intersection Observer) */}
         <Script src="/assets/js/github-repos.js" strategy="afterInteractive" />
         
         <Script src="/assets/js/bootstrap.bundle.min.js" strategy="afterInteractive" />
