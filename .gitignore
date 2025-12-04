@@ -62,6 +62,9 @@ out/
 dist/
 coverage/
 
+# Generated at build time (always fresh in CI)
+public/summary.json
+
 # TypeScript Build Info
 *.tsbuildinfo
 
