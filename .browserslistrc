@@ -1,0 +1,15 @@
+# Browserslist-Konfiguration für jozapf.de
+# Ziel: Moderne Browser, keine Polyfills für veraltete Features
+# Erstellt: 2025-12-03
+# Dokumentation: docs/20251203_browserslist-optimization.md
+
+# Moderne Browser (ES2020+ Support)
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions
+
+# Ausschlüsse
+not dead
+not IE 11
+not op_mini all

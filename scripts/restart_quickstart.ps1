@@ -156,13 +156,8 @@ function Start-JZStacks {
   if($Dev){
     Write-Host "[>>] Dev-Stack (Next HMR) starten..." -ForegroundColor Cyan
 
-    # Node-Module-Check: Einfacher Einzeiler, robust fuer PowerShell -> sh Uebergabe
-    $shellCmd = 'test -d node_modules && test -n "$(ls -A node_modules 2>/dev/null)" || npm ci || npm i'
-    
-    docker compose -f compose.yml -f compose.next.yml run --rm next-dev sh -c $shellCmd
-    if($LASTEXITCODE -ne 0){ 
-      Write-Warning "Vor-Install im Dev-Container evtl. fehlgeschlagen (pruefe Logs)." 
-    }
+    # Node-Module-Check erfolgt automatisch im Container via compose.next.yml command
+    # Kein separater Vor-Install noetig - vermeidet PowerShell->Docker->sh Quoting-Probleme
 
     docker compose -f compose.yml -f compose.next.yml --profile next up -d next-dev
     if($LASTEXITCODE -ne 0){ throw "Dev-Stack konnte nicht gestartet werden." }
