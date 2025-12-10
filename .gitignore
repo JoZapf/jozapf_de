@@ -132,3 +132,8 @@ out/
 
 # Next.js TypeScript definitions (auto-generated)
 next-env.d.ts
+
+# sonstiges
+robots-txt-template-for-assets-subdomain.txt
+scripts/2025-12-01_port-und-script-fixes.md
+vendor/meta_debug_web.py

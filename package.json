@@ -5,7 +5,7 @@
   "scripts": {
     "predev": "powershell -NoProfile -Command \"try { npx kill-port 3000 3002 } catch {} ; Remove-Item .\\.next\\dev\\lock -Force -ErrorAction Ignore ; exit 0\" && node scripts/remove-sourcemap.mjs",
     "dev": "npx next@16 dev -p 3000 -H 0.0.0.0",
-    "prebuild": "tsx scripts/generate-summary.ts",
+    "prebuild": "tsx scripts/generate-summary.ts && tsx scripts/generate-og-images.ts",
     "build": "next build",
     "export": "next export",
     "preview": "npx --yes serve out -l tcp://0.0.0.0:8080",
@@ -29,7 +29,9 @@
     "@types/react-dom": "^19.2.2",
     "kill-port": "^2.0.1",
     "tsx": "^4.20.6",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "satori": "^0.12.1",
+    "@resvg/resvg-js": "^2.6.2"
   },
   "engines": {
     "node": ">=18.18.0"

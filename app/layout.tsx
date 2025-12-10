@@ -82,12 +82,12 @@ export const metadata: Metadata = {
     locale: "de_DE",
     images: [
       {
-        url: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
-        secureUrl: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
+        url: "https://assets.jozapf.de/og/og-home-de.png",
+        secureUrl: "https://assets.jozapf.de/og/og-home-de.png",
         width: 1200,
         height: 630,
         alt: "Jo Zapf – Webentwicklung und Anwendungsentwicklung aus Berlin",
-        type: "image/jpeg",
+        type: "image/png",
       },
     ],
   },
@@ -96,7 +96,7 @@ export const metadata: Metadata = {
     title: "Jo Zapf – Webentwicklung & Digitale Lösungen",
     description:
       "Webentwicklung, Anwendungsentwicklung und Cross-Media-Lösungen aus Berlin.",
-    images: ["https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg"],
+    images: ["https://assets.jozapf.de/og/og-home-de.png"],
   },
 };
 
@@ -199,8 +199,8 @@ const serviceSchema = {
   },
   image: {
     "@type": "ImageObject",
-    url: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
-    contentUrl: "https://assets.jozapf.de/jpg/og_image_v2_1200x630_jozapf_de.jpg",
+    url: "https://assets.jozapf.de/og/og-home-de.png",
+    contentUrl: "https://assets.jozapf.de/og/og-home-de.png",
     width: 1200,
     height: 630,
     caption: "Jo Zapf – Digitale Lösungen aus Berlin",
