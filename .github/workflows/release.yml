@@ -1,3 +1,4 @@
+# .github/workflows/release.yml
 name: Release
 
 on:
@@ -5,27 +6,151 @@ on:
     tags:
       - 'v*.*.*'  # Triggered bei v2.0.2, v2.1.0, etc.
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    env:
+      # ---- Remote connection (Secrets) ----
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # ---- Remote targets (Repository Variables) ----
+      DOCROOT_SITE: ${{ vars.HETZNER_DOCROOT_SITE }}
+      DOCROOT_ASSETS: ${{ vars.HETZNER_DOCROOT_ASSETS }}
+
+      # ---- Local export dir ----
+      SITE_DIR: out
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (v20)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
+      - name: Detect project directory
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+          CANDIDATE="$(git ls-files | awk -F/ '/(^|\/)package\.json$/ {NF--; p=$0; if (p=="") p="."; print p}' | sort -u | head -n1)"
+          if [ -z "${CANDIDATE}" ]; then
+            echo "::error::No package.json found in repository."
+            exit 1
+          fi
+          echo "PROJECT_DIR=${CANDIDATE}" >> $GITHUB_ENV
+          echo "Detected PROJECT_DIR=${CANDIDATE}"
+
       - name: Install dependencies
-        run: npm ci
-      
-      - name: Build
+        shell: bash
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          set -e
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Build project
+        shell: bash
+        working-directory: ${{ env.PROJECT_DIR }}
         env:
           GIT_TAG: ${{ github.ref_name }}
           BUILD_DATE: ${{ github.event.head_commit.timestamp }}
-        run: npm run build
-      
-      - name: Deploy to Production
-        # Dein Deploy-Command hier
         run: |
-          rsync -avz out/ user@server:/var/www/jozapf.de/
+          set -e
+          echo "::notice::Building release ${GIT_TAG}"
+          npm run build
+
+      - name: Verify build output
+        shell: bash
+        run: |
+          set -e
+          if [ ! -d "$SITE_DIR" ]; then
+            echo "::error::SITE_DIR '$SITE_DIR' does not exist."
+            exit 1
+          fi
+          if [ ! -f "$SITE_DIR/index.html" ]; then
+            echo "::warning::No $SITE_DIR/index.html found."
+          fi
+          echo "[ls $SITE_DIR]"
+          ls -la "$SITE_DIR"
+
+      - name: Prepare SSH key
+        shell: bash
+        run: |
+          set -e
+          mkdir -p "${HOME}/.ssh"
+          echo "${SSH_PRIVATE_KEY}" > "${HOME}/.ssh/deploy_key"
+          chmod 600 "${HOME}/.ssh/deploy_key"
+
+      - name: Add host key to known_hosts
+        shell: bash
+        run: |
+          set -e
+          : "${SSH_PORT:=222}"
+          ssh-keyscan -p "${SSH_PORT}" "${SSH_HOST}" >> "${HOME}/.ssh/known_hosts"
+
+      - name: Upload site via SSH
+        shell: bash
+        run: |
+          set -e
+          : "${SSH_PORT:=222}"
+
+          if [ -z "${SSH_HOST:-}" ] || [ -z "${SSH_USER:-}" ] || [ -z "${SSH_PRIVATE_KEY:-}" ]; then
+            echo "::error::Missing SSH credentials (SSH_HOST/SSH_USER/SSH_PRIVATE_KEY)."
+            exit 1
+          fi
+          if [ -z "${DOCROOT_SITE:-}" ]; then
+            echo "::error::DOCROOT_SITE (Repo Variable) is not set."
+            exit 1
+          fi
+
+          DOCROOT_SITE="$(echo "${DOCROOT_SITE}" | tr -d '\n\r' | xargs)"
+          echo "::notice::Uploading site to ${SSH_USER}@${SSH_HOST}:${DOCROOT_SITE} (port ${SSH_PORT})"
+          tar czf - -C "${SITE_DIR}" . | ssh -i "${HOME}/.ssh/deploy_key" -p "${SSH_PORT}" -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" "cd '${DOCROOT_SITE}' && tar xzf -"
+
+      - name: Upload assets via SSH
+        shell: bash
+        run: |
+          set -e
+          : "${SSH_PORT:=222}"
+
+          if [ -z "${DOCROOT_ASSETS:-}" ]; then
+            echo "::notice::DOCROOT_ASSETS not set – skipping assets upload."
+            exit 0
+          fi
+
+          ASSETS_SOURCE=""
+          if [ -d "assets-deploy" ]; then
+            ASSETS_SOURCE="assets-deploy"
+            echo "::notice::Using assets-deploy directory"
+          elif [ -d "public/assets" ]; then
+            ASSETS_SOURCE="public/assets"
+            echo "::notice::Using public/assets directory (legacy)"
+          else
+            echo "::notice::No assets directory found – skipping assets upload."
+            exit 0
+          fi
+
+          DOCROOT_ASSETS="$(echo "${DOCROOT_ASSETS}" | tr -d '\n\r' | xargs)"
+          echo "::notice::Uploading assets from ${ASSETS_SOURCE} to ${SSH_USER}@${SSH_HOST}:${DOCROOT_ASSETS} (port ${SSH_PORT})"
+          tar czf - -C "${ASSETS_SOURCE}" . | ssh -i "${HOME}/.ssh/deploy_key" -p "${SSH_PORT}" -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" "cd '${DOCROOT_ASSETS}' && tar xzf -"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
