@@ -192,29 +192,88 @@ assets.jozapf.de    → Static CDN (images, fonts, icons, SVGs)
 **Directory Structure:**
 ```
 /workspace/
-├── out/                    → Deployed to jozapf.de
-│   ├── index.html
-│   ├── _next/static/
-│   └── assets/
-│       ├── css/            ← Application CSS
-│       ├── js/             ← Application JS
-│       ├── html/           ← HTML fragments
-│       └── php/            ← Backend scripts
+├── out/                          → Deployed to jozapf.de
+│   ├── index.html                   (DE Homepage)
+│   ├── 404.html                     (Error page)
+│   ├── privacy.html                 (Datenschutz)
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   ├── summary.json                 (Build metadata)
+│   ├── .htaccess
+│   │
+│   ├── en/                          (English version)
+│   │   ├── index.html
+│   │   └── print/index.html
+│   │
+│   ├── print/                       (Print versions)
+│   │   └── index.html
+│   │
+│   ├── changelog/                   (Version history)
+│   │   └── index.html
+│   │
+│   ├── _next/static/                (Next.js runtime)
+│   │   └── chunks/                  (JS/CSS bundles)
+│   │
+│   ├── assets/                      (Application assets)
+│   │   ├── css/                     ← Bootstrap, custom styles
+│   │   ├── js/                      ← Bootstrap, contact-form, github-repos
+│   │   ├── html/                    ← HTML fragments (contact-form, privacy)
+│   │   ├── php/                     ← Backend scripts
+│   │   │   ├── data/                   (blocklist.json, whitelist.json)
+│   │   │   └── logs/                   (submissions, security logs)
+│   │   ├── favicon/                 ← Favicons for site
+│   │   ├── png/                     ← UI icons, profile images
+│   │   ├── svg/                     ← Vector graphics
+│   │   └── ico/                     ← Legacy favicon
+│   │
+│   └── vendor/                      (Third-party libraries)
+│       └── swiper/                  ← Carousel for GitHub repos
 │
-└── assets-deploy/          → Deployed to assets.jozapf.de
-    ├── favicon/            ← .ico, .png, .svg, .webmanifest
-    ├── fonts/              ← .woff2, .woff, .ttf, .otf, .eot
-    ├── png/                ← .png, .jpg, .jpeg (images)
-    └── svg/                ← .svg (icons, graphics)
+└── assets-deploy/                → Deployed to assets.jozapf.de
+    ├── .htaccess                    (CORS headers, caching)
+    ├── favicon/                  ← .ico, .png, .svg, .webmanifest
+    ├── fonts/                    ← Montserrat (.woff2, .ttf)
+    ├── jpg/                      ← Photos, OG base image
+    ├── og/                       ← Generated OG images (prebuild)
+    │   ├── og-home-de.png          (German social preview)
+    │   └── og-home-en.png          (English social preview)
+    ├── png/                      ← Raster graphics
+    ├── svg/                      ← Vector graphics, icons
+    └── webp/                     ← Optimized web images
 ```
 
 **Deployment Flow (GitHub Actions):**
-```yaml
-# Simplified workflow
-steps:
-  - Build Next.js → /out/
-  - Upload /out/ → jozapf.de (via SSH/SFTP)
-  - Upload /assets-deploy/ → assets.jozapf.de (via SSH/SFTP)
+```mermaid
+%%{init: {'theme': 'dark'}}%%
+flowchart TD
+    subgraph build["npm run build"]
+        A[prebuild: generate-summary.ts] --> B[prebuild: generate-og-images.ts]
+        B --> C[next build]
+        B --> |generates| OG[assets-deploy/]
+        C --> |exports| OUT[out/]
+    end
+
+    subgraph deploy["GitHub Actions"]
+        direction LR
+        D1[deploy.yml<br/>Push to main]
+        D2[release.yml<br/>Tag v*.*.*]
+    end
+
+    subgraph targets["Production Servers"]
+        T1[("🌐 jozapf.de")]
+        T2[("📦 assets.jozapf.de")]
+    end
+
+    OUT --> |tar + ssh| D1
+    OG --> |tar + ssh| D1
+    OUT --> |tar + ssh| D2
+    OG --> |tar + ssh| D2
+    
+    D1 --> T1
+    D1 --> T2
+    D2 --> T1
+    D2 --> T2
+
 ```
 
 **Benefits of this architecture:**
@@ -228,56 +287,69 @@ steps:
 
 #### Asset Subdomain Configuration (assets.jozapf.de)
 
-**`.htaccess` - CORS + Aggressive Caching:**
+**`.htaccess` - CORS + Security + Aggressive Caching:**
 ```apache
-# CORS: Allow cross-origin requests from main domain
+# =========================
+# .htaccess – assets.jozapf.de
+# CRITICAL: CORS "*" for Google/Social Media crawlers
+# =========================
+
+# 1) CORS headers - ALL origins allowed (for crawlers)
 <IfModule mod_headers.c>
-  # Web Fonts
-  <FilesMatch "\.(woff2?|ttf|otf|eot)$">
-    Header set Access-Control-Allow-Origin "https://jozapf.de"
-    Header set Access-Control-Allow-Methods "GET, OPTIONS"
-    Header set Access-Control-Allow-Headers "Accept, Origin, Content-Type, User-Agent"
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Methods "GET, OPTIONS"
+  Header set Access-Control-Allow-Headers "Content-Type, X-Requested-With"
+  Header set Access-Control-Allow-Credentials "false"
+  Header set Timing-Allow-Origin "*"
+</IfModule>
+
+# 2) Security headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "no-referrer-when-downgrade"
+  Header always set X-Frame-Options "DENY"
+</IfModule>
+
+# 3) Cache control (aggressive for performance)
+<IfModule mod_headers.c>
+  # Images & fonts – 1 year, immutable
+  <FilesMatch "\.(png|jpg|jpeg|gif|webp|svg|ico|woff|woff2|eot|ttf|otf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
   
-  # SVGs (Icons/Fonts)
-  <FilesMatch "\.(svg)$">
-    Header set Access-Control-Allow-Origin "https://jozapf.de"
-  </FilesMatch>
-  
-  # Web Manifest & JSON
-  <FilesMatch "\.(webmanifest|json)$">
-    Header set Access-Control-Allow-Origin "https://jozapf.de"
-    Header set Access-Control-Allow-Methods "GET, OPTIONS"
-  </FilesMatch>
-  
-  # Favicons & Images
-  <FilesMatch "\.(png|jpg|jpeg|ico|webp)$">
-    Header set Access-Control-Allow-Origin "https://jozapf.de"
-    Header set Access-Control-Allow-Methods "GET"
+  # CSS and JS – 1 month
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
 </IfModule>
 
-# Aggressive caching for static assets
+# 4) Expires headers (fallback)
 <IfModule mod_expires.c>
   ExpiresActive On
-  
-  # Manifest & JSON: 1 day
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
   ExpiresByType application/manifest+json "access plus 1 day"
-  ExpiresByType application/json "access plus 1 day"
-  
-  # Images & Icons: 30 days
-  ExpiresByType image/png  "access plus 30 days"
-  ExpiresByType image/jpeg "access plus 30 days"
-  ExpiresByType image/webp "access plus 30 days"
-  ExpiresByType image/svg+xml "access plus 30 days"
-  ExpiresByType image/x-icon "access plus 30 days"
-  
-  # Fonts: 30 days
-  ExpiresByType font/woff2 "access plus 30 days"
-  ExpiresByType font/woff  "access plus 30 days"
-  ExpiresByType font/ttf   "access plus 30 days"
-  ExpiresByType font/otf   "access plus 30 days"
 </IfModule>
+
+# 5) Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/css application/javascript image/svg+xml
+</IfModule>
+
+# 6) Enforce HTTPS
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+</IfModule>
+
+# 7) Security
+Options -Indexes
+ServerSignature Off
 ```
 
 **Why separate assets subdomain:**
@@ -1102,4 +1174,4 @@ Berlin, Germany
 
 **⭐ If you find this migration journey helpful, please consider starring this repository!**
 
-*Last Updated: 2024-11-13 | Version: 2.1.0*
+*Last Updated: 2025-12-10 | Version: 2.2.0*
