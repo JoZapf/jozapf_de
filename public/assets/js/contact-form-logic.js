@@ -182,44 +182,6 @@ async function submitForm(form) {
   }
 }
 
-// Modal-Funktionalität für Privacy Policy
-function initPrivacyModal() {
-  const privacyLink = document.getElementById('privacyLink');
-  const modal = document.getElementById('privacyModal');
-  const closeBtn = document.getElementById('closePrivacyModal');
-  const iframe = document.getElementById('privacyFrame');
-
-  if (!privacyLink || !modal) return;
-
-  privacyLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    const url = privacyLink.dataset.privacyUrl || '/test11/privacy.html';
-    iframe.src = url;
-    modal.style.display = 'flex';
-  });
-
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
-      modal.style.display = 'none';
-      iframe.src = '';
-    });
-  }
-
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-      iframe.src = '';
-    }
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.style.display === 'flex') {
-      modal.style.display = 'none';
-      iframe.src = '';
-    }
-  });
-}
-
 // Öffentliche Initialisierung
 export function initContactForm(root = document) {
   const form = $('#contactForm', root);
@@ -243,10 +205,8 @@ export function initContactForm(root = document) {
     submitForm(form);
   });
 
-  // Privacy Modal initialisieren
-  initPrivacyModal();
-
   form.dataset.initialized = '1';
+  // Note: Privacy Modal is now handled globally by privacy-modal.js
 }
 
 // Fallback

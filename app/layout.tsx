@@ -281,6 +281,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Script src="/assets/js/experience.js" strategy="afterInteractive" />
         <Script src="/assets/js/lang-detect.js" strategy="afterInteractive" />
 
+        {/* Privacy Policy Modal Handler (Global) */}
+        <Script src="/assets/js/privacy-modal.js" strategy="afterInteractive" />
+
         {/* Fallbacks (Jahre/©) */}
         <Script id="boot-fallback" strategy="afterInteractive">
           {`(function(){
@@ -302,7 +305,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Kontaktformular Lazy-Loader */}
         <Script id="contact-loader" type="module" strategy="afterInteractive">
           {`const CONFIG = {
-            formURL: '/assets/html/contact-form-wrapper.html',
+            formURL: window.location.pathname.startsWith('/en') 
+              ? '/assets/html/contact-form-wrapper-en.html' 
+              : '/assets/html/contact-form-wrapper.html',
             logicURL: '/assets/js/contact-form-logic.js',
             triggers: '#menuPanel a[href*="contact"], a[href="#contact"], a[data-action="contact"]'
           };

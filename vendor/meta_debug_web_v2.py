@@ -410,6 +410,13 @@ def build_html_page(url: str,
     </div>
 
     <div class="card">
+        <h2>Bilder (og:image &amp; &lt;img&gt;)</h2>
+        <div class="images-grid">
+            {image_blocks_html or "<p><em>Keine Bilder gefunden.</em></p>"}
+        </div>
+    </div>
+    
+    <div class="card">
         <h2>Open Graph Tags</h2>
         <table>
             <thead>
@@ -434,21 +441,15 @@ def build_html_page(url: str,
     </div>
 
     <div class="card">
+        <h2>Textvorschau (erste 2000 Zeichen)</h2>
+        <pre>{text_preview_html}</pre>
+    </div>
+
+    <div class="card">
         <h2>Structured Data (JSON-LD)</h2>
         {json_ld_html}
     </div>
 
-    <div class="card">
-        <h2>Bilder (og:image &amp; &lt;img&gt;)</h2>
-        <div class="images-grid">
-            {image_blocks_html or "<p><em>Keine Bilder gefunden.</em></p>"}
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Textvorschau (erste 2000 Zeichen)</h2>
-        <pre>{text_preview_html}</pre>
-    </div>
 """
 
     html_page += """

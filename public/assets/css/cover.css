@@ -119,6 +119,13 @@ h6,
 	opacity: 0.85;
 }
 
+/* Hero Image (reusable, original size, rounded corners) */
+.hero-image {
+	border-radius: 0.5rem;
+	max-width: 100%;
+	height: auto;
+}
+
 /* Hero Container */
 .hero {
 	padding-top: 150px;
@@ -197,6 +204,44 @@ h6,
 	bottom: 0.25rem;
 	width: 0.75rem;
 	background-color: var(--muted);
+}
+
+/* Fact Sheet: Two-column grid rows within .intro */
+.intro li.fact-row {
+	display: grid;
+	grid-template-columns: 11rem 1fr;
+	gap: 0 1.25rem;
+}
+
+@media (max-width: 576px) {
+	.intro li.fact-row {
+		grid-template-columns: 1fr;
+	}
+}
+
+/*
+ * PAGE-SCOPE: .page-praktikum
+ * ──────────────────────────────────────────
+ * Diese Overrides gelten AUSSCHLIESSLICH auf den Praktikumsseiten
+ * (DE + EN). Die Scope-Klasse wird auf <main class="page-praktikum">
+ * in den jeweiligen page.tsx gesetzt.
+ *
+ * Entfernt:
+ *   - border-bottom + padding-bottom von .intro
+ *   - padding-bottom von .hero
+ *   - padding-top von .py-5 (Bootstrap)
+ */
+.page-praktikum .intro {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.page-praktikum .hero {
+	padding-bottom: 0;
+}
+
+.page-praktikum .py-5 {
+	padding-top: 0 !important;
 }
 
 /* ========================================
