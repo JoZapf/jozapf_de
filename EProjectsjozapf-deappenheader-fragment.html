@@ -1,0 +1,80 @@
+	<!-- Header / Navigation -->
+	<header data-bs-theme="dark">
+		<nav class="navbar navbar-dark bg-transparent sticky-top border-bottom border-secondary-subtle" aria-label="Main navigation">
+			<div class="container-xxl d-flex justify-content-end align-items-center gap-2">
+				<!-- Language Toggle - Show only German button on English page -->
+				<a href="/" 
+				   class="btn btn-outline-light btn-sm px-2 py-1 rounded-1 lang-toggle lang-toggle-de"
+				   aria-label="Deutsch">
+					<span class="lang-flag-text">DE</span>
+				</a>
+				
+				<!-- Menu Button -->
+				<button
+					class="btn btn-outline-light btn-sm px-2 py-1 rounded-1"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#menuPanel"
+					aria-controls="menuPanel"
+					aria-expanded="false"
+					aria-label="Open navigation menu"
+				>
+					<span class="navbar-toggler-icon small align-middle"></span>
+				</button>
+			</div>
+		</nav>
+
+		<div id="menuPanel" class="collapse bg-dark border-bottom border-secondary-subtle">
+			<div class="container-xxl py-4">
+				<div class="row">
+					<nav class="col-12 col-md-12" aria-label="Social media links">
+						<ul class="list-unstyled mb-0">
+							<li class="mb-2">
+								<a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" 
+								   href="/en/pflichtpraktikum-anwendungsentwicklung-berlin/">
+									↳ Internship Application Development
+								</a>
+							</li>
+							<li class="mb-2">
+								<a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" 
+								   href="https://www.linkedin.com/in/jo-zapf/" 
+								   target="_blank" 
+								   rel="noopener noreferrer">
+									LinkedIn
+								</a>
+							</li>
+							<li class="mb-2">
+								<a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" 
+								   href="https://github.com/JoZapf" 
+								   target="_blank" 
+								   rel="noopener noreferrer">
+									GitHub
+								</a>
+							</li>
+							<li class="mb-2">
+							<a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" 
+							href="#contact">
+							Contact
+							</a>
+							</li>
+					<li class="mb-0">
+					<a class="link-light link-underline-opacity-25 link-underline-opacity-100-hover" 
+					href="#" 
+					data-privacy-url="/privacy-en.html">
+					Privacy Policy
+					</a>
+					</li>
+							<li class="mb-2">
+								<p id="build-info" class="build-info">
+									<span>Version:</span>
+									<strong id="build-version"> <!-- wird serverseitig/inline befüllt --></strong>
+									<span class="sep">•</span>
+									<span id="build-date"></span>
+								</p>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</header>
