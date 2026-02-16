@@ -85,8 +85,8 @@ export const metadata: Metadata = {
     alternateLocale: ["en_US"],
     images: [
       {
-        url: "https://assets.jozapf.de/og/og-home-de.png",
-        secureUrl: "https://assets.jozapf.de/og/og-home-de.png",
+        url: "https://assets.jozapf.de/og/og-praktikum-de.png",
+        secureUrl: "https://assets.jozapf.de/og/og-praktikum-de.png",
         width: 1200,
         height: 630,
         alt: "Jo Zapf – Pflichtpraktikum Anwendungsentwicklung Berlin",
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
     description:
       "960 Stunden FIAE-Praktikum (IHK) ab Juni 2026. " +
       "DevOps, Docker, CI/CD, Python, Java, Systemintegration & Zero-Trust-Infrastruktur.",
-    images: ["https://assets.jozapf.de/og/og-home-de.png"],
+    images: ["https://assets.jozapf.de/og/og-praktikum-de.png"],
   },
 };
 
