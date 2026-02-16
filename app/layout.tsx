@@ -411,6 +411,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }`}
         </Script>
 
+        {/* Privacy Modal – global handler for data-privacy-url links */}
+        <Script src="/assets/js/modal-handler.js" strategy="lazyOnload" />
+
       </body>
     </html>
   );
