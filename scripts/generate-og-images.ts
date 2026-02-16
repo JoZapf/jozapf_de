@@ -38,8 +38,9 @@ const FONT_BOLD = join(PROJECT_ROOT, 'assets-deploy', 'fonts', 'Montserrat-Bold.
 const FONT_REGULAR = join(PROJECT_ROOT, 'assets-deploy', 'fonts', 'Montserrat-Regular.ttf');
 const FONT_MEDIUM = join(PROJECT_ROOT, 'assets-deploy', 'fonts', 'Montserrat-Medium.ttf');
 
-// Background image (the existing abstract shapes motif)
-const BG_IMAGE_PATH = join(PROJECT_ROOT, 'assets-deploy', 'jpg', 'og_image_v2_1200x630_jozapf_de.jpg');
+// Background images
+const BG_IMAGE_HOME = join(PROJECT_ROOT, 'assets-deploy', 'jpg', 'og_image_v2_1200x630_jozapf_de.jpg');
+const BG_IMAGE_PRAKTIKUM = join(PROJECT_ROOT, 'assets-deploy', 'jpg', 'og_praktikum_1200x630.jpg');
 
 // Content for each language
 const CONTENT = {
@@ -56,6 +57,20 @@ const CONTENT = {
     description: 'Digital solutions from Berlin: Web development, application development, cross-media design and secure cloud infrastructure.',
     badge: 'jozapf.de',
     filename: 'og-home-en.png',
+  },
+  'praktikum-de': {
+    title: 'Jo Zapf',
+    subtitle: 'Pflichtpraktikum Anwendungsentwicklung',
+    description: '960 Stunden · Berlin · FIAE (IHK) · DevOps, Docker, CI/CD, Python, Java, Systemintegration & Zero-Trust-Infrastruktur',
+    badge: 'jozapf.de',
+    filename: 'og-praktikum-de.png',
+  },
+  'praktikum-en': {
+    title: 'Jo Zapf',
+    subtitle: 'Mandatory Internship · Application Development',
+    description: '960 hours · Berlin · FIAE (IHK) · DevOps, Docker, CI/CD, Python, Java, system integration & zero-trust infrastructure',
+    badge: 'jozapf.de',
+    filename: 'og-praktikum-en.png',
   },
 } as const;
 
@@ -265,8 +280,8 @@ function createOGTemplate(content: OGContentProps, bgImageDataUrl: string) {
 // GENERATION LOGIC
 // ============================================================================
 
-async function generateOGImage(lang: 'de' | 'en', bgImageDataUrl: string): Promise<void> {
-  const content = CONTENT[lang];
+async function generateOGImage(key: keyof typeof CONTENT, bgImageDataUrl: string): Promise<void> {
+  const content = CONTENT[key];
   console.log(`  → Generating ${content.filename}...`);
 
   // Load fonts
@@ -330,18 +345,28 @@ async function main(): Promise<void> {
   }
   console.log('✓ Fonts verified');
 
-  // Verify background image exists
-  if (!existsSync(BG_IMAGE_PATH)) {
-    console.error(`❌ Background image not found: ${BG_IMAGE_PATH}`);
-    console.error('  Expected: assets-deploy/jpg/og_image_v2_1200x630_jozapf_de.jpg');
-    process.exit(1);
+  // Verify background images exist
+  for (const bgPath of [BG_IMAGE_HOME, BG_IMAGE_PRAKTIKUM]) {
+    if (!existsSync(bgPath)) {
+      console.error(`❌ Background image not found: ${bgPath}`);
+      process.exit(1);
+    }
   }
-  console.log('✓ Background image verified');
+  console.log('✓ Background images verified');
 
-  // Load background image as Base64
-  console.log('  Loading background image...');
-  const bgImageDataUrl = loadImageAsBase64(BG_IMAGE_PATH);
-  console.log(`  ✓ Loaded (${Math.round(bgImageDataUrl.length / 1024)} KB as Base64)`);
+  // Load background images as Base64
+  console.log('  Loading background images...');
+  const bgHome = loadImageAsBase64(BG_IMAGE_HOME);
+  const bgPraktikum = loadImageAsBase64(BG_IMAGE_PRAKTIKUM);
+  console.log('  ✓ Loaded');
+
+  // Map keys to background images
+  const bgMap: Record<keyof typeof CONTENT, string> = {
+    de: bgHome,
+    en: bgHome,
+    'praktikum-de': bgPraktikum,
+    'praktikum-en': bgPraktikum,
+  };
 
   // Ensure output directory exists
   if (!existsSync(OUTPUT_DIR)) {
@@ -353,8 +378,9 @@ async function main(): Promise<void> {
   console.log('\nGenerating OG images...');
   
   try {
-    await generateOGImage('de', bgImageDataUrl);
-    await generateOGImage('en', bgImageDataUrl);
+    for (const key of Object.keys(CONTENT) as (keyof typeof CONTENT)[]) {
+      await generateOGImage(key, bgMap[key]);
+    }
     
     console.log('\n' + '═'.repeat(50));
     console.log('✅ OG images generated successfully!');

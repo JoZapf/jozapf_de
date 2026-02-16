@@ -85,8 +85,8 @@ export const metadata: Metadata = {
     alternateLocale: ["de_DE"],
     images: [
       {
-        url: "https://assets.jozapf.de/og/og-home-en.png",
-        secureUrl: "https://assets.jozapf.de/og/og-home-en.png",
+        url: "https://assets.jozapf.de/og/og-praktikum-en.png",
+        secureUrl: "https://assets.jozapf.de/og/og-praktikum-en.png",
         width: 1200,
         height: 630,
         alt: "Jo Zapf – Mandatory Internship Application Development Berlin",
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
     description:
       "960-hour FIAE internship (IHK) from June 2026. " +
       "DevOps, Docker, CI/CD, Python, Java, system integration & zero-trust infrastructure.",
-    images: ["https://assets.jozapf.de/og/og-home-en.png"],
+    images: ["https://assets.jozapf.de/og/og-praktikum-en.png"],
   },
 };
 
