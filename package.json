@@ -1,6 +1,6 @@
 {
   "name": "jozapf-de",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "scripts": {
     "predev": "powershell -NoProfile -Command \"try { npx kill-port 3000 3002 } catch {} ; Remove-Item .\\.next\\dev\\lock -Force -ErrorAction Ignore ; exit 0\" && node scripts/remove-sourcemap.mjs",
