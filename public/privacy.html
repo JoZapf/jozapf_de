@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="utf-8" />
-  <title>Privacy Policy (Contact Form)</title>
+  <title>Datenschutzerklärung – Kontaktformular & GitHub API</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root { --fg:#111; --muted:#555; --bg:#fff; --line:#eee; --accent:#0a84ff; }
@@ -29,301 +29,204 @@
 <body>
 <main role="main" id="contact-privacy">
   <header>
-    <h1>Privacy Policy — Contact Form</h1>
-    <p class="muted">Last updated: <time datetime="2025-10-04">04 October 2025</time></p>
+    <h1>Datenschutzerklärung – Kontaktformular & GitHub API</h1>
+    <p class="muted">Letzte Aktualisierung: <time datetime="2026-02-16">16. Februar 2026</time></p>
   </header>
 
-  <nav aria-label="On this page">
-    <strong>Contents:</strong>
-    <a href="#controller">1. Controller</a>
-    <a href="#purposes-legal-bases">2. Purposes &amp; Legal Bases</a>
-    <a href="#data-categories">3. Data Categories</a>
+  <nav aria-label="Inhaltsverzeichnis">
+    <strong>Inhaltsverzeichnis:</strong>
+    <a href="#controller">1. Verantwortlicher</a>
+    <a href="#purposes-legal-bases">2. Zweck &amp; Rechtsgrundlagen</a>
+    <a href="#data-categories">3. Datenkategorien</a>
     <a href="#cookies">4. Cookies</a>
-    <a href="#recipients">5. Recipients &amp; Processing</a>
-    <a href="#transfers">6. Third-Country Transfers</a>
-    <a href="#storage">7. Storage &amp; Anonymization</a>
-    <a href="#rights">8. Your Rights</a>
-    <a href="#consent-withdrawal">9. Consent &amp; Withdrawal</a>
-    <a href="#obligation">10. Obligation to Provide Data</a>
-    <a href="#security">11. Security</a>
-    <a href="#complaints">12. Complaints</a>
-    <a href="#changes">13. Changes</a>
+    <a href="#recipients">5. Empfänger &amp; Verarbeitung</a>
+    <a href="#transfers">6. Übermittlung ins Ausland</a>
+    <a href="#storage">7. Speicherung &amp; Anonymisierung</a>
+    <a href="#rights">8. Ihre Rechte</a>
+    <a href="#consent">9. Zustimmung &amp; Widerruf</a>
+    <a href="#obligation">10. Datenpflicht</a>
+    <a href="#security">11. Sicherheit</a>
+    <a href="#github">12. GitHub API</a>
+    <a href="#complaints">13. Beschwerde</a>
+    <a href="#changes">14. Änderungen</a>
   </nav>
 
   <section id="intro">
     <p>
-      This privacy notice explains how we process your personal data when you use the
-      contact form on <span class="mono">jozapf.de</span>.
-      We process your data in accordance with the EU General Data Protection Regulation (GDPR) and applicable German data protection law.
+      Diese Datenschutzerklärung erklärt, wie wir Ihre personenbezogenen Daten verarbeiten, wenn Sie das Kontaktformular auf 
+      <span class="mono">jozapf.de</span> nutzen und wenn Sie GitHub-Repository-Daten über unsere Website abrufen.
+      Wir verarbeiten Ihre Daten gemäß der EU-Datenschutz-Grundverordnung (DSGVO).
     </p>
   </section>
 
   <section id="controller">
-    <h2>1. Controller</h2>
+    <h2>1. Verantwortlicher</h2>
     <p>
       <strong>Jo Zapf</strong><br>
       Berliner Str. 45<br>
-      13189 Berlin, Germany<br>
+      13189 Berlin, Deutschland<br>
     </p>
   </section>
 
   <section id="purposes-legal-bases">
-    <h2>2. Purposes &amp; Legal Bases</h2>
-    <p>We process data submitted via the contact form for the following purposes:</p>
+    <h2>2. Zweck &amp; Rechtsgrundlagen</h2>
+    <p>Wir verarbeiten Ihre Daten aus dem Kontaktformular zu folgenden Zwecken:</p>
     <ul>
-      <li>Responding to your inquiry and managing follow-up communication;</li>
-      <li>Preventing misuse and ensuring service security (spam detection, captcha validation, rate-limiting, abuse prevention);</li>
-      <li>Documenting communication to establish, exercise, or defend legal claims where necessary.</li>
+      <li>Beantwortung Ihrer Anfrage</li>
+      <li>Missbrauchsprävention und Spam-Abwehr (Drosseln, CAPTCHA-Validierung)</li>
+      <li>Gewährleistung der Dienste-Sicherheit</li>
     </ul>
-    <p>Legal bases under Art. 6 GDPR:</p>
-    <ul>
-      <li><strong>Art. 6(1)(b) GDPR</strong> — performance of a contract or steps prior to entering into a contract (if your inquiry relates to a contract or service request);</li>
-      <li><strong>Art. 6(1)(a) GDPR</strong> — consent (e.g., privacy policy acceptance checkbox);</li>
-      <li><strong>Art. 6(1)(f) GDPR</strong> — legitimate interests (efficient handling of inquiries, service integrity, IT security, and protection against automated abuse).</li>
-    </ul>
+    <p><strong>Rechtsgrundlagen:</strong> Art. 6 Abs. 1 Buchstabe a DSGVO (Einwilligung), Art. 6 Abs. 1 Buchstabe b DSGVO (Vertragserfüllung), Art. 6 Abs. 1 Buchstabe f DSGVO (berechtigte Interessen)</p>
   </section>
 
   <section id="data-categories">
-    <h2>3. Data Categories Collected via the Contact Form</h2>
-    
-    <h3>3.1 Form Data</h3>
+    <h2>3. Verarbeitete Datenkategorien</h2>
+    <h3>3.1 Kontaktformular-Daten</h3>
     <ul>
-      <li>Identification: first name, last name;</li>
-      <li>Contact: email address, phone number (optional);</li>
-      <li>Message content: subject (optional), message text;</li>
-      <li>Security: arithmetic challenge answer (local captcha, no third-party service);</li>
-      <li>Consent: privacy policy acceptance (checkbox).</li>
+      <li>Name, E-Mail-Adresse, Telefonnummer (optional)</li>
+      <li>Betreff und Nachrichtentext</li>
+      <li>CAPTCHA-Antwort (lokale Rechenaufgabe)</li>
+      <li>Zustimmung zu Datenschutz (Checkbox)</li>
     </ul>
 
-    <h3>3.2 Technical Metadata (Extended Logging)</h3>
-    <p>
-      To protect our service from automated abuse, spam, and security threats, we log the following technical metadata 
-      when you submit the contact form:
-    </p>
+    <h3>3.2 Technische Metadaten</h3>
     <ul>
-      <li><strong>IP Address</strong> — your internet protocol address;</li>
-      <li><strong>Timestamp</strong> — date and time of submission;</li>
-      <li><strong>User-Agent</strong> — browser type and version;</li>
-      <li><strong>Browser Fingerprint</strong> — non-invasive technical identifier derived from HTTP headers (used for duplicate detection);</li>
-      <li><strong>Spam Score</strong> — automated risk assessment (0-100) based on content analysis and submission patterns;</li>
-      <li><strong>Validation Results</strong> — which security checks were triggered (e.g., rate limit, suspicious patterns).</li>
+      <li>IP-Adresse (14 Tage gespeichert, dann anonymisiert)</li>
+      <li>Zeitstempel, User-Agent, Browser-Fingerprint</li>
+      <li>Spam-Score und Validierungsergebnisse</li>
     </ul>
-
     <div class="important">
-      <strong>IP Address Processing:</strong><br>
-      Your IP address is stored in full for <strong>14 days</strong> to enable abuse prevention measures (blocking repeated spam attacks, 
-      identifying coordinated abuse patterns). After 14 days, the last segment of your IP address is automatically anonymized 
-      (e.g., <span class="mono">192.168.1.100</span> becomes <span class="mono">192.168.1.XXX</span>), making it no longer 
-      personally identifiable while preserving statistical data.
+      <strong>IP-Adressen-Verarbeitung:</strong><br>
+      Ihre IP-Adresse wird 14 Tage zur Missbrauchsprävention gespeichert. Danach wird sie automatisch anonymisiert 
+      (z.B. <span class="mono">192.168.1.100</span> wird zu <span class="mono">192.168.1.XXX</span>).
     </div>
-
-    <h3>3.3 Blocklist & Whitelist</h3>
-    <p>
-      If your IP address is associated with abusive behavior (e.g., spam, repeated failed submissions, automated attacks), 
-      we may add it to a blocklist to protect our service. Conversely, trusted IP addresses may be whitelisted. 
-      Blocklist entries can be temporary (with expiration date) or permanent, and include a reason for blocking.
-    </p>
-    <p>
-      <strong>Legal basis:</strong> Art. 6(1)(f) GDPR (legitimate interest in maintaining service security and preventing abuse).
-    </p>
   </section>
 
-	<section id="cookies">
-	  <h2>4. Cookies</h2>
-	  
-	  <h3>4.1 Technical Cookies (No Consent Required)</h3>
-	  <p>
-		We use <strong>strictly necessary cookies</strong> for essential website functionality. 
-		These cookies are required for the operation of our services and do not require consent under ePrivacy law.
-	  </p>
-
-	  <div class="box">
-		<strong>Authentication Cookie</strong><br>
-		<strong>Purpose:</strong> Secure access to administrative areas.<br>
-		<strong>Duration:</strong> 24 hours.<br>
-		<strong>Legal basis:</strong> Art. 6(1)(b) GDPR (necessary for service provision).
-	  </div>
-
-	  <h3>4.2 No Tracking or Analytics Cookies</h3>
-	  <p>
-		We do <strong>not</strong> use third-party tracking, analytics, advertising, or social media cookies.
-	  </p>
-	</section>
+  <section id="cookies">
+    <h2>4. Cookies</h2>
+    <p>Wir verwenden nur technisch notwendige Cookies. Wir nutzen <strong>KEINE</strong> Tracking-, Analyse- oder Werbe-Cookies.</p>
+    <div class="box">
+      <strong>Authentifizierungs-Cookie</strong> (24 Stunden, für Admin-Zugang)
+    </div>
+  </section>
 
   <section id="recipients">
-    <h2>5. Recipients &amp; Processing</h2>
-    <p>Your message is delivered to us by email. For this we use our email provider and hosting services:</p>
+    <h2>5. Empfänger &amp; Verarbeitung</h2>
+    <p>Ihre Nachricht wird verarbeitet durch:</p>
     <ul>
-      <li><strong>Hosting/Infrastructure:</strong> Hetzner Online GmbH — Germany/EU;</li>
-      <li><strong>Email transmission (SMTP):</strong> Hetzner — Germany/EU.</li>
+      <li><strong>Hetzner Online GmbH</strong> – E-Mail-Übertragung (Deutschland/EU)</li>
     </ul>
-    <p>
-      These service providers act as (sub-)processors under Art. 28 GDPR on the basis of appropriate data processing agreements. 
-      Within our organization, access is limited to persons who need the data to process your inquiry (need-to-know principle).
-    </p>
+    <p>Diese sind Auftragsverarbeiter gemäß Art. 28 DSGVO mit angemessenen Datenverarbeitungsverträgen.</p>
   </section>
 
   <section id="transfers">
-    <h2>6. Third-Country Transfers</h2>
-    <p>
-      We do not intentionally transfer contact form data to countries outside the EU/EEA.
-      If an exceptional transfer is necessary (e.g., you request contact via a non-EU channel), we will ensure appropriate safeguards under Art. 44 ff. GDPR.
-    </p>
+    <h2>6. Übermittlung ins Ausland</h2>
+    <p>Kontaktformular-Daten werden nicht absichtlich außerhalb der EU/EWR übermittelt.</p>
   </section>
 
   <section id="storage">
-    <h2>7. Storage Periods &amp; Anonymization</h2>
-    
-    <h3>7.1 Message Content</h3>
+    <h2>7. Speicherungsdauer</h2>
+    <p><strong>Kontakt-Nachrichten:</strong> 12 Monate</p>
+    <p><strong>Technische Protokolle:</strong></p>
     <ul>
-      <li>Email content and form data: retained for <strong>12 months</strong> to handle your request and document communication;</li>
-      <li>If legal retention obligations apply (e.g., commercial or tax law), we retain data as required by law and restrict processing accordingly.</li>
-    </ul>
-
-    <h3>7.2 Technical Logs (GDPR-Compliant)</h3>
-    <table style="width:100%; border-collapse:collapse; margin:1rem 0;">
-      <thead>
-        <tr style="background:#f5f5f5;">
-          <th style="padding:8px; text-align:left; border:1px solid #ddd;">Data Type</th>
-          <th style="padding:8px; text-align:left; border:1px solid #ddd;">Full Storage</th>
-          <th style="padding:8px; text-align:left; border:1px solid #ddd;">After Anonymization</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="padding:8px; border:1px solid #ddd;"><strong>IP Address</strong></td>
-          <td style="padding:8px; border:1px solid #ddd;">14 days</td>
-          <td style="padding:8px; border:1px solid #ddd;">Anonymized (last segment replaced with XXX) — retained for statistics</td>
-        </tr>
-        <tr>
-          <td style="padding:8px; border:1px solid #ddd;"><strong>User-Agent, Fingerprint</strong></td>
-          <td style="padding:8px; border:1px solid #ddd;">14 days</td>
-          <td style="padding:8px; border:1px solid #ddd;">Retained for statistics (non-identifying)</td>
-        </tr>
-        <tr>
-          <td style="padding:8px; border:1px solid #ddd;"><strong>Spam Score, Timestamps</strong></td>
-          <td style="padding:8px; border:1px solid #ddd;">Indefinite</td>
-          <td style="padding:8px; border:1px solid #ddd;">Not personally identifiable</td>
-        </tr>
-        <tr>
-          <td style="padding:8px; border:1px solid #ddd;"><strong>Blocklist Entries</strong></td>
-          <td style="padding:8px; border:1px solid #ddd;">Until manually removed or expired</td>
-          <td style="padding:8px; border:1px solid #ddd;">—</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h3>7.3 Automatic Anonymization Process</h3>
-    <p>
-      We employ an automated anonymization system that runs periodically to anonymize IP addresses older than 14 days. 
-      This process is irreversible and ensures compliance with data minimization principles (Art. 5(1)(c) GDPR).
-      An audit log records all anonymization actions for accountability.
-    </p>
-
-    <h3>7.4 Whitelist/Blocklist Storage</h3>
-    <ul>
-      <li><strong>Blocklist:</strong> Entries remain active until manually removed or until expiration date (if set). Expired blocks are automatically cleaned.</li>
-      <li><strong>Whitelist:</strong> Trusted IP addresses are retained indefinitely unless manually removed.</li>
+      <li>Vollständige IP-Adresse: 14 Tage</li>
+      <li>Anonymisierte IP: Für Statistiken gespeichert</li>
+      <li>Andere Metadaten: Unbegrenzt (nicht identifizierbar)</li>
     </ul>
   </section>
 
   <section id="rights">
-    <h2>8. Your Rights (GDPR)</h2>
-    <p>
-      You have the right to request access (Art. 15), rectification (Art. 16), erasure (Art. 17),
-      restriction (Art. 18), and data portability (Art. 20), and to object to processing based on Art. 6(1)(f) (Art. 21).
-      Where processing is based on consent, you may withdraw consent at any time (see Section 9).
-    </p>
-    <p>
-      To exercise your rights, please contact us at the address provided in Section 1.
-    </p>
-
-    <h3>8.1 Right to Erasure ("Right to be Forgotten")</h3>
-    <p>
-      You can request deletion of your personal data. Note that:
-    </p>
+    <h2>8. Ihre Rechte (DSGVO)</h2>
+    <p>Sie haben das Recht zu:</p>
     <ul>
-      <li>IP addresses older than 14 days are already anonymized automatically;</li>
-      <li>Blocklist entries may be retained if necessary to protect against ongoing abuse (Art. 17(3)(f) GDPR — legal claims);</li>
-      <li>Message content retained for legal obligations cannot be deleted until the retention period expires.</li>
+      <li>Auskunft über Ihre personenbezogenen Daten erhalten (Art. 15)</li>
+      <li>Berichtigung unrichtiger Daten (Art. 16)</li>
+      <li>Löschung anfordern (Art. 17)</li>
+      <li>Einschränkung der Verarbeitung anfordern (Art. 18)</li>
+      <li>Datenportabilität (Art. 20)</li>
+      <li>Widerspruch gegen die Verarbeitung (Art. 21)</li>
     </ul>
+    <p>Kontaktieren Sie uns unter der oben angegebenen Adresse, um diese Rechte auszuüben.</p>
   </section>
 
-  <section id="consent-withdrawal">
-    <h2>9. Consent &amp; Withdrawal</h2>
-    <p>
-      By checking the privacy policy acceptance checkbox when submitting the contact form, you consent to the processing 
-      described in this notice (Art. 6(1)(a) GDPR). You may withdraw this consent at any time by contacting us. 
-      The lawfulness of processing prior to withdrawal remains unaffected.
-    </p>
+  <section id="consent">
+    <h2>9. Zustimmung &amp; Widerruf</h2>
+    <p>Durch das Ankreuzen der Datenschutz-Checkbox stimmen Sie unserer Verarbeitung zu. Sie können Ihre Zustimmung jederzeit durch Kontakt mit uns widerrufen.</p>
   </section>
 
   <section id="obligation">
-    <h2>10. Obligation to Provide Data</h2>
-    <p>
-      You are not legally obliged to provide personal data. However, without essential information (first name, last name, 
-      email address, and message text), we cannot process your inquiry. Optional fields (phone, subject) are marked accordingly.
-    </p>
-    <p>
-      The privacy policy checkbox must be checked to submit the form (contractual requirement).
-    </p>
+    <h2>10. Datenpflicht</h2>
+    <p>Die Angabe von Daten ist freiwillig, aber wir benötigen wesentliche Informationen (Name, E-Mail, Nachricht), um Ihnen antworten zu können.</p>
   </section>
 
   <section id="security">
-    <h2>11. Security</h2>
-    <p>
-      We implement appropriate technical and organizational measures to protect your data (Art. 32 GDPR), including:
-    </p>
+    <h2>11. Sicherheit</h2>
+    <p>Wir schützen Ihre Daten mit:</p>
     <ul>
-      <li><strong>Transport Encryption:</strong> TLS 1.3 for all data transmission;</li>
-      <li><strong>Access Control:</strong> Dashboard access protected by HMAC-signed authentication tokens (stateless, cryptographically secure);</li>
-      <li><strong>Server Hardening:</strong> Regular security updates, firewall rules, restricted file permissions;</li>
-      <li><strong>Abuse Prevention:</strong> Rate limiting, spam detection, IP-based blocking;</li>
-      <li><strong>Local Captcha:</strong> No third-party services; simple arithmetic challenge processed server-side;</li>
-      <li><strong>Audit Logging:</strong> Security-relevant events (failed authentication, blocked submissions, anonymization actions) are logged;</li>
-      <li><strong>Automated Anonymization:</strong> IP addresses older than 14 days are automatically pseudonymized.</li>
+      <li>TLS 1.3-Verschlüsselung für alle Übertragungen</li>
+      <li>Drosselung und Spam-Erkennung</li>
+      <li>HMAC-signierte Authentifizierungs-Token</li>
+      <li>Automatische IP-Anonymisierung nach 14 Tagen</li>
+      <li>Sicherheits-Audit-Protokollierung</li>
     </ul>
   </section>
 
+  <section id="github">
+    <h2>12. GitHub API Integration</h2>
+    <p>Unsere Website zeigt aktuelle GitHub-Repositories über die GitHub REST API an.</p>
+    <h3>12.1 Funktionsweise</h3>
+    <ul>
+      <li>Ihr Browser ruft öffentliche Repository-Daten von GitHub ab</li>
+      <li>Keine personenbezogenen Daten über Sie werden an GitHub gesendet – nur Standard-HTTP-Protokollierung</li>
+      <li>Die Daten werden vollständig in Ihrem Browser verarbeitet (clientseitig)</li>
+    </ul>
+    <h3>12.2 Mit GitHub gemeinsam genutzte Daten</h3>
+    <ul>
+      <li><strong>Gemeinsam genutzt:</strong> Öffentliche Repository-Metadaten (Name, Beschreibung, Stars, etc.)</li>
+      <li><strong>Nicht gemeinsam genutzt:</strong> Ihre personenbezogenen Daten, Verhalten oder Identität</li>
+    </ul>
+    <h3>12.3 GitHub als Auftragsverarbeiter</h3>
+    <ul>
+      <li><strong>Auftragsverarbeiter:</strong> GitHub Inc., 88 Colin P. Kelly Jr. St, San Francisco, CA 94107, USA</li>
+      <li><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 Buchstabe f DSGVO (berechtigtes Interesse: Portfolio-Transparenz)</li>
+      <li><strong>Datenschutz:</strong> Siehe <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank">GitHub Datenschutzerklärung</a></li>
+    </ul>
+    <h3>12.4 Caching</h3>
+    <p>Repository-Daten werden 24 Stunden in Ihrem Browser gepuffert, um API-Aufrufe zu reduzieren.</p>
+    <h3>12.5 Opt-Out</h3>
+    <p>Sie können Anfragen an <span class="mono">api.github.com</span> mit Browser-Erweiterungen blockieren.</p>
+  </section>
+
   <section id="complaints">
-    <h2>12. Complaints</h2>
-    <p>
-      You have the right to lodge a complaint with a supervisory authority, in particular in the EU Member State of your habitual residence,
-      place of work, or place of the alleged infringement.
-    </p>
-    <p>
-      In Berlin, Germany, the competent authority is:<br>
-      <strong>Berliner Beauftragte für Datenschutz und Informationsfreiheit</strong><br>
-      Friedrichstr. 219, 10969 Berlin<br>
-      <a href="https://www.datenschutz-berlin.de">www.datenschutz-berlin.de</a>
-    </p>
+    <h2>13. Beschwerde</h2>
+    <p>Sie haben das Recht, eine Beschwerde bei einer Aufsichtsbehörde einzureichen:</p>
+    <p><strong>Berlin, Deutschland:</strong><br>
+    Berliner Beauftragte für Datenschutz und Informationsfreiheit<br>
+    Friedrichstr. 219, 10969 Berlin<br>
+    <a href="https://www.datenschutz-berlin.de">www.datenschutz-berlin.de</a></p>
   </section>
 
   <section id="changes">
-    <h2>13. Changes to This Notice</h2>
-    <p>
-      We may update this notice to reflect legal, technical, or operational changes. The "Last updated" date at the top indicates the current version.
-      Material changes will be communicated appropriately (e.g., via website notice).
-    </p>
+    <h2>14. Änderungen dieser Erklärung</h2>
+    <p>Wir können diese Erklärung aktualisieren, um gesetzliche oder technische Änderungen widerzuspiegeln. Das Datum „Letzte Aktualisierung" zeigt die aktuelle Version an.</p>
   </section>
 
   <hr>
 
   <section id="summary" style="background:#f0f8ff; padding:20px; border-radius:8px; margin-top:2rem;">
-    <h3 style="margin-top:0;">Summary for Users</h3>
-    <p><strong>What we collect:</strong></p>
-    <ul style="margin-bottom:1rem;">
-      <li>Your contact details and message (to respond to you)</li>
-      <li>Your IP address for 14 days (spam protection), then automatically anonymized</li>
-      <li>Technical metadata (browser info, timestamps) for security</li>
+    <h3 style="margin-top:0;">Zusammenfassung für Benutzer</h3>
+    <p><strong>Was wir über das Kontaktformular erfassen:</strong></p>
+    <ul>
+      <li>Ihre Kontaktdaten (um zu antworten)</li>
+      <li>IP-Adresse (14 Tage, dann anonymisiert)</li>
+      <li>Technische Metadaten für Sicherheit</li>
     </ul>
-    <p><strong>What we DON'T do:</strong></p>
-    <ul style="margin-bottom:1rem;">
-      <li>We don't use tracking cookies or analytics</li>
-      <li>We don't share data with third parties for marketing</li>
-      <li>We don't keep full IP addresses longer than 14 days</li>
+    <p><strong>Was wir über GitHub API erfassen:</strong></p>
+    <ul>
+      <li>Öffentliche Repository-Metadaten (in Ihrem Browser verarbeitet)</li>
+      <li>Keine personenbezogenen Daten über Sie werden an GitHub gesendet</li>
     </ul>
-    <p><strong>Your rights:</strong> You can request access, correction, or deletion of your data at any time.</p>
+    <p><strong>Ihre Rechte:</strong> Sie können jederzeit Zugang, Berichtigung oder Löschung Ihrer Daten anfordern.</p>
   </section>
 
 </main>
