@@ -186,6 +186,10 @@ h6,
 	margin: 0.75rem auto;
 }
 
+.text-secondary-muted {
+    --bs-text-opacity: 1;
+    color: var(--muted) !important;
+}
 /* ========================================
    5. INTRO SECTION
    ======================================== */
