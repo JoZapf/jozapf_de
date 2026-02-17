@@ -244,6 +244,33 @@ h6,
 	padding-top: 0 !important;
 }
 
+/*
+ * hero-quote Breite = identisch mit col-12/col-md-10/col-lg-8
+ * (gleiche Breite wie die <hr> in der Factsheet-Section)
+ */
+.page-praktikum .hero-quote {
+	width: 66.667%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+@media (max-width: 991.98px) {
+	.page-praktikum .hero-quote {
+		width: 83.333%;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.page-praktikum .hero-quote {
+		width: 100%;
+	}
+}
+
+.page-praktikum .hero-quote::before,
+.page-praktikum .hero-quote::after {
+	width: 100%;
+}
+
 /* ========================================
    6. ICONS & IMAGES
    ======================================== */
