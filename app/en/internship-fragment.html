@@ -139,9 +139,40 @@
 
 				<p class="text-secondary text-center">
 					For questions about the internship, please reach out via the
-					<a href="/en/#contact" class="link-light">contact form</a>.
+					<a href="#contact" class="link-light">contact form</a>.
 				</p>
 
 			</div>
 		</div>
 	</section>
+
+	<!-- GitHub Repositories Section -->
+	<section class="container-xxl py-5 github-repos">
+		<a href="https://github.com/JoZapf" target="_blank" rel="noopener noreferrer" class="github-profile-link">
+			<h2 class="hero-subtitle mb-4" style="color: var(--muted);">
+				<div class="github-heading-wrapper">
+					<span>recent</span>
+					<img src="https://assets.jozapf.de/png/github-mark-white_50x49.png" alt="GitHub" width="50" height="50" loading="lazy">
+					<span>projects</span>
+				</div>
+			</h2>
+		</a>
+
+		<div id="repos-loading" class="text-center">
+			<div class="spinner-border"></div>
+			<p>Loading repositories...</p>
+		</div>
+
+		<div id="repos-error" style="display:none">
+			<p>Unable to load repositories</p>
+		</div>
+
+		<div class="swiper repos-swiper" style="display:none">
+			<div class="swiper-wrapper" id="repos-container"></div>
+			<div class="swiper-button-next"></div>
+			<div class="swiper-button-prev"></div>
+		</div>
+	</section>
+
+	<!-- Contact Form Mount Point -->
+	<div class="contact_form" id="contact-form-anchor"></div>
