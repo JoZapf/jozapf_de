@@ -84,6 +84,18 @@ h6,
 	border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
+.navigation-link-muted {
+    color: var(--muted) !important; font-size: small;
+}
+
+.build-info {
+    color: var(--muted) !important;
+}
+
+.bg-dark {
+    --bs-bg-opacity: 1;
+    background-color: rgb(19 23 26) !important;
+}
 /* ========================================
    4. HERO SECTION
    ======================================== */
