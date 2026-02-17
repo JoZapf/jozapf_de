@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   title: "Pflichtpraktikum Anwendungsentwicklung Berlin 2026 – Jo Zapf | FIAE (IHK)",
   description:
     "Pflichtpraktikum Anwendungsentwicklung (FIAE/IHK) in Berlin ab Juni 2026. " +
-    "960 Stunden · DevOps, Docker, CI/CD, Python, Java, Systemintegration, " +
-    "Zero-Trust-Infrastruktur · Über 20 Jahre Cross-Media- und IT-Erfahrung.",
+    "960 Stunden · Berlin 2026 · IHK Abschlussprojekt, DevOps, Systemintegration, " +
+    "Anwendungsentwicklung · Über 20 Jahre Cross-Media- und IT-Erfahrung.",
   keywords: [
     // Primary
     "Pflichtpraktikum",
