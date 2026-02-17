@@ -61,14 +61,14 @@ const CONTENT = {
   'praktikum-de': {
     title: 'Jo Zapf',
     subtitle: 'Pflichtpraktikum Anwendungsentwicklung',
-    description: '960 Stunden · Berlin · FIAE (IHK) · DevOps, Docker, CI/CD, Python, Java, Systemintegration & Zero-Trust-Infrastruktur',
+    description: '· 960 Stunden · Berlin · FIAE (IHK) · Abschlussprojekt · DevOps · CI/CD · Systemintegration · Zero-Trust ·',
     badge: 'jozapf.de',
     filename: 'og-praktikum-de.png',
   },
   'praktikum-en': {
     title: 'Jo Zapf',
     subtitle: 'Mandatory Internship · Application Development',
-    description: '960 hours · Berlin · FIAE (IHK) · DevOps, Docker, CI/CD, Python, Java, system integration & zero-trust infrastructure',
+    description: '960 hours · Berlin · FIAE (IHK) · final project · DevOps · CI/CD · system integration · zero-trust ·',
     badge: 'jozapf.de',
     filename: 'og-praktikum-en.png',
   },
