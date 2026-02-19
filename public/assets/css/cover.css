@@ -88,6 +88,36 @@ h6,
     color: var(--muted) !important; font-size: small;
 }
 
+/* Internship Notice – Desktop/Tablet (in navbar flex row) */
+.internship-notice {
+	color: var(--muted);
+	font-size: 0.85rem;
+	letter-spacing: 0.01em;
+	min-width: 0; /* allows text-truncate to work inside flex */
+}
+
+.internship-notice:hover {
+	color: var(--text-medium);
+}
+
+/* Internship Notice – Mobile (below nav, scrolls with page) */
+.internship-notice-mobile {
+	background: var(--bg-header);
+}
+
+.internship-notice-mobile a {
+	color: var(--muted);
+}
+
+.internship-notice-mobile a::after {
+	content: " →";
+	font-size: 1em;
+}
+
+.internship-notice-mobile a:hover {
+	color: var(--text-medium);
+}
+
 .build-info {
     color: var(--muted) !important;
 }
