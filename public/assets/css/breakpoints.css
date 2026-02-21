@@ -51,6 +51,10 @@
     padding-bottom: 20px;
   }
 
+  	.jz-skills {
+		padding-left:  0!important;
+		padding-right: 0!important;
+	}
   .hero-quote::before,
   .hero-quote::after {
     width: min(840px, 85vw);

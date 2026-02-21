@@ -17,31 +17,34 @@
 
 				<!-- Internship Notice – Desktop/Tablet -->
 				<a href="/en/pflichtpraktikum-anwendungsentwicklung-berlin/"
-				   class="internship-notice d-none d-md-block text-decoration-none text-truncate me-auto"
+				   class="internship-notice d-none d-md-block text-decoration-none text-truncate flex-grow-1"
 				   title="Internship position wanted for mandatory internship"
 				   target="_self">
 					► Internship position wanted for mandatory internship
 				</a>
 
-				<!-- Language Toggle - Show only German button on English page -->
-				<a href="/" 
-				   class="btn btn-outline-light btn-sm px-2 py-1 rounded-1 lang-toggle lang-toggle-de"
-				   aria-label="Deutsch">
-					<span class="lang-flag-text">DE</span>
-				</a>
-				
-				<!-- Menu Button -->
-				<button
-					class="btn btn-outline-light btn-sm px-2 py-1 rounded-1"
-					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#menuPanel"
-					aria-controls="menuPanel"
-					aria-expanded="false"
-					aria-label="Open navigation menu"
-				>
-					<span class="navbar-toggler-icon small align-middle"></span>
-				</button>
+				<!-- Language Toggle + Menu Button (always together, right-aligned) -->
+				<div class="d-flex align-items-center gap-2 ms-auto">
+					<!-- Language Toggle - Show only German button on English page -->
+					<a href="/" 
+					   class="btn btn-outline-light btn-sm px-2 py-1 rounded-1 lang-toggle lang-toggle-de"
+					   aria-label="Deutsch">
+						<span class="lang-flag-text">DE</span>
+					</a>
+					
+					<!-- Menu Button -->
+					<button
+						class="btn btn-outline-light btn-sm px-2 py-1 rounded-1"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target="#menuPanel"
+						aria-controls="menuPanel"
+						aria-expanded="false"
+						aria-label="Open navigation menu"
+					>
+						<span class="navbar-toggler-icon small align-middle"></span>
+					</button>
+				</div>
 			</div>
 		</nav>
 
