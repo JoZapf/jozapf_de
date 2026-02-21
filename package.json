@@ -1,6 +1,6 @@
 {
   "name": "jozapf-de",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "private": true,
   "scripts": {
     "predev": "powershell -NoProfile -Command \"try { npx kill-port 3000 3002 } catch {} ; Remove-Item .\\.next\\dev\\lock -Force -ErrorAction Ignore ; exit 0\" && node scripts/remove-sourcemap.mjs",
@@ -19,19 +19,19 @@
     "version:major": "node scripts/bump-version.mjs major"
   },
   "dependencies": {
-    "next": "^16.0.7",
+    "next": "^16.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
-    "@types/node": "^20.19.23",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
+    "@types/node": "^20.19.33",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "kill-port": "^2.0.1",
-    "marked": "^17.0.2",
+    "marked": "^17.0.3",
     "satori": "^0.12.1",
-    "tsx": "^4.20.6",
+    "tsx": "^4.21.0",
     "typescript": "5.9.3"
   },
   "engines": {

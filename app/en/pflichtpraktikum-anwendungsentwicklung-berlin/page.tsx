@@ -26,6 +26,8 @@ export const metadata: Metadata = {
     // Primary
     "mandatory internship",
     "application development",
+    "Softwareengineering",
+    "Softwaredevelopment",
     "Berlin",
     // Qualification
     "IT specialist",

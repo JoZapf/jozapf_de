@@ -245,6 +245,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href="/assets/css/fonts.css" rel="stylesheet" />
         <link href="/assets/css/breakpoints.css" rel="stylesheet" />
         <link href="/assets/css/cover.css" rel="stylesheet" />
+        <link href="/assets/css/skills.css" rel="stylesheet" />
         <link href="/assets/css/timeline.css" rel="stylesheet" />
         <link href="/assets/css/vertical_timeline.css" rel="stylesheet" />
         <link href="/assets/css/github_repos.css" rel="stylesheet" />
