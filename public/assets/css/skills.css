@@ -1,0 +1,294 @@
+/**
+ * skills.css – Skills Accordion
+ * Verwendet auf: /pflichtpraktikum-anwendungsentwicklung-berlin/ (DE + EN)
+ * Scoped unter .jz-skills – kein Konflikt mit globalem Stylesheet.
+ *
+ * Variablen orientieren sich an variables.css (--bg-header, --line, --muted, --text-medium)
+ * und werden hier lokal gemappt, damit das Modul auch standalone funktioniert.
+ */
+
+/* ── Box-Model-Reset (scoped) ─────────────────────────────────────────── */
+.jz-skills *,
+.jz-skills *::before,
+.jz-skills *::after {
+	box-sizing: border-box;
+
+}
+
+/* ── Basis ────────────────────────────────────────────────────────────── */
+.jz-skills {
+	--sk-bg:        #13171a;   /* = --bg-header */
+	--sk-bg-hover:  #1a1e22;
+	--sk-bg-active: #1d2124;
+	--sk-panel-bg:  #181c1f;
+	--sk-line:      #6c757d;   /* = --line */
+	--sk-muted:     #adb5bd;   /* = --muted */
+	--sk-text:      #cfd4da;   /* = --text-medium */
+	--sk-star-on:   var(--muted);
+	--sk-star-off:  #2e3336;
+	--sk-divider:   rgba(255, 255, 255, 0.06);
+	--sk-radius:    4px;
+	--sk-ease:      200ms ease;
+	font-size: 		var(--bs-body-font-size);
+	line-height: 1.55;
+}
+
+/* Mobil/Tablet (< 992px): identisch mit .intro (cover.css)
+   padding: calc(var(--bs-gutter-x) * 1.5) – kein Fallback, Bootstrap setzt --bs-gutter-x immer */
+@media (max-width: 991.98px) {
+	.jz-skills {
+		padding-left:  calc(var(--bs-gutter-x) * 1.5);
+		padding-right: calc(var(--bs-gutter-x) * 1.5);
+	}
+	.jz-skills-col {
+		min-width: 280px!important;
+		flex-shrink: 0;
+	}	
+}
+
+/* ── GitHub-Link über Skills ────────────────────────────────────────── */
+.sk-github-link {
+	display: block;
+	color: var(--muted);
+	text-decoration: none;
+	margin-bottom: 0.5rem;
+}
+
+.sk-github-link:hover {
+	color: var(--muted);
+	text-decoration: none;
+}
+
+/* Ausblenden unter 992px – Skills liegt dort direkt über den Repos */
+@media (max-width: 991.98px) {
+	.sk-github-link {
+		display: none !important;
+	}
+}
+
+/* github-heading-wrapper hat global width:100px auf span + flex-shrink:0 (github_repos.css)
+   Das übersteigt col-lg-3 bei 992px (≈230px) → Overflow → Scrollbar → Hero-Asymmetrie.
+   Hier: feste Breiten aufheben, Wrapper auf volle Spaltenbreite setzen. */
+.sk-github-link .github-heading-wrapper {
+	width: 100%;
+	justify-content: center;
+}
+
+.sk-github-link .github-heading-wrapper span {
+	width: auto;
+	flex-shrink: 1;
+}
+
+/* ── Skills-Heading ──────────────────────────────────────────────────── */
+.jz-skills > h2 {
+	color: var(--muted);
+}
+
+@media (max-width: 991.98px) {
+	.jz-skills > h2 {
+		text-align: right !important;
+	}
+}
+
+/* ── Desktop-Layout (≥ 992px) ────────────────────────────────────── */
+/* flex-wrap: nowrap auf der Row erlaubt min-width auf der Skills-Spalte:
+   col-lg-9 schrumpft (min-width: 0), col-lg-3 hält ihre Mindestbreite.
+   Kein Column-Drop, kein Tag-Overflow mehr.
+   Scoped auf .page-praktikum um kein globales col-lg-* zu brechen. */
+@media (min-width: 992px) {
+	.page-praktikum .row {
+		flex-wrap: nowrap;
+	}
+	.page-praktikum .col-lg-3 {
+		min-width: 280px;
+		flex-shrink: 0;
+	}
+	.page-praktikum .col-lg-9 {
+		min-width: 0;
+	}
+	.jz-skills {
+		padding-right: calc(var(--bs-gutter-x) * 1.5);
+	}
+}
+
+/* ── Sticky-Wrapper (nur Desktop) ────────────────────────────────────── */
+@media (min-width: 992px) {
+	.jz-skills-sticky {
+		position: sticky;
+		top: 1.5rem;
+	}
+}
+
+/* ── Tab-Container ────────────────────────────────────────────────────── */
+.jz-skills .sk-tabs {
+	border: 1px solid rgba(255, 255, 255, 0.09);
+	border-radius: var(--sk-radius);
+	overflow: hidden;
+}
+
+.jz-skills .sk-tab {
+	border-bottom: 1px solid var(--sk-divider);
+}
+
+.jz-skills .sk-tab:last-child {
+	border-bottom: none;
+}
+
+/* ── Accordion-Trigger ────────────────────────────────────────────────── */
+.jz-skills .sk-trigger {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	padding: 0.75rem 0.85rem;
+	background: var(--sk-bg);
+	border: none;
+	cursor: pointer;
+	text-align: left;
+	transition: background var(--sk-ease);
+	outline: none;
+}
+
+.jz-skills .sk-trigger:hover {
+	background: var(--sk-bg-hover);
+}
+
+.jz-skills .sk-tab.is-open > .sk-trigger {
+	background: var(--sk-bg-active);
+}
+
+/* Tab-Beschriftung */
+.jz-skills .sk-tab-label {
+	flex: 1;
+	font-size: var(--bs-body-font-size);
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	color: var(--sk-muted);
+}
+
+/* Chevron-Icon */
+.jz-skills .sk-chevron {
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+	color: var(--sk-line);
+	transition: transform var(--sk-ease);
+}
+
+.jz-skills .sk-tab.is-open > .sk-trigger .sk-chevron {
+	transform: rotate(180deg);
+}
+
+/* ── Accordion-Panel (CSS grid collapse) ─────────────────────────────── */
+.jz-skills .sk-panel {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows var(--sk-ease);
+	background: var(--sk-panel-bg);
+}
+
+.jz-skills .sk-tab.is-open > .sk-panel {
+	grid-template-rows: 1fr;
+}
+
+.jz-skills .sk-panel-inner {
+	overflow: hidden;
+	min-width: 0;
+}
+
+.jz-skills .sk-panel-content {
+	min-width: 0;
+	padding: 0.75rem 0.85rem 0.9rem;
+	border-top: 1px solid var(--sk-divider);
+}
+
+/* ── Gruppen-Label (innerhalb Panel) ─────────────────────────────────── */
+.jz-skills .sk-group-label {
+	font-size: 0.85rem;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--sk-line);
+	margin: 0.75rem 0 0.85rem;
+	padding-bottom: 0.25rem;
+	border-bottom: 1px solid var(--sk-divider);
+}
+
+.jz-skills .sk-group-label:first-child {
+	margin-top: 0;
+}
+
+/* ── Skill-Zeile ──────────────────────────────────────────────────────── */
+.jz-skills .sk-row {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.15rem 0;
+	border-bottom: 1px solid var(--sk-divider);
+}
+
+.jz-skills .sk-row:last-of-type {
+	border-bottom: none;
+}
+
+/* Skill-Name */
+.jz-skills .sk-name {
+	flex: 1;
+	font-size: 0.85rem;
+	color: var(--sk-text);
+	letter-spacing: 0.01em;
+	margin: 0.55rem 0 0.55rem;
+}
+
+/* Kontext-Notiz (grau, nach Skill-Name) */
+.jz-skills .sk-note {
+	font-size: 0.85rem;
+	color: var(--sk-line);
+	margin-left: 0.15rem;
+}
+
+/* ── Sterne-Bewertung ─────────────────────────────────────────────────── */
+.jz-skills .sk-stars {
+	display: inline-flex;
+	gap: 3px;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.jz-skills .sk-star {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--sk-star-off);
+}
+
+.jz-skills .sk-star.on {
+	background: var(--sk-star-on);
+}
+
+/* ── Tags ─────────────────────────────────────────────────────────────── */
+.jz-skills .sk-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	margin-top: 0.65rem;
+}
+
+.jz-skills .sk-tag {
+	font-size: 0.58rem;
+	letter-spacing: 0.07em;
+	font-weight: 500;
+	color: var(--sk-muted);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 2px;
+	padding: 0.08rem 0.4rem;
+	text-transform: uppercase;
+}
+
+/* ── Gradient-Trennlinie (zwischen Primär- und Sekundär-Tabs) ─────────── */
+.jz-skills .sk-divider {
+	height: 1px;
+	background: linear-gradient(90deg, transparent, var(--sk-line), transparent);
+	opacity: 0.35;
+}

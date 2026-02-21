@@ -295,7 +295,7 @@ h6,
  * (gleiche Breite wie die <hr> in der Factsheet-Section)
  */
 .page-praktikum .hero-quote {
-	width: 66.667%;
+	width: 100%;
 	margin-left: auto;
 	margin-right: auto;
 }
