@@ -286,3 +286,7 @@
 	background: linear-gradient(90deg, transparent, var(--sk-line), transparent);
 	opacity: 0.35;
 }
+
+.sk-location {
+	color: #c77102!important;
+}
