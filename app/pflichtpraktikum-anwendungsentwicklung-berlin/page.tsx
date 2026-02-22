@@ -105,6 +105,63 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * JSON-LD – Seitenspezifisch: Pflichtpraktikum (DE)
+ *
+ * Verknüpft mit globalen Entitäten aus Root-Layout:
+ * - https://jozapf.de/#person  (Person)
+ * - https://jozapf.de/#website (WebSite)
+ *
+ * Optimiert: 2025-02-22
+ */
+const buildDate = new Date().toISOString().split("T")[0];
+
+const pageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://jozapf.de/pflichtpraktikum-anwendungsentwicklung-berlin/#webpage",
+  url: "https://jozapf.de/pflichtpraktikum-anwendungsentwicklung-berlin/",
+  name: "Pflichtpraktikum Anwendungsentwicklung Berlin 2026 – Jo Zapf",
+  description:
+    "Pflichtpraktikum Anwendungsentwicklung (FIAE/IHK) in Berlin ab Juni 2026. " +
+    "960 Stunden · DevOps, Docker, CI/CD, Python, Java, Systemintegration, " +
+    "Zero-Trust-Infrastruktur · Über 20 Jahre Cross-Media- und IT-Erfahrung.",
+  inLanguage: "de",
+  isPartOf: { "@id": "https://jozapf.de/#website" },
+  about: { "@id": "https://jozapf.de/#person" },
+  mainEntity: { "@id": "https://jozapf.de/#person" },
+  datePublished: "2025-02-16",
+  dateModified: buildDate,
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: "https://assets.jozapf.de/og/og-praktikum-de.png",
+    width: 1200,
+    height: 630,
+    caption: "Jo Zapf – Pflichtpraktikum Anwendungsentwicklung Berlin",
+  },
+  breadcrumb: {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Startseite",
+        item: "https://jozapf.de/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Pflichtpraktikum Anwendungsentwicklung",
+        item: "https://jozapf.de/pflichtpraktikum-anwendungsentwicklung-berlin/",
+      },
+    ],
+  },
+  significantLink: [
+    "https://github.com/JoZapf",
+    "https://www.linkedin.com/in/jo-zapf/",
+  ],
+} as const;
+
 function readFragment(name: string) {
   const filePath = path.join(process.cwd(), "app", name);
   if (!fs.existsSync(filePath)) {
@@ -120,6 +177,11 @@ export default function PraktikumPage() {
 
   return (
     <>
+      {/* Seitenspezifisches JSON-LD (ergänzt globale Schemas aus Root-Layout) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+      />
       <div dangerouslySetInnerHTML={{ __html: header }} />
       <main id="main-content" className="page-praktikum" dangerouslySetInnerHTML={{ __html: main }} />
       <div dangerouslySetInnerHTML={{ __html: footer }} />
