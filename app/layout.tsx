@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   description:
     "Webentwicklung und Anwendungsentwicklung aus Berlin. " +
     "Über 25 Jahre Erfahrung in Cross-Media-Design, Fotografie und IT. " +
-    "Spezialisiert auf Python, Java, Docker, CI/CD und sichere Cloud-Infrastruktur.",
+    "Spezialisierend auf Python, Java, Docker, CI/CD und sichere Cloud-Infrastruktur.",
   keywords: [
     "Webentwicklung",
     "Anwendungsentwicklung",

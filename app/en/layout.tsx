@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     "Web development and application development from Berlin. " +
     "Over 25 years of experience in cross-media design, photography and IT. " +
-    "Specialized in Python, Java, Docker, CI/CD and secure cloud infrastructure.",
+    "Specializing in Python, Java, Docker, CI/CD and secure cloud infrastructure.",
   alternates: {
     canonical: "/en/",
     languages: {
