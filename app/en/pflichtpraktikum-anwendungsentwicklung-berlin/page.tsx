@@ -106,6 +106,63 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * JSON-LD – Page-specific: Mandatory Internship (EN)
+ *
+ * References global entities from root layout:
+ * - https://jozapf.de/#person  (Person)
+ * - https://jozapf.de/#website (WebSite)
+ *
+ * Optimised: 2025-02-22
+ */
+const buildDate = new Date().toISOString().split("T")[0];
+
+const pageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://jozapf.de/en/pflichtpraktikum-anwendungsentwicklung-berlin/#webpage",
+  url: "https://jozapf.de/en/pflichtpraktikum-anwendungsentwicklung-berlin/",
+  name: "Mandatory Internship Application Development Berlin 2026 – Jo Zapf",
+  description:
+    "Mandatory internship in application development (FIAE/IHK) in Berlin from June 2026. " +
+    "960 hours · DevOps, Docker, CI/CD, Python, Java, system integration, " +
+    "zero-trust infrastructure · 20+ years of cross-media and IT experience.",
+  inLanguage: "en",
+  isPartOf: { "@id": "https://jozapf.de/#website" },
+  about: { "@id": "https://jozapf.de/#person" },
+  mainEntity: { "@id": "https://jozapf.de/#person" },
+  datePublished: "2025-02-16",
+  dateModified: buildDate,
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: "https://assets.jozapf.de/og/og-praktikum-en.png",
+    width: 1200,
+    height: 630,
+    caption: "Jo Zapf – Mandatory Internship Application Development Berlin",
+  },
+  breadcrumb: {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://jozapf.de/en/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Mandatory Internship Application Development",
+        item: "https://jozapf.de/en/pflichtpraktikum-anwendungsentwicklung-berlin/",
+      },
+    ],
+  },
+  significantLink: [
+    "https://github.com/JoZapf",
+    "https://www.linkedin.com/in/jo-zapf/",
+  ],
+} as const;
+
 function readFragment(name: string) {
   const filePath = path.join(process.cwd(), "app", "en", name);
   if (!fs.existsSync(filePath)) {
@@ -121,6 +178,11 @@ export default function InternshipPage() {
 
   return (
     <>
+      {/* Page-specific JSON-LD (supplements global schemas from root layout) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
+      />
       <div dangerouslySetInnerHTML={{ __html: header }} />
       <main id="main-content" className="page-praktikum" dangerouslySetInnerHTML={{ __html: main }} />
       <div dangerouslySetInnerHTML={{ __html: footer }} />
