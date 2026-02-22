@@ -49,6 +49,7 @@
 	color: var(--muted);
 	text-decoration: none;
 	margin-bottom: 0.5rem;
+	padding-top: 0.85rem;
 }
 
 .sk-github-link:hover {
@@ -69,11 +70,13 @@
 .sk-github-link .github-heading-wrapper {
 	width: 100%;
 	justify-content: center;
+	font-size: 1.5rem;
 }
 
 .sk-github-link .github-heading-wrapper span {
 	width: auto;
 	flex-shrink: 1;
+	padding-bottom:-1rem;
 }
 
 /* ── Skills-Heading ──────────────────────────────────────────────────── */
