@@ -154,6 +154,7 @@
 
 .jz-skills .sk-tab.is-open > .sk-trigger {
 	background: var(--sk-bg-active);
+	border: 1px solid #c77102 !important;
 }
 
 /* Tab-Beschriftung */
@@ -197,6 +198,7 @@
 .jz-skills .sk-panel-content {
 	padding: 0.75rem 0.85rem 0.9rem;
 	border-top: 1px solid var(--sk-divider);
+	border: 1px solid #c77102 !important;
 }
 
 /* ── Gruppen-Label (innerhalb Panel) ─────────────────────────────────── */
