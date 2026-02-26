@@ -1,0 +1,15 @@
+# Jo Zapf – Web Development & Application Development | Berlin
+
+> Aspiring IT specialist for application development (Fachinformatiker für Anwendungsentwicklung, FIAE/IHK) with 25+ years of cross-media, IT infrastructure and web/CMS experience. Based in Berlin. Currently seeking a mandatory internship (Pflichtpraktikum) in application development starting June 2026.
+
+## Internship (Pflichtpraktikum)
+- [Pflichtpraktikum Anwendungsentwicklung Berlin (DE)](https://jozapf.de/pflichtpraktikum-anwendungsentwicklung-berlin/): Mandatory internship page with fact sheet, profile, skills and contact — German version
+- [Mandatory Internship Application Development Berlin (EN)](https://jozapf.de/en/pflichtpraktikum-anwendungsentwicklung-berlin/): Mandatory internship page with fact sheet, profile, skills and contact — English version
+
+## Main
+- [Startseite (DE)](https://jozapf.de/): Portfolio, experience timeline, skills and services — German version
+- [Home (EN)](https://jozapf.de/en/): Portfolio, experience timeline, skills and services — English version
+
+## Links
+- [GitHub](https://github.com/JoZapf)
+- [LinkedIn](https://www.linkedin.com/in/jo-zapf/)
