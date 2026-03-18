@@ -270,6 +270,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
 
       <body className="d-flex flex-column min-vh-100 text-bg-dark">
+        {/* tsParticles Background – hinter allem Content */}
+        <div id="tsparticles" aria-hidden="true"></div>
+
         <LangAttribute />
         <HeaderInfo />
         {children}
@@ -414,6 +417,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         {/* Privacy Modal – global handler for data-privacy-url links */}
         <Script src="/assets/js/modal-handler.js" strategy="lazyOnload" />
+
+        {/* tsParticles – Vendor-Lib (Self-Hosted, v3.9.1) */}
+        <Script src="/assets/js/tsparticles.slim.bundle.min.js" strategy="lazyOnload" />
+
+        {/* tsParticles – Init (Partikel-Hintergrundanimation) */}
+        <Script src="/assets/js/particles-init.js" strategy="lazyOnload" />
 
       </body>
     </html>
