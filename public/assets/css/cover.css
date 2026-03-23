@@ -245,6 +245,19 @@ h6,
 	padding-left: calc(var(--bs-gutter-x) * 1.5);
 }
 
+/* Intro without horizontal padding – for row/col layouts flush with container edge */
+.intro-columns {
+	border-bottom: 1px solid var(--line);
+	padding-top: var(--section-padding-top);
+	padding-bottom: var(--section-padding-bottom);
+	color: var(--muted);
+	width: 100%;
+}
+
+.intro-columns p {
+	text-align: left;
+}
+
 .intro li {
 	text-align: left;
 	padding: 0.25rem 0;
