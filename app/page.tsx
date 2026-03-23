@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 
 function readFragment(name: string) {
   const candidates = [
-    path.join(process.cwd(), "app", "(marketing)", name), // bevorzugter Ort
-    path.join(process.cwd(), "app", name),                // Fallback: direkt unter app/
+    path.join(process.cwd(), "app", "(marketing)", name),
+    path.join(process.cwd(), "app", name),
   ];
 
   for (const p of candidates) {

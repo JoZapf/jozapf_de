@@ -61,7 +61,8 @@
     padding: 0 15vw;
   }
 
-  .intro {
+  .intro,
+  .intro-columns {
     padding-top: 60px !important;
     padding-bottom: 2rem;
     padding-right: calc(var(--bs-gutter-x) * 0.5);
@@ -188,7 +189,8 @@
       width: min(650px, 95vw)!important;
   }
 
-  .intro {
+  .intro,
+  .intro-columns {
       padding-right: 0px !important; 
       padding-left: 0px !important; 
   }
@@ -569,10 +571,16 @@
     padding: 0 15vw;
   }
 
-  .intro {
+  .intro,
+  .intro-columns {
     padding-top: 4rem;
     padding-bottom: 20px;
     width: auto;
+  }
+
+  .intro-columns {
+    padding-right: calc(var(--bs-gutter-x) * 1.5);
+    padding-left: calc(var(--bs-gutter-x) * 1.5);
   }
 
   /* Smaller Icons for Tablet */
