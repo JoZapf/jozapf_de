@@ -322,7 +322,7 @@
     left: calc(var(--bs-gutter-x) * 0.5);
     right: calc(var(--bs-gutter-x) * 0.5);
     height: 0.75rem;
-    background-color: var(--line);
+    background-color: var(--muted);
   }
 
   /* timeline.css - Horizontal Timeline Layout */
@@ -623,7 +623,7 @@
     left: calc(var(--bs-gutter-x) * 0.5);
     right: calc(var(--bs-gutter-x) * 0.5);
     height: 0.75rem;
-    background-color: var(--line);
+    background-color: var(--muted);
   }
 
   /* Smaller Icons for Tablet */
