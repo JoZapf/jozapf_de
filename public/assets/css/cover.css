@@ -207,7 +207,10 @@ h6,
 	margin: 0.5rem 0;
 }
 
-/* Hero Quote */
+/* Hero Quote
+   align-self: stretch overrides parent's align-items: center
+   so .hero-quote fills the full flex container width.
+   Responsive margin offsets in breakpoints.css match .intro-columns padding. */
 .hero-quote {
 	font-weight: 300;
 	font-size: clamp(1rem, 0.9vw + 0.6rem, 1.4rem);
@@ -216,6 +219,7 @@ h6,
 	position: relative;
 	background-color: var(--muted);
 	letter-spacing: 0.2em;
+	align-self: stretch;
 }
 
 .hero-quote::before,
@@ -224,8 +228,8 @@ h6,
 	display: block;
 	height: 3px;
 	background: var(--bg-jz);
-	width: min(650px, 80vw);
-	margin: 0.75rem auto;
+	width: 100%;
+	margin: 0.75rem 0;
 }
 
 .text-secondary-muted {
