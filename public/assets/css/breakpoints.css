@@ -6,6 +6,7 @@
  * - 576px:    Mobile (Small devices)
  * - 650px:    Mobile to Tablet transition
  * - 651px:    Tablet minimum
+ * - 767.98px: Below Bootstrap md (intro-columns accent bar hidden)
  * - 1400px:   Desktop (Timeline horizontal switch)
  * - 1399.98px: Below Desktop
  *
@@ -283,6 +284,20 @@
 }
 
 /* ========================================
+   INTRO COLUMNS: Accent bar hidden below md
+   col-md-4 stacks at 767.98px → bar no longer meaningful
+   ======================================== */
+@media (max-width: 767.98px) {
+  .intro-columns .col-md-4::before {
+    display: none;
+  }
+  .intro-columns .col-md-4 {
+    padding-bottom: 0;
+    padding-left: calc(var(--bs-gutter-x) * 0.5);
+  }
+}
+
+/* ========================================
    DESKTOP: 1400px (Timeline Horizontal)
    From: cover.css + timeline.css
    ======================================== */
@@ -294,6 +309,20 @@
 
   .vertical_timeline {
     display: none !important;
+  }
+
+  /* Intro columns: accent bar BOTTOM */
+  .intro-columns .col-md-4 {
+    padding-bottom: 1.25rem;
+  }
+  .intro-columns .col-md-4::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: calc(var(--bs-gutter-x) * 0.5);
+    right: calc(var(--bs-gutter-x) * 0.5);
+    height: 0.75rem;
+    background-color: var(--line);
   }
 
   /* timeline.css - Horizontal Timeline Layout */
@@ -581,6 +610,20 @@
   .intro-columns {
     padding-right: calc(var(--bs-gutter-x) * 1.5);
     padding-left: calc(var(--bs-gutter-x) * 1.5);
+  }
+
+  /* Intro columns: accent bar BOTTOM (768px–1399px, cols still side-by-side) */
+  .intro-columns .col-md-4 {
+    padding-bottom: 1.25rem;
+  }
+  .intro-columns .col-md-4::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: calc(var(--bs-gutter-x) * 0.5);
+    right: calc(var(--bs-gutter-x) * 0.5);
+    height: 0.75rem;
+    background-color: var(--line);
   }
 
   /* Smaller Icons for Tablet */
