@@ -258,6 +258,12 @@ h6,
 	text-align: left;
 }
 
+/* Intro columns: positioning context for accent bar (::before)
+   Responsive bar direction controlled in breakpoints.css */
+.intro-columns .col-md-4 {
+	position: relative;
+}
+
 .intro li {
 	text-align: left;
 	padding: 0.25rem 0;
