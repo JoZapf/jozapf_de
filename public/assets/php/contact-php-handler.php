@@ -12,8 +12,22 @@
  * ✅ Comprehensive sanitization
  * 
  * @author JoZapf
- * @version 4.0.0
- * @date 2025-10-04
+ * @version 4.3.0
+ * @date 2026-03-25
+ * 
+ * Changelog v4.3.0 (2026-03-25):
+ * - NF-02 FIX: Bestätigungsmail Rate-Limit (max 1 pro E-Mail pro 24h)
+ *
+ * Changelog v4.2.0 (2026-03-24):
+ * - KF-03 FIX: CSRF-Token (Session-basiert, One-Time-Use)
+ * - HF-01 FIX: Captcha-Lösung in Session statt Hidden-Field
+ * - NF-01 FIX: Session-Härtung (httponly, secure, samesite)
+ * - GET ?init=1 Endpoint für CSRF-Token + Captcha-Aufgabe
+ * - Methoden-Guard: Nur POST + GET?init erlaubt
+ * - Migrations-Modus für CSRF + Captcha (Frontend-Kompatibilität)
+ *
+ * Changelog v4.1.0 (2026-03-24):
+ * - KF-02 FIX: CORS Wildcard * durch Domain-Lock ersetzt
  */
 
 declare(strict_types=1);
@@ -21,15 +35,30 @@ declare(strict_types=1);
 // ============================================================================
 // 0) SESSION START
 // ============================================================================
+// NF-01 FIX: Session-Härtung
+// cookie_httponly: JavaScript kann Session-Cookie nicht lesen (XSS-Schutz)
+// cookie_secure:   Cookie nur über HTTPS gesendet (kein Klartext-Leak)
+// cookie_samesite: Cookie wird nicht bei Cross-Site-Requests gesendet (CSRF-Schutz)
+// use_strict_mode: Lehnt uninitialisierte Session-IDs ab (Session-Fixation-Schutz)
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_secure'   => true,
+        'cookie_samesite' => 'Strict',
+        'use_strict_mode' => true,
+    ]);
 }
 
 // ============================================================================
 // 1) HEADERS & ERROR HANDLING
 // ============================================================================
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+// KF-02 FIX: CORS auf eigene Domain einschränken (vorher: Wildcard *)
+// Wildcard erlaubte Cross-Origin-Requests von jeder Website → Spam-Relay-Risiko.
+// Hardcoded, da env() hier noch nicht geladen ist (load_env kommt in Abschnitt 3).
+// Für Staging: ALLOWED_ORIGIN in .env.prod setzen → Override nach load_env() unten.
+$allowedOrigin = 'https://jozapf.de';
+header('Access-Control-Allow-Origin: ' . $allowedOrigin);
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
 
@@ -130,6 +159,42 @@ function env(string $key, ?string $default = null): ?string {
 }
 
 // ============================================================================
+// 2b) FORM INIT ENDPOINT — KF-03 + HF-01 (CSRF-Token + Captcha)
+// ============================================================================
+// GET ?init=1 liefert einen CSRF-Token und eine Captcha-Aufgabe.
+// Beide werden in der PHP-Session gespeichert (nicht im HTML!).
+// Das Frontend ruft diesen Endpoint beim Laden des Formulars auf.
+//
+// Warum hier (vor Config/PHPMailer/Validator)?
+// → Ein leichtgewichtiger GET-Request braucht keine DB, kein SMTP, keinen
+//   Validator. Session + CORS-Headers reichen. Spart Serverressourcen.
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['init'])) {
+    // CSRF-Token generieren (KF-03)
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    
+    // Captcha generieren (HF-01: Lösung NUR in Session, nicht im HTML)
+    $captchaA = random_int(1, 20);
+    $captchaB = random_int(1, 20);
+    $_SESSION['captcha_solution'] = $captchaA + $captchaB;
+    
+    json_success('Form initialized', [
+        'csrf_token' => $_SESSION['csrf_token'],
+        'captcha'    => [
+            'question' => "{$captchaA} + {$captchaB} = ?",
+            'a'        => $captchaA,
+            'b'        => $captchaB
+        ]
+    ]);
+    // json_success() ruft exit() auf — hier endet der GET-Request.
+}
+
+// Ab hier: Nur noch POST-Requests (Formular-Submit)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    json_error('Method not allowed. Use POST to submit the form, GET ?init=1 to initialize.', 405);
+}
+
+// ============================================================================
 // 3) CONFIGURATION
 // ============================================================================
 
@@ -149,6 +214,12 @@ if (!is_dir($dataDir)) {
 // Load .env.prod
 $envFile = $handlerDir . '/.env.prod';
 load_env($envFile);
+
+// KF-02: CORS Override aus .env.prod (für Staging/andere Domains)
+$envOrigin = env('ALLOWED_ORIGIN');
+if ($envOrigin) {
+    header('Access-Control-Allow-Origin: ' . $envOrigin);
+}
 
 // PHPMailer Autoload
 $vendorAutoload = $projectRoot . '/vendor/autoload.php';
@@ -207,6 +278,34 @@ if ($validation['blocked']) {
 }
 
 // ============================================================================
+// 4b) CSRF VALIDATION (KF-03)
+// ============================================================================
+// Prüft ob der CSRF-Token aus dem POST mit dem Session-Token übereinstimmt.
+// hash_equals() verhindert Timing-Angriffe beim Vergleich.
+// Nach erfolgreicher Prüfung wird der Token gelöscht (One-Time-Use).
+//
+// MIGRATIONS-MODUS: Während der Übergangsphase (Frontend noch ohne CSRF)
+// wird der Check nur ausgeführt, wenn ein Token in der Session existiert.
+// Nach Frontend-Deployment diese Bedingung entfernen und CSRF erzwingen!
+
+$csrfToken = $_POST['csrf_token'] ?? '';
+$sessionCsrf = $_SESSION['csrf_token'] ?? '';
+
+if (!empty($sessionCsrf)) {
+    // Session hat einen CSRF-Token → Validierung erzwingen
+    if (empty($csrfToken) || !hash_equals($sessionCsrf, $csrfToken)) {
+        json_error('Invalid security token. Please reload the page.', 403);
+    }
+    // One-Time-Use: Token nach erfolgreicher Validierung löschen
+    unset($_SESSION['csrf_token']);
+}
+// TODO (nach Frontend-Deploy): Migrations-Modus entfernen, immer erzwingen:
+// if (empty($csrfToken) || empty($sessionCsrf) || !hash_equals($sessionCsrf, $csrfToken)) {
+//     json_error('Invalid security token. Please reload the page.', 403);
+// }
+// unset($_SESSION['csrf_token']);
+
+// ============================================================================
 // 5) INPUT SANITIZATION & FIELD VALIDATION
 // ============================================================================
 
@@ -220,7 +319,15 @@ $message   = sanitize_text($_POST['message'] ?? '', 5000);
 
 // Captcha
 $captchaAnswer = trim($_POST['captchaAnswer'] ?? '');
-$captchaSolution = trim($_POST['captcha_answer'] ?? '');
+// HF-01 FIX: Lösung aus Session lesen, NICHT aus POST-Hidden-Field.
+// Vorher: $captchaSolution = trim($_POST['captcha_answer'] ?? '');
+// Das Hidden-Field war im HTML sichtbar → Bot konnte Lösung auslesen.
+$captchaSolution = $_SESSION['captcha_solution'] ?? null;
+// MIGRATIONS-FALLBACK: Altes Frontend sendet Lösung noch als Hidden-Field.
+// TODO (nach Frontend-Deploy): Diese 3 Zeilen entfernen!
+if ($captchaSolution === null && !empty($_POST['captcha_answer'])) {
+    $captchaSolution = (int) trim($_POST['captcha_answer']);
+}
 
 // Privacy checkbox
 $privacyAccepted = isset($_POST['privacy']) && $_POST['privacy'] === 'on';
@@ -249,7 +356,7 @@ if (!$privacyAccepted) {
     json_error('You must accept the privacy policy.', 422, ['fields' => ['privacy' => false]]);
 }
 
-// --- CAPTCHA SERVER-SIDE VALIDATION ---
+// --- CAPTCHA SERVER-SIDE VALIDATION (HF-01: Session-basiert) ---
 
 if (empty($captchaAnswer)) {
     json_error('Please solve the security question.', 422, ['fields' => ['captchaAnswer' => false]]);
@@ -259,13 +366,16 @@ if (!is_numeric($captchaAnswer)) {
     json_error('Security answer must be a number.', 422, ['fields' => ['captchaAnswer' => false]]);
 }
 
-if (empty($captchaSolution)) {
-    json_error('Security question expired. Please refresh the page.', 422, ['fields' => ['captchaAnswer' => false]]);
+if ($captchaSolution === null) {
+    json_error('Security question expired. Please reload the page.', 422, ['fields' => ['captchaAnswer' => false]]);
 }
 
 if ((int)$captchaAnswer !== (int)$captchaSolution) {
     json_error('Security answer is incorrect.', 422, ['fields' => ['captchaAnswer' => false]]);
 }
+
+// HF-01: One-Time-Use — Captcha-Lösung nach Prüfung löschen
+unset($_SESSION['captcha_solution']);
 
 // --- FORMAT VALIDATION ---
 
@@ -445,8 +555,33 @@ try {
 }
 
 // ============================================================================
+// 7b) NF-02 FIX: CONFIRMATION MAIL RATE-LIMIT (max 1 per email per 24h)
+// Verhindert Missbrauch als Spam-Relay über die Bestätigungsmail.
+// E-Mail-Adresse wird als SHA-256-Hash gespeichert (DSGVO-konform).
+// ============================================================================
+
+$confirmRateLimitFile = $dataDir . '/confirm_ratelimit.json';
+$confirmLimits = json_decode(@file_get_contents($confirmRateLimitFile) ?: '{}', true) ?: [];
+$emailHash = hash('sha256', strtolower(trim($email)));
+$cutoff24h = time() - 86400;
+
+// Alte Einträge bereinigen (älter als 24h)
+$confirmLimits = array_filter($confirmLimits, fn($t) => $t > $cutoff24h);
+
+$skipConfirmation = false;
+if (isset($confirmLimits[$emailHash]) && $confirmLimits[$emailHash] > $cutoff24h) {
+    $skipConfirmation = true;
+    error_log('[CONTACT FORM] Confirmation mail rate-limited for ' . $email . ' (already sent within 24h)');
+} else {
+    $confirmLimits[$emailHash] = time();
+    file_put_contents($confirmRateLimitFile, json_encode($confirmLimits), LOCK_EX);
+}
+
+// ============================================================================
 // 8) SEND CONFIRMATION TO USER
 // ============================================================================
+
+if (!$skipConfirmation) {
 
 $confirmMail = new PHPMailer(true);
 
@@ -543,15 +678,21 @@ try {
     // Don't fail the whole request if confirmation fails
 }
 
+} // Ende NF-02: if (!$skipConfirmation)
+
 // ============================================================================
 // 9) SUCCESS RESPONSE
 // ============================================================================
 
+$confirmMessage = $skipConfirmation
+    ? 'Thank you for your message! We will get back to you shortly.'
+    : 'Thank you for your message! We will get back to you shortly. A confirmation email has been sent to ' . $email;
+
 json_success(
-    'Thank you for your message! We will get back to you shortly. A confirmation email has been sent to ' . $email,
+    $confirmMessage,
     [
         'timestamp' => date('c'),
         'spamScore' => $validation['spamScore'],
-        'confirmationSent' => $confirmSent ?? false
+        'confirmationSent' => ($confirmSent ?? false) && !$skipConfirmation
     ]
 );

@@ -2,48 +2,20 @@
 /**
  * Unified Dashboard - Statistics + Blocklist Management
  * Protected with HMAC token
- * @version 2025.10.12
+ * 
+ * @version 2.0.0
+ * @date 2026-03-24
+ * 
+ * Changelog v2.0.0 (2026-03-24):
+ * - HF-03 FIX: CSRF-Token für alle POST-Formulare
+ * - MF-03 FIX: Lokale env()/verifyToken() durch helpers.php ersetzt
+ * 
+ * Changelog v1.0.0 (2025-10-12):
+ * - Initial: Unified Dashboard mit Tabs
  */
 
-// Token verification & robust env loader
-function env($key, $default = null) {
-    // 1) prefer process environment (getenv / $_ENV)
-    $v = getenv($key);
-    if ($v !== false && $v !== '') return $v;
-    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return $_ENV[$key];
-
-    // 2) fallback candidates (support .app.env in webroot, assets/php, legacy .env.prod)
-    $candidates = [
-        __DIR__ . '/.env.prod',
-        __DIR__ . '/.app.env',
-        __DIR__ . '/app.env',
-        dirname(__DIR__) . '/.app.env',       // project webroot
-        dirname(__DIR__) . '/app.env',
-        dirname(__DIR__) . '/.env',
-    ];
-
-    foreach ($candidates as $envFile) {
-        if (!file_exists($envFile)) continue;
-        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if ($line === '' || $line[0] === '#') continue;
-            if (strpos($line, '=') === false) continue;
-            [$k, $val] = explode('=', $line, 2);
-            if (trim($k) === $key) return trim($val, " \t\n\r\0\x0B\"'");
-        }
-    }
-    return $default;
-}
-
-function verifyToken($token, $secret) {
-    if (empty($token) || strpos($token, '.') === false) return false;
-    [$payload, $signature] = explode('.', $token, 2);
-    $expected = hash_hmac('sha256', $payload, $secret);
-    if (!hash_equals($expected, $signature)) return false;
-    $data = json_decode(base64_decode($payload), true);
-    return $data && isset($data['exp']) && $data['exp'] >= time();
-}
+// MF-03 FIX: Zentrale Hilfsfunktionen
+require_once __DIR__ . '/helpers.php';
 
 $secret = env('DASHBOARD_SECRET');
 $token = $_COOKIE['dashboard_token'] ?? '';
@@ -60,11 +32,32 @@ require_once __DIR__ . '/BlocklistManager.php';
 $logger = new ExtendedLogger(__DIR__ . '/logs');
 $blocklist = new BlocklistManager(__DIR__ . '/data');
 
+// HF-03 FIX: CSRF-Token für Dashboard-Formulare
+if (session_status() === PHP_SESSION_NONE) {
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_secure'   => true,
+        'cookie_samesite' => 'Strict',
+    ]);
+}
+if (empty($_SESSION['dashboard_csrf'])) {
+    $_SESSION['dashboard_csrf'] = bin2hex(random_bytes(32));
+}
+
 // Handle actions
 $message = '';
 $messageType = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // HF-03: CSRF-Token validieren
+    $postedCsrf = $_POST['dashboard_csrf'] ?? '';
+    if (!hash_equals($_SESSION['dashboard_csrf'], $postedCsrf)) {
+        $message = 'Invalid security token. Please reload the page.';
+        $messageType = 'error';
+    } else {
+    // Token rotieren nach erfolgreicher Validierung
+    $_SESSION['dashboard_csrf'] = bin2hex(random_bytes(32));
+
     $action = $_POST['action'] ?? '';
     
     try {
@@ -132,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "Error: " . $e->getMessage();
         $messageType = 'error';
     }
+    } // Ende HF-03 CSRF else-Block
 }
 
 // Get data
@@ -635,6 +629,7 @@ $blockStats = $blocklist->getStats();
                                 </td>
                                 <td>
                                     <form method="POST" style="display: inline;">
+                                        <input type="hidden" name="dashboard_csrf" value="<?= htmlspecialchars($_SESSION['dashboard_csrf']) ?>">
                                         <input type="hidden" name="action" value="unblock_ip">
                                         <input type="hidden" name="ip" value="<?= htmlspecialchars($entry['ip']) ?>">
                                         <button type="submit" class="btn btn-success btn-small" onclick="return confirm('Unblock this IP?')">
@@ -679,6 +674,7 @@ $blockStats = $blocklist->getStats();
                                 <td class="timestamp"><?= date('Y-m-d H:i', strtotime($entry['addedAt'])) ?></td>
                                 <td>
                                     <form method="POST" style="display: inline;">
+                                        <input type="hidden" name="dashboard_csrf" value="<?= htmlspecialchars($_SESSION['dashboard_csrf']) ?>">
                                         <input type="hidden" name="action" value="remove_whitelist">
                                         <input type="hidden" name="ip" value="<?= htmlspecialchars($entry['ip']) ?>">
                                         <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remove from whitelist?')">
@@ -707,6 +703,7 @@ $blockStats = $blocklist->getStats();
             </div>
             
             <form method="POST">
+                <input type="hidden" name="dashboard_csrf" value="<?= htmlspecialchars($_SESSION['dashboard_csrf']) ?>">
                 <input type="hidden" name="action" value="block_ip">
                 <input type="hidden" name="ip" id="blockIP">
                 <input type="hidden" name="userAgent" id="blockUserAgent">
@@ -746,6 +743,7 @@ $blockStats = $blocklist->getStats();
             </div>
             
             <form method="POST">
+                <input type="hidden" name="dashboard_csrf" value="<?= htmlspecialchars($_SESSION['dashboard_csrf']) ?>">
                 <input type="hidden" name="action" value="whitelist_ip">
                 
                 <div class="form-group">

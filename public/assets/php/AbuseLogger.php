@@ -12,8 +12,11 @@
  * - DSGVO-konform (Anonymisierung möglich)
  * 
  * @author JoZapf
- * @version 1.0.0
- * @date 2025-10-02
+ * @version 1.1.0
+ * @date 2026-03-25
+ * 
+ * Changelog v1.1.0 (2026-03-25):
+ * - MF-02 FIX: getClientIP() gehärtet — X-Forwarded-For/X-Real-IP entfernt (spoofbar auf Shared Hosting)
  */
 
 class AbuseLogger
@@ -294,30 +297,24 @@ class AbuseLogger
     }
     
     /**
-     * Holt Client-IP (auch hinter Proxies)
+     * Holt Client-IP (gehärtet, MF-02 FIX)
+     * 
+     * Auf Shared Hosting (Hetzner) ohne vertrauenswürdigen Reverse-Proxy:
+     * - X-Forwarded-For und X-Real-IP sind client-spoofbar → ignorieren
+     * - Nur REMOTE_ADDR ist verlässlich (vom Webserver gesetzt)
+     * - Cloudflare-Header nur prüfen wenn CF aktiviert ist (Zukunftssicherung)
+     * 
+     * @version 2.0.0 (2026-03-25) MF-02 FIX
      */
     private function getClientIP(): string
     {
-        $headers = [
-            'HTTP_CF_CONNECTING_IP', // Cloudflare
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_REAL_IP',
-            'REMOTE_ADDR'
-        ];
-        
-        foreach ($headers as $header) {
-            if (!empty($_SERVER[$header])) {
-                $ip = $_SERVER[$header];
-                // Bei X-Forwarded-For kann es mehrere IPs geben
-                if (strpos($ip, ',') !== false) {
-                    $ip = trim(explode(',', $ip)[0]);
-                }
-                if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                    return $ip;
-                }
-            }
+        // Cloudflare (nur wenn aktiviert — Header wird vom CF-Edge gesetzt, nicht vom Client)
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])
+            && filter_var($_SERVER['HTTP_CF_CONNECTING_IP'], FILTER_VALIDATE_IP)) {
+            return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
         
+        // Shared Hosting: Direkt REMOTE_ADDR — X-Forwarded-For ist spoofbar!
         return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
     

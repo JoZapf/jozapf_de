@@ -1,60 +1,94 @@
-#Optional 1 RegEx files match
-#<FilesMatch "^\.(env|env\.prod|env\.local)$|^(blocklist|AbuseLogger\.php)$">
-#  Require all denied
-#</FilesMatch>
-#php_flag display_errors Off
+# =============================================================================
+# .htaccess — Contact Form Security Hardening
+# =============================================================================
+# Version:  2.0.0
+# Date:     2026-03-24
+# Basis:    Security-Audit + SECURITY-FIX-KONZEPT.md (Phase 1)
+# Fixes:    HF-04 (Diagnose-Endpunkte), MF-01 (.htaccess-Lücken),
+#           MF-05 (.env.compose), + PHP-Klassen-Schutz
+# =============================================================================
+#
+# CHANGELOG:
+#   v2.0.0 (2026-03-24) — Security Hardening
+#     - Diagnose-Endpunkte gesperrt (HF-04)
+#     - Alle env-Dateien geschützt inkl. app.env, .env.compose (MF-01/MF-05)
+#     - PHP-Klassen vor direktem HTTP-Aufruf geschützt
+#     - Markdown-Dateien gesperrt (enthalten Server-Pfade)
+#     - Options -Indexes hinzugefügt
+#     - Alte auskommentierte Varianten entfernt
+#
+#   v1.0.0 (2025-10-04) — Initial
+#     - Basis-Schutz für .env-Dateien
+#     - AbuseLogger.php gesperrt
+#     - Log-Dateien gesperrt
+# =============================================================================
 
-# Optional 2 RegEx sensitive files match
-#<FilesMatch "^\.(env|env\.prod|env\.local)$|^(blocklist|AbuseLogger\.php)$">
-#  Require all denied
-#</FilesMatch>
-#php_flag display_errors Off
 
-#Optional 3
-#<Files ".env">
-#  Require all denied
-#</Files>
-#<Files ".env.prod">
-#  Require all denied
-#</Files>
-#<Files "app.env">
-#  Require all denied
-#</Files>
-#<Files ".app.env">
-#  Require all denied
-#</Files>
-#<Files "blocklist">
-#  Require all denied
-#</Files>
-#<Files "AbuseLogger.php">
-#  Require all denied
-#</Files>
-#php_flag display_errors Off
+# --- 1) PHP-Fehleranzeige deaktivieren ---
+# Verhindert, dass PHP-Fehler Pfade oder Secrets im Browser leaken.
+php_flag display_errors Off
 
-# Redirect dashboard.html to login
-#RewriteEngine On
-#RewriteRule ^dashboard\.html$ ./dashboard-login.php [R,L]
 
-# Protect environment files
-<FilesMatch "^\.(env|env\.prod|env\.local)$">
+# --- 2) Verzeichnislistung deaktivieren ---
+# Ohne dieses Flag zeigt Apache bei fehlendem index.php den Ordnerinhalt.
+Options -Indexes
+
+
+# --- 3) Environment-Dateien sperren ---
+# Schützt ALLE env-Varianten: .env, .env.prod, .env.local, .env.compose
+# PLUS app.env und die Example-Datei (enthält Feld-Beschreibungen für Angreifer)
+<FilesMatch "\.(env|env\.prod|env\.local|env\.compose)$">
   Require all denied
 </FilesMatch>
-
-# Protect PHP classes from direct access
-<Files "AbuseLogger.php">
+<Files "app.env">
+  Require all denied
+</Files>
+<Files ".env.compose">
+  Require all denied
+</Files>
+<Files ".env.prod.example.v3">
   Require all denied
 </Files>
 
-# Protect API backend (optional - depends on your setup)
-# Uncomment if you want API only callable from same server
-#<Files "dashboard-api.php">
-#  Require all denied
-#</Files>
 
-# Disable PHP error display
-php_flag display_errors Off
+# --- 4) Diagnose-Endpunkte sperren (HF-04) ---
+# KRITISCH: Diese Dateien geben PHP-Version, Dateipfade, SMTP-Credentials
+# und Autoload-Status preis. _probe.php zeigt sogar SMTP_PASS im Klartext!
+#
+# Bei Debugging-Bedarf: vorübergehend auskommentieren,
+# danach SOFORT wieder aktivieren!
+<FilesMatch "^(_probe|_smtp_probe|_env_check|_autoload_check|selftest|health-check|mail-transport-diag|debug_session)\.php$">
+  Require all denied
+</FilesMatch>
 
-# Optional: Protect log files
+
+# --- 5) PHP-Klassen vor direktem HTTP-Aufruf schützen ---
+# Diese Dateien sind nur als require_once innerhalb anderer PHP-Dateien gedacht.
+# Direkter Aufruf per Browser kann Fehlermeldungen mit Pfaden leaken.
+<FilesMatch "^(AbuseLogger|BlocklistManager|ExtendedLogger|ContactFormValidator-v2|LoginRateLimiter|helpers)\.php$">
+  Require all denied
+</FilesMatch>
+
+
+# --- 6) Dokumentation und sensible Textdateien sperren ---
+# Markdown-Dateien enthalten Server-Pfade, Berechtigungsstrukturen und
+# Security-Konzepte — nicht für die Öffentlichkeit bestimmt.
+<FilesMatch "\.(md|sh)$">
+  Require all denied
+</FilesMatch>
+<Files "blocklist.txt">
+  Require all denied
+</Files>
+
+
+# --- 7) Log-Dateien (Backup-Schutz) ---
+# Hauptschutz liegt in logs/.htaccess — dies ist eine zweite Sicherheitsebene.
 <FilesMatch "\.log$">
   Require all denied
 </FilesMatch>
+
+
+# --- 8) Redirect Dashboard-HTML zu Login (optional) ---
+# Auskommentiert: Nur aktivieren, falls eine dashboard.html existiert.
+# RewriteEngine On
+# RewriteRule ^dashboard\.html$ ./dashboard-login.php [R,L]
