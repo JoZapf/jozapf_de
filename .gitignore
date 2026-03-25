@@ -140,6 +140,10 @@ next-env.d.ts
 # sonstiges
 robots-txt-template-for-assets-subdomain.txt
 scripts/2025-12-01_port-und-script-fixes.md
-vendor/meta_debug_web.pyg i t h u b - r e p o s i t o r y - - r e s t A P I - w e b - i n t e g r a t i o n / 
+vendor/meta_debug_web.py
+public/assets/php/*.md
+public/assets/php/*.pdf
+public/assets/php/*.zip
+public/assets/php/*.svg
  
  

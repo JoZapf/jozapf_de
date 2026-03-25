@@ -1,63 +1,43 @@
 <?php
 /**
  * Dashboard Login - HMAC Token Authentication
- * @version 2025.10.12
+ * 
+ * @version 2.0.0
+ * @date 2026-03-24
+ * 
+ * Changelog v2.0.0 (2026-03-24):
+ * - HF-02 FIX: Brute-Force-Schutz via LoginRateLimiter (5 Versuche / 15 min)
+ * - HF-05 FIX: Default-Passwort 'admin123' entfernt, hash_equals statt ===
+ * - MF-03 FIX: Lokale env()/verifyToken() durch helpers.php ersetzt
+ * - MF-04 FIX: Token enthält IP-Bindung, Gültigkeit 4h statt 24h
+ * 
+ * Changelog v1.0.0 (2025-10-12):
+ * - Initial: HMAC Token Authentication mit Cookie
  */
 
-function env($key, $default = null) {
-    // 1) prefer process environment (getenv / $_ENV)
-    $v = getenv($key);
-    if ($v !== false && $v !== '') return $v;
-    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return $_ENV[$key];
+// MF-03 FIX: Zentrale Hilfsfunktionen statt lokaler Duplikate
+require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/LoginRateLimiter.php';
 
-    // 2) fallback to local .env.prod file (legacy behavior)
-    // 2) fallback: prefer .app.env or .env in webroot (production) or assets/php
-    $candidates = [
-        __DIR__ . '/.env.prod',
-        __DIR__ . '/.app.env',
-        __DIR__ . '/app.env',
-        dirname(__DIR__) . '/.app.env',       // project webroot
-        dirname(__DIR__) . '/app.env',
-        dirname(__DIR__) . '/.env',
-    ];
-
-    foreach ($candidates as $envFile) {
-        if (!file_exists($envFile)) continue;
-        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if ($line === '' || $line[0] === '#') continue;
-            if (strpos($line, '=') === false) continue;
-            [$k, $val] = explode('=', $line, 2);
-            if (trim($k) === $key) return trim($val, " \t\n\r\0\x0B\"'");
-        }
-    }
-    return $default;
-}
-
-function generateToken($secret) {
+/**
+ * MF-04 FIX: Token mit IP-Bindung und verkürzter Laufzeit.
+ * Vorher: 24h, keine IP → gestohlener Cookie von überall nutzbar.
+ * Nachher: 4h, IP gebunden → Cookie nur von der Login-IP gültig.
+ */
+function generateToken(string $secret): string {
     $data = [
         'user' => 'dashboard_admin',
-        'exp' => time() + (24 * 3600),
-        'iat' => time()
+        'ip'   => $_SERVER['REMOTE_ADDR'] ?? '',
+        'exp'  => time() + (4 * 3600),   // 4h statt 24h
+        'iat'  => time()
     ];
     $payload = base64_encode(json_encode($data));
     $signature = hash_hmac('sha256', $payload, $secret);
     return $payload . '.' . $signature;
 }
 
-function verifyToken($token, $secret) {
-    if (empty($token) || strpos($token, '.') === false) return false;
-    [$payload, $signature] = explode('.', $token, 2);
-    $expected = hash_hmac('sha256', $payload, $secret);
-    if (!hash_equals($expected, $signature)) return false;
-    $data = json_decode(base64_decode($payload), true);
-    return $data && isset($data['exp']) && $data['exp'] >= time();
-}
-
 // Compatibility wrapper for setting cookies with SameSite across PHP versions
 function set_cookie_compat(string $name, string $value, int $expires, string $path = '/', bool $secure = true, bool $httponly = true, string $samesite = 'Strict') {
-    // PHP >= 7.3 supports options array
     if (defined('PHP_VERSION_ID') && PHP_VERSION_ID >= 70300) {
         setcookie($name, $value, [
             'expires' => $expires,
@@ -68,8 +48,6 @@ function set_cookie_compat(string $name, string $value, int $expires, string $pa
         ]);
         return;
     }
-
-    // Fallback for older PHP: build Set-Cookie header manually (SameSite may not be supported)
     $cookie = rawurlencode($name) . '=' . rawurlencode($value);
     $cookie .= '; Expires=' . gmdate('D, d-M-Y H:i:s T', $expires);
     $cookie .= '; Path=' . $path;
@@ -79,13 +57,24 @@ function set_cookie_compat(string $name, string $value, int $expires, string $pa
     header('Set-Cookie: ' . $cookie, false);
 }
 
-$DASHBOARD_PASSWORD = env('DASHBOARD_PASSWORD', 'admin123');
+// --- Konfiguration ---
+
+// HF-05 FIX: Kein Default-Passwort mehr!
+// Vorher: env('DASHBOARD_PASSWORD', 'admin123') ← unsicherer Default
+// Nachher: Kein Default. Fehlt beides → Login verweigert.
 $DASHBOARD_PASSWORD_HASH = env('DASHBOARD_PASSWORD_HASH');
+$DASHBOARD_PASSWORD = env('DASHBOARD_PASSWORD');  // Kein Default!
 $DASHBOARD_SECRET = env('DASHBOARD_SECRET');
 
 if (!$DASHBOARD_SECRET) {
     die('ERROR: DASHBOARD_SECRET not set in .env.prod');
 }
+
+if (!$DASHBOARD_PASSWORD && !$DASHBOARD_PASSWORD_HASH) {
+    die('ERROR: No dashboard password configured. Set DASHBOARD_PASSWORD or DASHBOARD_PASSWORD_HASH in .env.prod');
+}
+
+// --- Token-Check: Bereits eingeloggt? ---
 
 $token = $_COOKIE['dashboard_token'] ?? '';
 if (verifyToken($token, $DASHBOARD_SECRET)) {
@@ -93,25 +82,63 @@ if (verifyToken($token, $DASHBOARD_SECRET)) {
     exit;
 }
 
+// --- HF-02 FIX: Brute-Force-Schutz ---
+
+$limiter = new LoginRateLimiter(__DIR__ . '/data');
+$ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+
 $error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$isLocked = $limiter->isLocked($ip);
+
+if ($isLocked) {
+    $remaining = $limiter->getRemainingLockTime($ip);
+    $minutes = (int) ceil($remaining / 60);
+    $error = "Too many login attempts. Try again in {$minutes} minute(s).";
+}
+
+// --- Login-Verarbeitung ---
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isLocked) {
     if (isset($_POST['password'])) {
         $pw = $_POST['password'];
         $ok = false;
-        // If a password hash is configured (Argon2id), verify against it
+        
+        // HF-05: Bevorzugt Argon2-Hash prüfen
         if ($DASHBOARD_PASSWORD_HASH && function_exists('password_verify')) {
-            if (password_verify($pw, $DASHBOARD_PASSWORD_HASH)) { $ok = true; }
+            if (password_verify($pw, $DASHBOARD_PASSWORD_HASH)) {
+                $ok = true;
+            }
         }
-        // Fallback: direct plaintext compare (legacy)
-        if (!$ok && $pw === $DASHBOARD_PASSWORD) { $ok = true; }
+        
+        // HF-05 FIX: Fallback mit hash_equals() statt === (Timing-sicher)
+        // Vorher: if ($pw === $DASHBOARD_PASSWORD) ← Timing-Angriff möglich
+        // Nachher: hash_equals() hat konstante Laufzeit
+        if (!$ok && $DASHBOARD_PASSWORD && hash_equals($DASHBOARD_PASSWORD, $pw)) {
+            $ok = true;
+        }
+        
         if ($ok) {
+            // Login erfolgreich → Fehlversuche zurücksetzen
+            $limiter->resetAttempts($ip);
+            
             $token = generateToken($DASHBOARD_SECRET);
-            // Use compatibility wrapper to support older PHP versions
-            set_cookie_compat('dashboard_token', $token, time() + (24 * 3600), '/assets/php/', true, true, 'Strict');
+            // MF-04: Cookie-Ablauf angepasst an Token-Laufzeit (4h)
+            set_cookie_compat('dashboard_token', $token, time() + (4 * 3600), '/assets/php/', true, true, 'Strict');
             header('Location: dashboard.php');
             exit;
         }
-        $error = 'Invalid password';
+        
+        // HF-02: Fehlversuch aufzeichnen
+        $limiter->recordFailedAttempt($ip);
+        $attemptCount = $limiter->getAttemptCount($ip);
+        $remaining = 5 - $attemptCount;
+        
+        if ($remaining > 0) {
+            $error = "Invalid password. {$remaining} attempt(s) remaining.";
+        } else {
+            $lockMinutes = (int) ceil($limiter->getRemainingLockTime($ip) / 60);
+            $error = "Too many login attempts. Try again in {$lockMinutes} minute(s).";
+        }
     }
 }
 ?>
@@ -169,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: background 0.2s;
         }
         .btn-login:hover { background: #2980b9; }
+        .btn-login:disabled { background: #555; cursor: not-allowed; }
         .error-message {
             background: var(--cf-error-bg-dark);
             border: 1px solid var(--cf-error-border-dark);
@@ -200,9 +228,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         autocomplete="current-password"
                         autofocus 
                         required
+                        <?= $isLocked ? 'disabled' : '' ?>
                     >
                 </div>
-                <button type="submit" class="btn-login">Access Dashboard</button>
+                <button type="submit" class="btn-login" <?= $isLocked ? 'disabled' : '' ?>>
+                    Access Dashboard
+                </button>
             </form>
         </div>
     </div>
