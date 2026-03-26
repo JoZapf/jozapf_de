@@ -1,8 +1,12 @@
-// data/facts.json
 {
   "key_points": [
-    "Edge-basiertes Processing mit MQTT",
-    "Lizenz: MIT",
-    "API: /api/v1 ... (später)"
+    "Portfolio-Website mit Next.js (Static Export), Fragment-basiertem Content-Management und automatisierter OG-Image-Generierung (Satori/Resvg)",
+    "CI/CD-Pipeline mit GitHub Actions: develop → staging → production, automatisierte SSH-Deployments mit Version-Bumping",
+    "Security-Hardening des Kontaktformulars: Rate-Limiting, Input-Sanitization, SPF/DKIM/DMARC, Anti-Spam (Phase 1–5 dokumentiert)",
+    "Bilinguales Design (DE/EN) mit hreflang-Tags, separaten OG-Images pro Sprache und strukturierten JSON-LD-Daten für AI-Crawler",
+    "Open-Source-Projekt: contact-form-abuse-prevention — dokumentierte Sicherheitsmaßnahmen gegen Kontaktformular-Missbrauch",
+    "Responsive Corporate Design mit Bootstrap, Custom CSS Variables und optimierten Breakpoints für Mobile/Tablet/Desktop",
+    "DevOps-Fokus: Docker/Compose, Linux-Hardening, Zero-Trust-Architektur, Secrets Management, mTLS",
+    "LLM-Optimierung: llms.txt, summary.json, strukturierte Schema.org-Daten mit @id-Referenzen für ChatGPT Search und Perplexity"
   ]
 }
