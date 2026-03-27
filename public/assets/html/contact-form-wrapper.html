@@ -1,63 +1,63 @@
-<!-- assets/html/contact-form-wrapper.html -->
+<!-- assets/html/contact-form-wrapper.html (Deutsche Version) -->
 <div class="card shadow-sm">
   <div class="card-body">
-    <h2 class="h3 mb-3">Contact</h2>
+    <h2 class="h3 mb-3">Kontakt</h2>
 
     <!-- Alerts -->
     <div id="cf-success" class="alert alert-success d-none" role="alert">
-      Thank you! Your message has been sent.
+      Vielen Dank! Ihre Nachricht wurde gesendet.
     </div>
     <div id="cf-error" class="alert alert-danger d-none" role="alert">
-      <span id="cf-error-text">Sending failed. Please try again later.</span>
+      <span id="cf-error-text">Senden fehlgeschlagen. Bitte versuchen Sie es später erneut.</span>
     </div>
 
     <form id="contactForm" novalidate>
       <div class="row g-3">
         <div class="col-md-6">
-          <label for="firstName" class="form-label">First Name *</label>
+          <label for="firstName" class="form-label">Vorname *</label>
           <input type="text" id="firstName" name="firstName" class="form-control" required>
-          <div class="invalid-feedback">Please enter your first name.</div>
+          <div class="invalid-feedback">Bitte geben Sie Ihren Vornamen ein.</div>
         </div>
         <div class="col-md-6">
-          <label for="lastName" class="form-label">Last Name *</label>
+          <label for="lastName" class="form-label">Nachname *</label>
           <input type="text" id="lastName" name="lastName" class="form-control" required>
-          <div class="invalid-feedback">Please enter your last name.</div>
+          <div class="invalid-feedback">Bitte geben Sie Ihren Nachnamen ein.</div>
         </div>
 
         <div class="col-md-6">
-          <label for="email" class="form-label">Email *</label>
+          <label for="email" class="form-label">E-Mail *</label>
           <input type="email" id="email" name="email" class="form-control" required>
-          <div class="invalid-feedback">Please enter a valid email.</div>
+          <div class="invalid-feedback">Bitte geben Sie eine gültige E-Mail-Adresse ein.</div>
         </div>
         <div class="col-md-6">
-          <label for="phone" class="form-label">Phone</label>
+          <label for="phone" class="form-label">Telefon</label>
           <input type="tel" id="phone" name="phone" class="form-control">
-          <div class="invalid-feedback">Please enter a valid phone (optional).</div>
+          <div class="invalid-feedback">Bitte geben Sie eine gültige Telefonnummer ein (optional).</div>
         </div>
 
         <div class="col-12">
-          <label for="subject" class="form-label">Subject *</label>
+          <label for="subject" class="form-label">Betreff *</label>
           <input type="text" id="subject" name="subject" class="form-control" required>
-          <div class="invalid-feedback">Please enter a subject.</div>
+          <div class="invalid-feedback">Bitte geben Sie einen Betreff ein.</div>
         </div>
 
         <div class="col-12">
-          <label for="message" class="form-label">Message *</label>
+          <label for="message" class="form-label">Nachricht *</label>
           <textarea id="message" name="message" class="form-control" rows="6" required></textarea>
-          <div class="invalid-feedback">Please enter your message.</div>
+          <div class="invalid-feedback">Bitte geben Sie Ihre Nachricht ein.</div>
         </div>
 
-        <!-- SECURITY QUESTION (Captcha) -->
+        <!-- SICHERHEITSFRAGE (Captcha) -->
         <div class="col-md-8">
           <label class="form-label d-flex align-items-center justify-content-between">
-            <span>Security question *</span>
+            <span>Sicherheitsfrage *</span>
             <span id="captchaQuestion" class="fw-semibold"></span>
           </label>
           <div class="input-group">
-            <input type="text" inputmode="numeric" pattern="[0-9]*" id="captchaAnswer" name="captchaAnswer" class="form-control" placeholder="Answer" required>
-            <button type="button" id="captchaRefresh" class="btn btn-outline-secondary">New task</button>
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="captchaAnswer" name="captchaAnswer" class="form-control" placeholder="Antwort" required>
+            <button type="button" id="captchaRefresh" class="btn btn-outline-secondary">Neue Aufgabe</button>
           </div>
-          <div class="invalid-feedback">Please solve the security question.</div>
+          <div class="invalid-feedback">Bitte lösen Sie die Sicherheitsfrage.</div>
           <!-- CSRF-Token wird von JS automatisch als Hidden-Field eingefügt -->
         </div>
 
@@ -65,14 +65,14 @@
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
             <label class="form-check-label" for="privacy">
-              I agree to the <a href="#" data-privacy-url="/privacy.html">privacy policy</a>
+              Ich stimme der <a href="#" data-privacy-url="/datenschutz.html">Datenschutzerklärung</a> zu
             </label>
-            <div class="invalid-feedback">Please agree to the privacy policy.</div>
+            <div class="invalid-feedback">Bitte stimmen Sie der Datenschutzerklärung zu.</div>
           </div>
         </div>
 
         <div class="col-12">
-          <button id="submitBtn" type="submit" class="btn btn-primary">Send</button>
+          <button id="submitBtn" type="submit" class="btn btn-primary">Absenden</button>
         </div>
       </div>
     </form>

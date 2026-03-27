@@ -1,9 +1,13 @@
 /**
- * Contact Form Logic - V2.0 SERVER-BASED CSRF + CAPTCHA
- * ======================================================
+ * Contact Form Logic - V2.1 SERVER-BASED CSRF + CAPTCHA + i18n
+ * =============================================================
  * 
- * @version 2.0.0
+ * @version 2.1.0
  * @date 2026-03-27
+ * 
+ * Changelog v2.1.0 (2026-03-27):
+ * - i18n: Sprache aus <html lang="..."> erkennen
+ * - Deutsche und englische Fehlermeldungen
  * 
  * Changelog v2.0.0 (2026-03-27):
  * - CSRF-Token vom Server holen (nicht mehr client-seitig)
@@ -12,10 +16,6 @@
  * - Hidden-Field "csrf_token" hinzugefügt
  * - Client-seitige Captcha-Validierung entfernt (Server validiert)
  * - fetchFormInit() für ?init=1 Endpoint
- * 
- * Changelog v1.x (vorher):
- * - Client-seitige Captcha-Generierung (unsicher)
- * - Captcha-Lösung als Hidden-Field (Bot konnte auslesen)
  */
 
 const $  = (sel, root = document) => root.querySelector(sel);
@@ -23,6 +23,46 @@ const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
 // Handler-URL (absolut für alle Unterseiten)
 const HANDLER_URL = '/assets/php/contact-php-handler.php';
+
+// ============================================================================
+// i18n — Sprachtexte
+// ============================================================================
+
+const TEXTS = {
+  de: {
+    pleaseCorrect: 'Bitte korrigieren Sie die markierten Felder.',
+    solveCaptcha: 'Bitte lösen Sie die Rechenaufgabe.',
+    sendFailed: 'Senden fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+    networkError: 'Netzwerkfehler. Bitte versuchen Sie es später erneut.',
+    defaultSuccess: 'Vielen Dank für Ihre Nachricht! Wir melden uns in Kürze bei Ihnen.'
+  },
+  en: {
+    pleaseCorrect: 'Please correct the marked fields.',
+    solveCaptcha: 'Please solve the math problem.',
+    sendFailed: 'Failed to send message. Please try again later.',
+    networkError: 'Network error. Please try again later.',
+    defaultSuccess: 'Thank you for your message! We will get back to you shortly.'
+  }
+};
+
+/**
+ * Ermittelt die aktuelle Sprache aus <html lang="...">
+ * @returns {'de'|'en'}
+ */
+function getLang() {
+  const htmlLang = document.documentElement.lang?.toLowerCase() || '';
+  return htmlLang.startsWith('de') ? 'de' : 'en';
+}
+
+/**
+ * Holt einen lokalisierten Text
+ * @param {string} key 
+ * @returns {string}
+ */
+function t(key) {
+  const lang = getLang();
+  return TEXTS[lang]?.[key] || TEXTS.en[key] || key;
+}
 
 // ============================================================================
 // FORM INIT — Holt CSRF-Token + Captcha vom Server
@@ -148,13 +188,13 @@ async function submitForm(form) {
   // Captcha: Nur prüfen ob ausgefüllt (Server validiert die Lösung!)
   const userAns = String(captchaA?.value ?? '').trim();
   if (userAns === '' || !Number.isFinite(Number(userAns))) {
-    setFieldInvalid(captchaA, 'Please solve the math problem.');
+    setFieldInvalid(captchaA, t('solveCaptcha'));
     hasErr = true;
   }
 
   if (hasErr) {
     show(errorBox);
-    if (errorText) errorText.textContent = 'Please correct the marked fields.';
+    if (errorText) errorText.textContent = t('pleaseCorrect');
     return;
   }
 
@@ -196,17 +236,17 @@ async function submitForm(form) {
       show(successBox); 
       hide(errorBox);
       
-      // Erfolgsmeldung vom Server
+      // Erfolgsmeldung vom Server oder Fallback
       const successText = successBox?.querySelector('p, div, [id*="text"]');
       if (successText && data.message) {
         successText.textContent = data.message;
       } else if (successBox) {
-        successBox.innerHTML = '<p>' + (data.message || 'Thank you for your message! We will get back to you shortly.') + '</p>';
+        successBox.innerHTML = '<p>' + (data.message || t('defaultSuccess')) + '</p>';
       }
       
     } else {
       // ❌ FEHLER
-      const msg = (data && (data.error || data.message)) || 'Failed to send message. Please try again later.';
+      const msg = (data && (data.error || data.message)) || t('sendFailed');
       if (errorText) errorText.textContent = msg;
       
       // Error-Box stylen
@@ -242,7 +282,7 @@ async function submitForm(form) {
     }
   } catch (e) {
     console.error('[ContactForm] Submit error:', e);
-    if (errorText) errorText.textContent = 'Network error. Please try again later.';
+    if (errorText) errorText.textContent = t('networkError');
     
     if (errorBox) {
       errorBox.classList.remove('cf-success');
