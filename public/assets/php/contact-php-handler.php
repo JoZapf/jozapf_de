@@ -12,9 +12,13 @@
  * ✅ Comprehensive sanitization
  * 
  * @author JoZapf
- * @version 4.3.0
- * @date 2026-03-25
+ * @version 4.4.0
+ * @date 2026-03-27
  * 
+ * Changelog v4.4.0 (2026-03-27):
+ * - K1 FIX: Cache-Control Header im Init-Endpoint (CSRF-Token darf nicht gecached werden)
+ * - H1 FIX: GET zu Access-Control-Allow-Methods hinzugefügt
+ *
  * Changelog v4.3.0 (2026-03-25):
  * - NF-02 FIX: Bestätigungsmail Rate-Limit (max 1 pro E-Mail pro 24h)
  *
@@ -59,7 +63,8 @@ header('Content-Type: application/json; charset=utf-8');
 // Für Staging: ALLOWED_ORIGIN in .env.prod setzen → Override nach load_env() unten.
 $allowedOrigin = 'https://jozapf.de';
 header('Access-Control-Allow-Origin: ' . $allowedOrigin);
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+// H1 FIX: GET hinzugefügt für ?init=1 Endpoint
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -170,6 +175,13 @@ function env(string $key, ?string $default = null): ?string {
 //   Validator. Session + CORS-Headers reichen. Spart Serverressourcen.
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['init'])) {
+    // K1 FIX: Cache-Control Header — CSRF-Token muss einzigartig pro Request sein!
+    // Ohne diese Header könnte Browser oder CDN die Response cachen → alle User
+    // bekommen denselben Token → CSRF-Schutz wertlos.
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    
     // CSRF-Token generieren (KF-03)
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     

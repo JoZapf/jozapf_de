@@ -1,35 +1,98 @@
-// assets/js/contact-form-logic.js - FINAL FIXED VERSION
+/**
+ * Contact Form Logic - V2.0 SERVER-BASED CSRF + CAPTCHA
+ * ======================================================
+ * 
+ * @version 2.0.0
+ * @date 2026-03-27
+ * 
+ * Changelog v2.0.0 (2026-03-27):
+ * - CSRF-Token vom Server holen (nicht mehr client-seitig)
+ * - Captcha-Aufgabe vom Server holen (nicht mehr client-seitig generiert)
+ * - Hidden-Field "captcha_answer" entfernt (Lösung nur in Server-Session)
+ * - Hidden-Field "csrf_token" hinzugefügt
+ * - Client-seitige Captcha-Validierung entfernt (Server validiert)
+ * - fetchFormInit() für ?init=1 Endpoint
+ * 
+ * Changelog v1.x (vorher):
+ * - Client-seitige Captcha-Generierung (unsicher)
+ * - Captcha-Lösung als Hidden-Field (Bot konnte auslesen)
+ */
+
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-let captchaSolution = null;
+// Handler-URL (absolut für alle Unterseiten)
+const HANDLER_URL = '/assets/php/contact-php-handler.php';
 
-function ensureHiddenAnswerInput(form) {
-  let hidden = $('[name="captcha_answer"]', form);
-  if (!hidden) {
-    hidden = document.createElement('input');
-    hidden.type = 'hidden';
-    hidden.name = 'captcha_answer';
-    form.appendChild(hidden);
+// ============================================================================
+// FORM INIT — Holt CSRF-Token + Captcha vom Server
+// ============================================================================
+
+/**
+ * Ruft den Init-Endpoint auf und gibt CSRF-Token + Captcha zurück.
+ * Setzt auch das Session-Cookie (credentials: 'same-origin').
+ * 
+ * @returns {Promise<{csrf_token: string, captcha: {question: string, a: number, b: number}}|null>}
+ */
+async function fetchFormInit() {
+  try {
+    const res = await fetch(HANDLER_URL + '?init=1', {
+      method: 'GET',
+      credentials: 'same-origin', // WICHTIG: Session-Cookie setzen/senden
+      headers: { 'Accept': 'application/json' }
+    });
+    
+    if (!res.ok) {
+      console.error('[ContactForm] Init failed:', res.status, res.statusText);
+      return null;
+    }
+    
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      console.error('[ContactForm] Init response invalid:', json);
+      return null;
+    }
+    
+    return json.data; // { csrf_token, captcha: { question, a, b } }
+  } catch (e) {
+    console.error('[ContactForm] Init error:', e);
+    return null;
   }
-  return hidden;
 }
 
-function generateCaptcha(form) {
-  const a = Math.floor(Math.random() * 7) + 6; // 6..12
-  const b = Math.floor(Math.random() * 6) + 1; // 1..6
-  const op = Math.random() < 0.5 ? '+' : '−';
-  captchaSolution = op === '+' ? a + b : a - b;
-  if (captchaSolution < 0) { captchaSolution = a + b; }
-
-  const q = $('#captchaQuestion', form?.ownerDocument || document);
-  if (q) q.textContent = `${a} ${op} ${b} = ?`;
+/**
+ * Wendet Init-Daten auf das Formular an:
+ * - Setzt CSRF-Token in Hidden-Field
+ * - Zeigt Captcha-Frage an
+ * 
+ * @param {HTMLFormElement} form 
+ * @param {object} initData - Von fetchFormInit()
+ */
+function applyInitData(form, initData) {
+  if (!initData) return false;
+  
+  // CSRF-Token Hidden-Field erstellen/aktualisieren
+  let csrfInput = form.querySelector('[name="csrf_token"]');
+  if (!csrfInput) {
+    csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrf_token';
+    form.appendChild(csrfInput);
+  }
+  csrfInput.value = initData.csrf_token;
+  
+  // Captcha-Frage anzeigen
+  const captchaQ = $('#captchaQuestion', form.ownerDocument || document);
+  if (captchaQ && initData.captcha?.question) {
+    captchaQ.textContent = initData.captcha.question;
+  }
+  
+  return true;
 }
 
-function setCaptchaOnForm(form) {
-  const hidden = ensureHiddenAnswerInput(form);
-  hidden.value = captchaSolution != null ? String(captchaSolution) : '';
-}
+// ============================================================================
+// UI HELPERS
+// ============================================================================
 
 function show(el) { if (el) el.classList.remove('d-none'); }
 function hide(el) { if (el) el.classList.add('d-none'); }
@@ -42,10 +105,15 @@ function setFieldInvalid(input, message) {
     if (fb && fb.classList.contains('invalid-feedback')) fb.textContent = message;
   }
 }
+
 function clearFieldState(input) {
   if (!input) return;
   input.classList.remove('is-invalid');
 }
+
+// ============================================================================
+// FORM SUBMIT
+// ============================================================================
 
 async function submitForm(form) {
   const successBox = $('#cf-success');
@@ -53,6 +121,7 @@ async function submitForm(form) {
   const errorText  = $('#cf-error-text');
   hide(successBox); hide(errorBox);
 
+  // Felder referenzieren
   const firstName = $('#firstName', form);
   const lastName  = $('#lastName',  form);
   const email     = $('#email',     form);
@@ -62,23 +131,24 @@ async function submitForm(form) {
   const privacy   = $('#privacy',   form);
   const captchaA  = $('#captchaAnswer', form);
 
+  // Alle Felder zurücksetzen
   [firstName, lastName, email, subject, message, captchaA, privacy].forEach(clearFieldState);
 
+  // Client-seitige Validierung (Pflichtfelder)
   let hasErr = false;
   if (!firstName?.value.trim()) { setFieldInvalid(firstName); hasErr = true; }
   if (!lastName?.value.trim())  { setFieldInvalid(lastName);  hasErr = true; }
-  if (!email?.value.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)) { setFieldInvalid(email); hasErr = true; }
+  if (!email?.value.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)) { 
+    setFieldInvalid(email); hasErr = true; 
+  }
   if (!subject?.value.trim())   { setFieldInvalid(subject);   hasErr = true; }
   if (!message?.value.trim())   { setFieldInvalid(message);   hasErr = true; }
   if (!privacy?.checked)        { setFieldInvalid(privacy);   hasErr = true; }
 
-  const userAns = Number(captchaA?.value);
-  if (!Number.isFinite(userAns) || String(captchaA?.value ?? '').trim() === '') {
+  // Captcha: Nur prüfen ob ausgefüllt (Server validiert die Lösung!)
+  const userAns = String(captchaA?.value ?? '').trim();
+  if (userAns === '' || !Number.isFinite(Number(userAns))) {
     setFieldInvalid(captchaA, 'Please solve the math problem.');
-    hasErr = true;
-  } else if (captchaSolution != null && userAns !== captchaSolution) {
-    setFieldInvalid(captchaA, 'Incorrect answer. New problem generated.');
-    generateCaptcha(form); setCaptchaOnForm(form);
     hasErr = true;
   }
 
@@ -88,30 +158,32 @@ async function submitForm(form) {
     return;
   }
 
-  setCaptchaOnForm(form);
+  // FormData erstellen (enthält CSRF-Token aus Hidden-Field)
   const fd = new FormData(form);
-  const handlerURL = '/assets/php/contact-php-handler.php';
 
   try {
     const submitBtn = $('#submitBtn', form);
     if (submitBtn) submitBtn.disabled = true;
 
-    const res = await fetch(handlerURL, {
+    const res = await fetch(HANDLER_URL, {
       method: 'POST',
       body: fd,
       headers: { 'Accept': 'application/json' },
-      credentials: 'same-origin',
+      credentials: 'same-origin', // Session-Cookie mitsenden
     });
 
     let data = null;
     try { data = await res.json(); } catch { /* no-op */ }
 
-    // ✅ FIXED: Check for data.success and ensure proper CSS classes
     if (res.ok && data && data.success === true) {
+      // ✅ ERFOLG
       form.reset();
-      generateCaptcha(form); setCaptchaOnForm(form);
       
-      // ✅ GREEN SUCCESS - Remove error class, add success class
+      // Neues CSRF-Token + Captcha holen (für nächste Nachricht)
+      const newInit = await fetchFormInit();
+      applyInitData(form, newInit);
+      
+      // Success-Box stylen
       if (successBox) {
         successBox.classList.remove('cf-error');
         successBox.classList.add('cf-success');
@@ -124,21 +196,20 @@ async function submitForm(form) {
       show(successBox); 
       hide(errorBox);
       
-      // Set success message from server
-      const successText = successBox.querySelector('p, div, [id*="text"]');
+      // Erfolgsmeldung vom Server
+      const successText = successBox?.querySelector('p, div, [id*="text"]');
       if (successText && data.message) {
         successText.textContent = data.message;
       } else if (successBox) {
-        // Fallback: Update the entire success box content
         successBox.innerHTML = '<p>' + (data.message || 'Thank you for your message! We will get back to you shortly.') + '</p>';
       }
       
     } else {
-      // ❌ RED ERROR
+      // ❌ FEHLER
       const msg = (data && (data.error || data.message)) || 'Failed to send message. Please try again later.';
       if (errorText) errorText.textContent = msg;
       
-      // Ensure error box has error class, success box has success class
+      // Error-Box stylen
       if (errorBox) {
         errorBox.classList.remove('cf-success');
         errorBox.classList.add('cf-error');
@@ -151,6 +222,7 @@ async function submitForm(form) {
       show(errorBox); 
       hide(successBox);
 
+      // Feld-spezifische Fehler markieren
       if (data && data.fields) {
         if (data.fields.firstName === false || data.fields.name === false) setFieldInvalid(firstName);
         if (data.fields.lastName  === false) setFieldInvalid(lastName);
@@ -160,11 +232,18 @@ async function submitForm(form) {
         if (data.fields.captcha   === false || data.fields.captchaAnswer === false) setFieldInvalid(captchaA);
         if (data.fields.privacy   === false) setFieldInvalid(privacy);
       }
+      
+      // Bei CSRF/Captcha-Fehler: Neues Token+Captcha holen
+      if (res.status === 403 || res.status === 422) {
+        const newInit = await fetchFormInit();
+        applyInitData(form, newInit);
+        if (captchaA) captchaA.value = '';
+      }
     }
   } catch (e) {
+    console.error('[ContactForm] Submit error:', e);
     if (errorText) errorText.textContent = 'Network error. Please try again later.';
     
-    // Ensure error styling
     if (errorBox) {
       errorBox.classList.remove('cf-success');
       errorBox.classList.add('cf-error');
@@ -182,39 +261,70 @@ async function submitForm(form) {
   }
 }
 
-// Öffentliche Initialisierung
-export function initContactForm(root = document) {
+// ============================================================================
+// PUBLIC INIT
+// ============================================================================
+
+/**
+ * Initialisiert das Kontaktformular.
+ * Holt CSRF-Token + Captcha vom Server.
+ * 
+ * @param {Document|HTMLElement} root 
+ */
+export async function initContactForm(root = document) {
   const form = $('#contactForm', root);
   if (!form || form.dataset.initialized === '1') return;
 
-  generateCaptcha(form);
-  setCaptchaOnForm(form);
+  // Guard: Formular als "in Initialisierung" markieren (verhindert Doppelaufruf)
+  form.dataset.initialized = '1';
 
+  // CSRF-Token + Captcha vom Server holen
+  const initData = await fetchFormInit();
+  if (!initData) {
+    console.error('[ContactForm] Could not initialize form - server unreachable');
+    // Formular bleibt ohne Captcha-Frage, Submit wird Server-seitig scheitern
+  }
+  applyInitData(form, initData);
+
+  // Captcha-Refresh Button
   const refreshBtn = $('#captchaRefresh', form);
   if (refreshBtn) {
-    refreshBtn.addEventListener('click', (e) => {
+    refreshBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      generateCaptcha(form); setCaptchaOnForm(form);
+      
+      // Neues CSRF-Token + Captcha vom Server
+      const newInit = await fetchFormInit();
+      applyInitData(form, newInit);
+      
+      // Captcha-Antwort-Feld leeren
       const ans = $('#captchaAnswer', form);
-      if (ans) { ans.value = ''; clearFieldState(ans); }
+      if (ans) { 
+        ans.value = ''; 
+        clearFieldState(ans); 
+      }
     });
   }
 
+  // Submit-Handler
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     submitForm(form);
   });
-
-  form.dataset.initialized = '1';
-  // Note: Privacy Modal is now handled globally by privacy-modal.js
 }
 
-// Fallback
+// ============================================================================
+// FALLBACK (DOMContentLoaded)
+// ============================================================================
+
 if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('contactForm');
     if (form && form.dataset.initialized !== '1') {
-      try { initContactForm(document); } catch { /* noop */ }
+      try { 
+        initContactForm(document); 
+      } catch (e) { 
+        console.error('[ContactForm] Auto-init failed:', e);
+      }
     }
   });
 }
