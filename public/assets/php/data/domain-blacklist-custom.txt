@@ -1,0 +1,27 @@
+# ============================================================
+# domain-blacklist-custom.txt
+# Manuell gepflegte Ergänzungen zur Upstream-Disposable-Liste
+# Quelle: Dashboard-Logs, bekannte Test-/Spam-Domains
+# Format: eine Domain pro Zeile, Kommentare mit #
+# Diese Datei wird NICHT vom Upstream-Update überschrieben.
+# ============================================================
+
+# === RFC 2606 / IANA Reserved Test-Domains ===
+example.com
+example.org
+example.net
+test.com
+test.org
+test.net
+
+# === Offensichtliche Spam-/Provokations-Domains ===
+evil.com
+spam.com
+spammer.com
+fakeemail.com
+fakemail.com
+nomail.com
+
+# === Weitere bekannte Wegwerf-Dienste (nicht in Upstream) ===
+# Hier Domains eintragen die im Dashboard auffallen
+# und nicht in der Upstream-Liste stehen.
