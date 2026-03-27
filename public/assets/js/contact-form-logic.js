@@ -90,7 +90,7 @@ async function submitForm(form) {
 
   setCaptchaOnForm(form);
   const fd = new FormData(form);
-  const handlerURL = 'assets/php/contact-php-handler.php';
+  const handlerURL = '/assets/php/contact-php-handler.php';
 
   try {
     const submitBtn = $('#submitBtn', form);
