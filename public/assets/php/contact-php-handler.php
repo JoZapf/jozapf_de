@@ -12,9 +12,13 @@
  * ✅ Comprehensive sanitization
  * 
  * @author JoZapf
- * @version 4.4.0
+ * @version 4.5.0
  * @date 2026-03-27
  * 
+ * Changelog v4.5.0 (2026-03-27):
+ * - PHASE C: CSRF strikt erzwingen (Migrations-Modus entfernt)
+ * - PHASE C: Captcha-Lösung NUR aus Session (POST-Fallback entfernt)
+ *
  * Changelog v4.4.0 (2026-03-27):
  * - K1 FIX: Cache-Control Header im Init-Endpoint (CSRF-Token darf nicht gecached werden)
  * - H1 FIX: GET zu Access-Control-Allow-Methods hinzugefügt
@@ -303,19 +307,14 @@ if ($validation['blocked']) {
 $csrfToken = $_POST['csrf_token'] ?? '';
 $sessionCsrf = $_SESSION['csrf_token'] ?? '';
 
-if (!empty($sessionCsrf)) {
-    // Session hat einen CSRF-Token → Validierung erzwingen
-    if (empty($csrfToken) || !hash_equals($sessionCsrf, $csrfToken)) {
-        json_error('Invalid security token. Please reload the page.', 403);
-    }
-    // One-Time-Use: Token nach erfolgreicher Validierung löschen
-    unset($_SESSION['csrf_token']);
+// Phase C: CSRF strikt erzwingen (Migrations-Modus entfernt 27.03.2026)
+// Jeder POST MUSS einen gültigen CSRF-Token haben.
+// Bots ohne Session → 403 Forbidden
+if (empty($csrfToken) || empty($sessionCsrf) || !hash_equals($sessionCsrf, $csrfToken)) {
+    json_error('Invalid security token. Please reload the page.', 403);
 }
-// TODO (nach Frontend-Deploy): Migrations-Modus entfernen, immer erzwingen:
-// if (empty($csrfToken) || empty($sessionCsrf) || !hash_equals($sessionCsrf, $csrfToken)) {
-//     json_error('Invalid security token. Please reload the page.', 403);
-// }
-// unset($_SESSION['csrf_token']);
+// One-Time-Use: Token nach erfolgreicher Validierung löschen
+unset($_SESSION['csrf_token']);
 
 // ============================================================================
 // 5) INPUT SANITIZATION & FIELD VALIDATION
@@ -332,14 +331,9 @@ $message   = sanitize_text($_POST['message'] ?? '', 5000);
 // Captcha
 $captchaAnswer = trim($_POST['captchaAnswer'] ?? '');
 // HF-01 FIX: Lösung aus Session lesen, NICHT aus POST-Hidden-Field.
-// Vorher: $captchaSolution = trim($_POST['captcha_answer'] ?? '');
-// Das Hidden-Field war im HTML sichtbar → Bot konnte Lösung auslesen.
+// Phase C: Captcha-Lösung NUR aus Session (POST-Fallback entfernt 27.03.2026)
+// Bots ohne Session → 422 "Security question expired"
 $captchaSolution = $_SESSION['captcha_solution'] ?? null;
-// MIGRATIONS-FALLBACK: Altes Frontend sendet Lösung noch als Hidden-Field.
-// TODO (nach Frontend-Deploy): Diese 3 Zeilen entfernen!
-if ($captchaSolution === null && !empty($_POST['captcha_answer'])) {
-    $captchaSolution = (int) trim($_POST['captcha_answer']);
-}
 
 // Privacy checkbox
 $privacyAccepted = isset($_POST['privacy']) && $_POST['privacy'] === 'on';
