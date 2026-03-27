@@ -1,14 +1,19 @@
 # =============================================================================
 # .htaccess — Contact Form Security Hardening
 # =============================================================================
-# Version:  2.0.0
-# Date:     2026-03-24
+# Version:  2.1.0
+# Date:     2026-03-27
 # Basis:    Security-Audit + SECURITY-FIX-KONZEPT.md (Phase 1)
 # Fixes:    HF-04 (Diagnose-Endpunkte), MF-01 (.htaccess-Lücken),
 #           MF-05 (.env.compose), + PHP-Klassen-Schutz
 # =============================================================================
 #
 # CHANGELOG:
+#   v2.1.0 (2026-03-27) — Disposable-Domain-Blacklist-Dateien gesperrt
+#     - domain-blacklist-custom.txt und domain-blacklist-upstream.txt gesperrt
+#     - Alle .txt-Dateien im Verzeichnis pauschal gesperrt (Defense-in-Depth)
+#     - Bezug: docs/contact-form-feature/KONZEPT-EMAIL-SPAM-VALIDIERUNG.md
+#
 #   v2.0.0 (2026-03-24) — Security Hardening
 #     - Diagnose-Endpunkte gesperrt (HF-04)
 #     - Alle env-Dateien geschützt inkl. app.env, .env.compose (MF-01/MF-05)
@@ -73,12 +78,11 @@ Options -Indexes
 # --- 6) Dokumentation und sensible Textdateien sperren ---
 # Markdown-Dateien enthalten Server-Pfade, Berechtigungsstrukturen und
 # Security-Konzepte — nicht für die Öffentlichkeit bestimmt.
-<FilesMatch "\.(md|sh)$">
+# Textdateien enthalten Blocklisten, IP-Listen und Konfigurationsdaten.
+# Shell-Skripte enthalten Server-Pfade und Deployment-Details.
+<FilesMatch "\.(md|sh|txt)$">
   Require all denied
 </FilesMatch>
-<Files "blocklist.txt">
-  Require all denied
-</Files>
 
 
 # --- 7) Log-Dateien (Backup-Schutz) ---

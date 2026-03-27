@@ -53,7 +53,8 @@ assets-deploy/png/Jo_Zapf.png
 assets-deploy/png/JoZapf_500x500.png
 
 cron/
-public/assets/php/data
+public/assets/php/data/*
+!public/assets/php/data/domain-blacklist*.txt
 
 # Log-Dateien rekursiv (Fix: vorher fehlte ein Zeilenumbruch)
 assets/php/logs/**/*.log
