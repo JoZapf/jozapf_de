@@ -14,6 +14,11 @@ type AppNextConfig = NextConfig & {
  * - Custom-Feld `allowedDevOrigins` bleibt nutzbar (eigener Typ oben)
  */
 const nextConfig: AppNextConfig = {
+  // 0) Build-Time Cache-Busting ID (ISO-Timestamp, URL-safe)
+  env: {
+    BUILD_ID: new Date().toISOString().replace(/[:.]/g, '-'),
+  },
+
   // 1) Statischer Export
   output: 'export',
 

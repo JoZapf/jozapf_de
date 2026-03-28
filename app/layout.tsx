@@ -227,6 +227,9 @@ const serviceSchema = {
   ],
 } as const;
 
+// Build-ID für Cache-Busting (wird zur Build-Zeit evaluiert)
+const buildId = process.env.BUILD_ID || 'dev';
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="de" data-bs-theme="dark" className="h-100" suppressHydrationWarning>
@@ -249,7 +252,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href="/assets/css/timeline.css" rel="stylesheet" />
         <link href="/assets/css/vertical_timeline.css" rel="stylesheet" />
         <link href="/assets/css/github_repos.css" rel="stylesheet" />
-        <link href="/assets/css/contact-form.css" rel="stylesheet" />
+        <link href={`/assets/css/contact-form.css?b=${buildId}`} rel="stylesheet" />
         <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
         
         {/* Swiper.js CSS - Lazy loaded by github-repos.js */}
@@ -310,9 +313,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Script id="contact-loader" type="module" strategy="afterInteractive">
           {`const CONFIG = {
             formURL: window.location.pathname.startsWith('/en') 
-              ? '/assets/html/contact-form-wrapper-en.html' 
-              : '/assets/html/contact-form-wrapper.html',
-            logicURL: '/assets/js/contact-form-logic.js',
+              ? '/assets/html/contact-form-wrapper-en.html?b=` + buildId + `' 
+              : '/assets/html/contact-form-wrapper.html?b=` + buildId + `',
+            logicURL: '/assets/js/contact-form-logic.js?b=` + buildId + `',
             triggers: '#menuPanel a[href*="contact"], a[href="#contact"], a[data-action="contact"]'
           };
 
