@@ -3,14 +3,21 @@
  * Dashboard Backend API - Returns JSON data
  * Updated for Extended Logging System
  * 
- * @version 2.0.0
- * @date 2026-03-24
+ * @version 2.1.0
+ * @date 2026-03-28
+ * 
+ * Changelog v2.1.0 (2026-03-28):
+ * - BUG FIX: Cache-Control Header hinzugefügt (no-cache, no-store, must-revalidate)
+ * - Verhindert Browser-Caching der API-Response
  * 
  * Changelog v2.0.0 (2026-03-24):
  * - MF-03 FIX: Lokale env()/verifyToken() durch helpers.php ersetzt
  */
 
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 require_once __DIR__ . '/ExtendedLogger.php';
 

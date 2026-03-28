@@ -3,8 +3,12 @@
  * Unified Dashboard - Statistics + Blocklist Management
  * Protected with HMAC token
  * 
- * @version 2.0.0
- * @date 2026-03-24
+ * @version 2.1.0
+ * @date 2026-03-28
+ * 
+ * Changelog v2.1.0 (2026-03-28):
+ * - BUG FIX: Cache-Busting für API-Fetch (Query-Parameter + cache: no-store)
+ * - Verhindert Browser-Caching der Dashboard-Daten
  * 
  * Changelog v2.0.0 (2026-03-24):
  * - HF-03 FIX: CSRF-Token für alle POST-Formulare
@@ -769,7 +773,10 @@ $blockStats = $blocklist->getStats();
             document.getElementById('dashboard').style.display = 'none';
             
             try {
-                const response = await fetch('dashboard-api.php', { credentials: 'same-origin' });
+                const response = await fetch('dashboard-api.php?_=' + Date.now(), { 
+                    credentials: 'same-origin',
+                    cache: 'no-store'
+                });
                 // If the server redirected to HTML (login page) or returned non-JSON,
                 // handle gracefully and surface a helpful error instead of throwing
                 if (!response.ok) {
