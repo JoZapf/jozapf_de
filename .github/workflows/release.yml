@@ -10,6 +10,9 @@ concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write  # Required for creating GitHub Releases
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

@@ -162,18 +162,18 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high --json-file-output=snyk-report.json
+          args: --severity-threshold=high --sarif-file-output=snyk.sarif
 
       - name: Upload Snyk results to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        if: always() && hashFiles('snyk.sarif') != ''
         with:
           sarif_file: snyk.sarif
 
-      - name: Upload Snyk JSON report
-        if: always()
+      - name: Upload Snyk SARIF report
+        if: always() && hashFiles('snyk.sarif') != ''
         uses: actions/upload-artifact@v4
         with:
-          name: snyk-report
-          path: snyk-report.json
+          name: snyk-sarif-report
+          path: snyk.sarif
           retention-days: 30
