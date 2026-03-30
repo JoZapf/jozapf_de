@@ -239,21 +239,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="dns-prefetch" href="https://github.com" />
 
         {/* Preload kritischer Ressourcen */}
-        <link rel="preload" href="/assets/css/bootstrap.min.css" as="style" />
-        <link rel="preload" href="/assets/js/bootstrap.bundle.min.js" as="script" />
+        <link rel="preload" href={`/assets/css/bootstrap.min.css?b=${buildId}`} as="style" />
+        <link rel="preload" href={`/assets/js/bootstrap.bundle.min.js?b=${buildId}`} as="script" />
 
         {/* Lokale Styles */}
-        <link href="/assets/css/variables.css" rel="stylesheet" />
-        <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="/assets/css/fonts.css" rel="stylesheet" />
-        <link href="/assets/css/breakpoints.css" rel="stylesheet" />
-        <link href="/assets/css/cover.css" rel="stylesheet" />
-        <link href="/assets/css/skills.css" rel="stylesheet" />
-        <link href="/assets/css/timeline.css" rel="stylesheet" />
-        <link href="/assets/css/vertical_timeline.css" rel="stylesheet" />
-        <link href="/assets/css/github_repos.css" rel="stylesheet" />
+        <link href={`/assets/css/variables.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/bootstrap.min.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/fonts.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/breakpoints.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/cover.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/skills.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/timeline.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/vertical_timeline.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/github_repos.css?b=${buildId}`} rel="stylesheet" />
         <link href={`/assets/css/contact-form.css?b=${buildId}`} rel="stylesheet" />
-        <link href="/assets/css/lang-toggle.css" rel="stylesheet" />
+        <link href={`/assets/css/lang-toggle.css?b=${buildId}`} rel="stylesheet" />
         
         {/* Swiper.js CSS - Lazy loaded by github-repos.js */}
 
@@ -282,14 +282,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         {/* JS */}
         {/* GitHub Repositories Display (loads Swiper lazily via Intersection Observer) */}
-        <Script src="/assets/js/github-repos.js" strategy="afterInteractive" />
+        <Script src={`/assets/js/github-repos.js?b=${buildId}`} strategy="afterInteractive" />
         
-        <Script src="/assets/js/bootstrap.bundle.min.js" strategy="afterInteractive" />
-        <Script src="/assets/js/experience.js" strategy="afterInteractive" />
-        <Script src="/assets/js/lang-detect.js" strategy="afterInteractive" />
+        <Script src={`/assets/js/bootstrap.bundle.min.js?b=${buildId}`} strategy="afterInteractive" />
+        <Script src={`/assets/js/experience.js?b=${buildId}`} strategy="afterInteractive" />
+        <Script src={`/assets/js/lang-detect.js?b=${buildId}`} strategy="afterInteractive" />
 
         {/* Privacy Policy Modal Handler (Global) */}
-        <Script src="/assets/js/privacy-modal.js" strategy="afterInteractive" />
+        <Script src={`/assets/js/privacy-modal.js?b=${buildId}`} strategy="afterInteractive" />
 
         {/* Fallbacks (Jahre/©) */}
         <Script id="boot-fallback" strategy="afterInteractive">
@@ -419,13 +419,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </Script>
 
         {/* Privacy Modal – global handler for data-privacy-url links */}
-        <Script src="/assets/js/modal-handler.js" strategy="lazyOnload" />
+        <Script src={`/assets/js/modal-handler.js?b=${buildId}`} strategy="lazyOnload" />
 
         {/* tsParticles – Vendor-Lib (Self-Hosted, v3.9.1) */}
-        <Script src="/assets/js/tsparticles.slim.bundle.min.js" strategy="lazyOnload" />
+        <Script src={`/assets/js/tsparticles.slim.bundle.min.js?b=${buildId}`} strategy="lazyOnload" />
 
         {/* tsParticles – Init (Partikel-Hintergrundanimation) */}
-        <Script src="/assets/js/particles-init.js" strategy="lazyOnload" />
+        <Script src={`/assets/js/particles-init.js?b=${buildId}`} strategy="lazyOnload" />
 
       </body>
     </html>

@@ -105,8 +105,7 @@ docker/*override*
 !docs/versioning.svg
 !docs/VERSIONING.md
 
-# Build-Output ---------------------------------------------------------------
-out/
+# Build-Output: out/ wird oben bereits ignoriert
 
 # ============================================
 # Backup-Dateien und Secrets (NEVER commit)

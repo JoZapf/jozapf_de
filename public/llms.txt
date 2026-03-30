@@ -13,3 +13,6 @@
 ## Links
 - [GitHub](https://github.com/JoZapf)
 - [LinkedIn](https://www.linkedin.com/in/jo-zapf/)
+
+## Machine-Readable
+- [Summary JSON](https://jozapf.de/summary.json): Project metadata, version, last updated, key points
