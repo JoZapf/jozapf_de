@@ -1,0 +1,141 @@
+/**
+ * crowdsec-chart.css – CrowdSec Live Stats Chart Component
+ * Verwendet auf: /pflichtpraktikum-anwendungsentwicklung-berlin/ (DE + EN)
+ * Scoped unter .crowdsec-chart-outer / .crowdsec-chart-wrapper
+ *
+ * Enthält: Chart-Container, Fallback-Overlay (Ghost-Grid + SVG-Spinner),
+ *          Zustandsklassen, Responsive (Mobile < 768px)
+ *
+ * Variablen: nutzt --bg-header aus variables.css
+ */
+
+/* ── Outer Container (Background, Padding, Radius) ──────── */
+.crowdsec-chart-outer {
+	width: 100%;
+	margin: 2rem auto;
+	padding: 1rem;
+	background: var(--bg-header);
+	border-radius: 12px;
+	box-sizing: border-box;
+}
+
+/* ── Heading + Description ───────────────────────────────── */
+.crowdsec-chart__heading {
+	color: #e0e0e0;
+	font-family: sans-serif;
+	margin: 0 0 0.5rem 0;
+	font-size: 1.17em;
+	font-weight: bold;
+}
+
+.crowdsec-chart__description {
+	color: #888;
+	font-family: sans-serif;
+	font-size: 0.85rem;
+	margin: 0 0 1rem 0;
+}
+
+.crowdsec-chart__description .highlight {
+	color: #fff;
+}
+
+/* ── Canvas Wrapper (Chart + Fallback) ───────────────────── */
+.crowdsec-chart-wrapper {
+	position: relative;
+	width: 100%;
+	height: 300px;
+}
+
+/* ── Status Line ─────────────────────────────────────────── */
+.crowdsec-chart__status {
+	color: #666;
+	font-family: sans-serif;
+	font-size: 0.75rem;
+	margin: 0.5rem 0 0 0;
+}
+
+/* ── Fallback Overlay ────────────────────────────────────── */
+.chart-fallback {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	overflow: hidden;
+	transition: opacity 0.4s ease;
+}
+
+.chart-fallback__bg {
+	position: absolute;
+	inset: 0;
+	/* Ghost-Grid: simuliert Chart-Raster */
+	background:
+		repeating-linear-gradient(
+			0deg, transparent, transparent 59px, #333 59px, #333 60px),
+		repeating-linear-gradient(
+			90deg, transparent, transparent 99px, #333 99px, #333 100px);
+	opacity: 0.3;
+}
+
+.chart-fallback__overlay {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+/* ── SVG Spinner ─────────────────────────────────────────── */
+.chart-fallback__spinner {
+	width: 40px;
+	height: 40px;
+	margin-bottom: 1rem;
+	animation: fb-spin 1s linear infinite;
+}
+
+.chart-fallback__spinner circle {
+	fill: none;
+	stroke-width: 3;
+	stroke-linecap: round;
+}
+
+.chart-fallback__spinner .fb-track {
+	stroke: #333;
+}
+
+.chart-fallback__spinner .fb-progress {
+	stroke: #36a2eb;
+	stroke-dasharray: 90 150;
+}
+
+@keyframes fb-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* ── Fallback Text ───────────────────────────────────────── */
+.chart-fallback__text {
+	color: #888;
+	font-family: sans-serif;
+	font-size: 0.85rem;
+	text-align: center;
+	margin: 0;
+}
+
+/* ── Zustandsklasse: Fallback ausblenden ─────────────────── */
+.chart-fallback.is-hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* ── Responsive: Mobile (<768px = unter Bootstrap md) ────── */
+@media (max-width: 767.98px) {
+	.crowdsec-chart-wrapper {
+		height: 200px;
+	}
+	.chart-fallback__text {
+		font-size: 0.75rem;
+	}
+}

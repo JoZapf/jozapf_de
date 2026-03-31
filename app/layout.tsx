@@ -253,6 +253,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link href={`/assets/css/vertical_timeline.css?b=${buildId}`} rel="stylesheet" />
         <link href={`/assets/css/github_repos.css?b=${buildId}`} rel="stylesheet" />
         <link href={`/assets/css/contact-form.css?b=${buildId}`} rel="stylesheet" />
+        <link href={`/assets/css/crowdsec-chart.css?b=${buildId}`} rel="stylesheet" />
         <link href={`/assets/css/lang-toggle.css?b=${buildId}`} rel="stylesheet" />
         
         {/* Swiper.js CSS - Lazy loaded by github-repos.js */}
@@ -283,6 +284,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* JS */}
         {/* GitHub Repositories Display (loads Swiper lazily via Intersection Observer) */}
         <Script src={`/assets/js/github-repos.js?b=${buildId}`} strategy="afterInteractive" />
+
+        {/* CrowdSec Live Stats Chart (loads Chart.js lazily via Intersection Observer) */}
+        <Script src={`/assets/js/crowdsec-chart.js?b=${buildId}`} strategy="afterInteractive" />
         
         <Script src={`/assets/js/bootstrap.bundle.min.js?b=${buildId}`} strategy="afterInteractive" />
         <Script src={`/assets/js/experience.js?b=${buildId}`} strategy="afterInteractive" />
