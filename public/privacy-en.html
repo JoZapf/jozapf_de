@@ -30,7 +30,7 @@
 <main role="main" id="contact-privacy">
   <header>
     <h1>Privacy Policy — Contact Form & GitHub API</h1>
-    <p class="muted">Last updated: <time datetime="2026-02-16">16 February 2026</time></p>
+    <p class="muted">Last updated: <time datetime="2026-03-31">31 March 2026</time></p>
   </header>
 
   <nav aria-label="On this page">
@@ -47,8 +47,9 @@
     <a href="#obligation">10. Data Requirements</a>
     <a href="#security">11. Security</a>
     <a href="#github">12. GitHub API</a>
-    <a href="#complaints">13. Complaints</a>
-    <a href="#changes">14. Changes</a>
+    <a href="#crowdsec">13. CrowdSec Live Statistics</a>
+    <a href="#complaints">14. Complaints</a>
+    <a href="#changes">15. Changes</a>
   </nav>
 
   <section id="intro">
@@ -197,8 +198,50 @@
     <p>You can block requests to <span class="mono">api.github.com</span> using browser extensions.</p>
   </section>
 
+  <section id="crowdsec">
+    <h2>13. CrowdSec Live Statistics (Grafana)</h2>
+    <p>Our website displays live statistics of detected attack scenarios on the internship page. The data originates from a self-hosted homelab server and is served via a Grafana public dashboard.</p>
+
+    <h3>13.1 How It Works</h3>
+    <ul>
+      <li>Your browser sends a request to <span class="mono">metrics.jozapf.de</span> (Grafana Public Dashboard API)</li>
+      <li>The response contains only <strong>aggregated statistics</strong> (count of detected scenarios per time interval) — no individual IP addresses</li>
+      <li>Rendering is performed entirely in your browser (client-side via Chart.js)</li>
+      <li>Data is automatically refreshed every 60 seconds</li>
+    </ul>
+
+    <h3>13.2 Data Processed</h3>
+    <ul>
+      <li><strong>Your IP address:</strong> Recorded in web server logs when requesting data from <span class="mono">metrics.jozapf.de</span> (standard HTTP logging)</li>
+      <li><strong>Displayed data:</strong> Aggregated counters of CrowdSec scenarios (e.g. "http-probing", "http-crawl-non-statics") — no personal data</li>
+    </ul>
+
+    <h3>13.3 CrowdSec Intrusion Prevention</h3>
+    <p>The homelab server runs <strong>CrowdSec</strong>, an open-source intrusion prevention system. CrowdSec processes IP addresses for the following purposes:</p>
+    <ul>
+      <li>Detection and mitigation of attack patterns (e.g. brute-force, port scanning)</li>
+      <li>Reporting detected attacker IPs to the <strong>CrowdSec Community API (CAPI)</strong> — a crowd-sourced threat intelligence database</li>
+    </ul>
+    <div class="important">
+      <strong>Note:</strong> Sharing with CrowdSec CAPI only concerns IP addresses identified as attack sources — not the IP addresses of regular visitors to this website.
+    </div>
+
+    <h3>13.4 Recipients</h3>
+    <ul>
+      <li><strong>CrowdSec SAS</strong> — Operator of the Community API (CAPI), based in France (EU)</li>
+      <li><strong>Legal basis:</strong> Art. 6(1)(f) GDPR (legitimate interest: IT security and attack mitigation)</li>
+      <li><strong>Privacy:</strong> See <a href="https://www.crowdsec.net/privacy-policy" target="_blank">CrowdSec Privacy Policy</a></li>
+    </ul>
+
+    <h3>13.5 Security Measures</h3>
+    <p>Access to <span class="mono">metrics.jozapf.de</span> is protected by a multi-layered security stack (TLS, Web Application Firewall, path restriction). The dashboard is configured as a token-based public dashboard — no login is required or possible.</p>
+
+    <h3>13.6 Opt-Out</h3>
+    <p>You can block requests to <span class="mono">metrics.jozapf.de</span> using browser extensions. The live statistics will then display a placeholder.</p>
+  </section>
+
   <section id="complaints">
-    <h2>13. Complaints</h2>
+    <h2>14. Complaints</h2>
     <p>You have the right to lodge a complaint with a supervisory authority:</p>
     <p><strong>Berlin, Germany:</strong><br>
     Berliner Beauftragte für Datenschutz und Informationsfreiheit<br>
@@ -207,7 +250,7 @@
   </section>
 
   <section id="changes">
-    <h2>14. Changes to This Notice</h2>
+    <h2>15. Changes to This Notice</h2>
     <p>We may update this notice to reflect legal or technical changes. The "Last updated" date indicates the current version.</p>
   </section>
 
@@ -225,6 +268,12 @@
     <ul>
       <li>Public repository metadata (processed in your browser)</li>
       <li>No personal data about you is sent to GitHub</li>
+    </ul>
+    <p><strong>What we collect via CrowdSec Live Statistics:</strong></p>
+    <ul>
+      <li>Your IP address in web server logs when fetching statistics</li>
+      <li>Displayed data is exclusively aggregated statistics — no personal data</li>
+      <li>CrowdSec only reports detected attacker IPs to the Community API — not visitor IPs</li>
     </ul>
     <p><strong>Your rights:</strong> Request access, correction, or deletion at any time.</p>
   </section>

@@ -30,7 +30,7 @@
 <main role="main" id="contact-privacy">
   <header>
     <h1>Datenschutzerklärung – Kontaktformular & GitHub API</h1>
-    <p class="muted">Letzte Aktualisierung: <time datetime="2026-02-16">16. Februar 2026</time></p>
+    <p class="muted">Letzte Aktualisierung: <time datetime="2026-03-31">31. März 2026</time></p>
   </header>
 
   <nav aria-label="Inhaltsverzeichnis">
@@ -47,8 +47,9 @@
     <a href="#obligation">10. Datenpflicht</a>
     <a href="#security">11. Sicherheit</a>
     <a href="#github">12. GitHub API</a>
-    <a href="#complaints">13. Beschwerde</a>
-    <a href="#changes">14. Änderungen</a>
+    <a href="#crowdsec">13. CrowdSec Live-Statistiken</a>
+    <a href="#complaints">14. Beschwerde</a>
+    <a href="#changes">15. Änderungen</a>
   </nav>
 
   <section id="intro">
@@ -197,8 +198,50 @@
     <p>Sie können Anfragen an <span class="mono">api.github.com</span> mit Browser-Erweiterungen blockieren.</p>
   </section>
 
+  <section id="crowdsec">
+    <h2>13. CrowdSec Live-Statistiken (Grafana)</h2>
+    <p>Unsere Website zeigt auf der Praktikumsseite eine Live-Statistik erkannter Angriffsszenarien an. Die Daten stammen von einem selbstbetriebenen Homelab-Server und werden über ein Grafana Public Dashboard bereitgestellt.</p>
+
+    <h3>13.1 Funktionsweise</h3>
+    <ul>
+      <li>Ihr Browser sendet eine Anfrage an <span class="mono">metrics.jozapf.de</span> (Grafana Public Dashboard API)</li>
+      <li>Die Antwort enthält ausschließlich <strong>aggregierte Statistiken</strong> (Anzahl erkannter Szenarien pro Zeitintervall) — keine individuellen IP-Adressen</li>
+      <li>Die Darstellung erfolgt vollständig in Ihrem Browser (clientseitig via Chart.js)</li>
+      <li>Daten werden automatisch alle 60 Sekunden aktualisiert</li>
+    </ul>
+
+    <h3>13.2 Verarbeitete Daten</h3>
+    <ul>
+      <li><strong>Ihre IP-Adresse:</strong> Wird bei der Anfrage an <span class="mono">metrics.jozapf.de</span> in den Webserver-Logs erfasst (Standard-HTTP-Protokollierung)</li>
+      <li><strong>Angezeigte Daten:</strong> Aggregierte Zähler von CrowdSec-Szenarien (z.&thinsp;B. „http-probing", „http-crawl-non-statics") — keine personenbezogenen Daten</li>
+    </ul>
+
+    <h3>13.3 CrowdSec Intrusion Prevention</h3>
+    <p>Auf dem Homelab-Server läuft <strong>CrowdSec</strong>, ein Open-Source-Intrusion-Prevention-System. CrowdSec verarbeitet IP-Adressen zu folgenden Zwecken:</p>
+    <ul>
+      <li>Erkennung und Abwehr von Angriffsmustern (z.&thinsp;B. Brute-Force, Port-Scanning)</li>
+      <li>Meldung erkannter Angreifer-IPs an die <strong>CrowdSec Community API (CAPI)</strong> — eine crowdbasierte Bedrohungsdatenbank</li>
+    </ul>
+    <div class="important">
+      <strong>Hinweis:</strong> Die Weitergabe an CrowdSec CAPI betrifft ausschließlich IP-Adressen, die als Angriffsquelle erkannt wurden — nicht die IP-Adressen regulärer Besucher dieser Website.
+    </div>
+
+    <h3>13.4 Empfänger</h3>
+    <ul>
+      <li><strong>CrowdSec SAS</strong> — Betreiber der Community API (CAPI), Sitz in Frankreich (EU)</li>
+      <li><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 Buchstabe f DSGVO (berechtigtes Interesse: IT-Sicherheit und Angriffsabwehr)</li>
+      <li><strong>Datenschutz:</strong> Siehe <a href="https://www.crowdsec.net/privacy-policy" target="_blank">CrowdSec Datenschutzerklärung</a></li>
+    </ul>
+
+    <h3>13.5 Sicherheitsmaßnahmen</h3>
+    <p>Der Zugriff auf <span class="mono">metrics.jozapf.de</span> ist durch einen mehrstufigen Security-Stack geschützt (TLS, Web Application Firewall, Pfad-Beschränkung). Das Dashboard ist als tokenbasiertes Public Dashboard konfiguriert — ein Login ist nicht erforderlich und nicht möglich.</p>
+
+    <h3>13.6 Opt-Out</h3>
+    <p>Sie können Anfragen an <span class="mono">metrics.jozapf.de</span> mit Browser-Erweiterungen blockieren. Die Live-Statistik zeigt dann einen Platzhalter an.</p>
+  </section>
+
   <section id="complaints">
-    <h2>13. Beschwerde</h2>
+    <h2>14. Beschwerde</h2>
     <p>Sie haben das Recht, eine Beschwerde bei einer Aufsichtsbehörde einzureichen:</p>
     <p><strong>Berlin, Deutschland:</strong><br>
     Berliner Beauftragte für Datenschutz und Informationsfreiheit<br>
@@ -207,7 +250,7 @@
   </section>
 
   <section id="changes">
-    <h2>14. Änderungen dieser Erklärung</h2>
+    <h2>15. Änderungen dieser Erklärung</h2>
     <p>Wir können diese Erklärung aktualisieren, um gesetzliche oder technische Änderungen widerzuspiegeln. Das Datum „Letzte Aktualisierung" zeigt die aktuelle Version an.</p>
   </section>
 
@@ -225,6 +268,12 @@
     <ul>
       <li>Öffentliche Repository-Metadaten (in Ihrem Browser verarbeitet)</li>
       <li>Keine personenbezogenen Daten über Sie werden an GitHub gesendet</li>
+    </ul>
+    <p><strong>Was wir über CrowdSec Live-Statistiken erfassen:</strong></p>
+    <ul>
+      <li>Ihre IP-Adresse in Webserver-Logs bei Abruf der Statistiken</li>
+      <li>Angezeigte Daten sind ausschließlich aggregierte Statistiken — keine personenbezogenen Daten</li>
+      <li>CrowdSec meldet nur erkannte Angreifer-IPs an die Community API — nicht Besucher-IPs</li>
     </ul>
     <p><strong>Ihre Rechte:</strong> Sie können jederzeit Zugang, Berichtigung oder Löschung Ihrer Daten anfordern.</p>
   </section>
