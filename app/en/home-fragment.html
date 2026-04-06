@@ -24,10 +24,10 @@
 				<section aria-labelledby="intro-heading">
 					<div class="row g-4 text-start">
 						<div class="col-md-4 h6">
-							Both personally and professionally, I integrate self-hosted infrastructure and applications with external services.
+							Integrating diverse systems and platforms — whether cloud services, existing enterprise software, or custom infrastructure.
 						</div>
 						<div class="col-md-4 h6">
-							Sensitive data, established processes, or implicit operational knowledge under your own control through needs-based architectures.
+							Architecture decisions driven by operational requirements: data protection, availability, scalability.
 						</div>
 						<div class="col-md-4 h6">
 							Automation as a means of making processes possible, more robust, and/or more practical.
@@ -42,7 +42,8 @@
 					<ul>
 						<li>Next.js/Node.js with fragment-based content management, build-time injection versioning, build-time og-image-generator and GitHub Actions CI/CD with automated SSH deployment</li>
 						<li>Secure operations for Linux & Windows platforms (hardening, patching, monitoring, backup & recovery)</li>
-						<li>Open-Desk EU — Selfhosted Sovereign Workplace: 20+ Docker containers, fully IaC-managed. Three-tier reverse proxy with WAF, Keycloak SSO/MFA,  6 segmented networks, hardened containers. Monitoring, automated backup, complete operations documentation.</li>
+						<li>Open-Desk EU — Selfhosted Sovereign Workplace: ~30 Docker containers (Keycloak, Nextcloud, Collabora, Vaultwarden, Overleaf, XWiki, OpenProject), 5 databases, 3 Redis instances. Defense-in-depth: Coraza WAF (OWASP CRS) → Traefik v3 → backend with Proxy Protocol. Keycloak SSO/2FA (TOTP + WebAuthn), 6 segmented networks, hardened containers (cap_drop ALL, read-only FS). Prometheus/Grafana/Loki observability, automated backup, complete operations documentation.</li>
+						<li>Zero-Knowledge Secrets Broker (original project) — Runtime API for container secrets replacing .env and Docker Secrets. FastAPI/Python, 202 tests (pytest + shell), 96% coverage, RBAC, 4-layer memory protection (mlock, memzero, seccomp), 8 production consumers, MCP interface for AI agents.</li>
 						<li>Hybrid cloud architectures and the scalability of hosted and on-premise sovereign cloud systems</li>
 						<li>Containerized services from development to production with Docker/Compose (reproducible builds, secure runtime, logging & metrics, automated rollbacks)</li>
 						<li>CI/CD with GitHub Actions (versioned releases, staged deployments: develop → staging → production)</li>
