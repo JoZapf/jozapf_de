@@ -266,6 +266,10 @@
 	background: var(--sk-star-on);
 }
 
+.jz-skills .sk-star.half {
+	background: linear-gradient(90deg, var(--sk-star-on) 50%, var(--sk-star-off) 50%);
+}
+
 /* ── Tags ─────────────────────────────────────────────────────────────── */
 .jz-skills .sk-tags {
 	display: flex;
